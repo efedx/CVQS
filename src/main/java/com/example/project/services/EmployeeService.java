@@ -1,11 +1,9 @@
 package com.example.project.services;
 
 import com.example.project.model.Employee;
-import com.example.project.repository.EmployeeRepo;
+import com.example.project.repository.EmployeeRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.hibernate.Filter;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +13,12 @@ import java.util.Optional;
 @Service
 public class EmployeeService {
 
-    private final EmployeeRepo employeeRepo;
+    private final EmployeeRepository employeeRepository;
     private EntityManager entityManager;
 
     @Autowired
-    EmployeeService(EmployeeRepo employeeRepo, EntityManager entityManager) {
-        this.employeeRepo = employeeRepo;
+    EmployeeService(EmployeeRepository employeeRepository, EntityManager entityManager) {
+        this.employeeRepository = employeeRepository;
         this.entityManager = entityManager;
     }
 
@@ -35,31 +33,31 @@ public class EmployeeService {
 //    }
 
     public List<Employee> getNonDeletedEmployees() {
-        List<Employee> nonDeletedEmployees = employeeRepo.findByDeletedFalse();
+        List<Employee> nonDeletedEmployees = employeeRepository.findByDeletedFalse();
         return nonDeletedEmployees;
     }
 
     public List<Employee> getDeletedEmployees() {
-        List<Employee> deletedEmployees = employeeRepo.findByDeletedTrue();
+        List<Employee> deletedEmployees = employeeRepository.findByDeletedTrue();
         return deletedEmployees;
     }
 
     public void registerNewEmployee(Employee employee) {
-        Optional<Employee> employeeOptional = employeeRepo.findByEmail(employee.getEmail());
+        Optional<Employee> employeeOptional = employeeRepository.findByEmail(employee.getEmail());
         if(employeeOptional.isPresent()) {
             throw new IllegalStateException("email taken");
         }
-        employeeRepo.save(employee);
+        employeeRepository.save(employee);
     }
 
     public void deleteEmployee(Long id) {
-        if(!employeeRepo.existsById(id)) throw new IllegalStateException(id + " does not exists");
-        else employeeRepo.deleteById(id);
+        if(!employeeRepository.existsById(id)) throw new IllegalStateException(id + " does not exists");
+        else employeeRepository.deleteById(id);
     }
 
     @Transactional
     public void updateEmployee(Long id, String username, String email) {
-        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new IllegalStateException("employee with id " + id + " does not exist"));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new IllegalStateException("employee with id " + id + " does not exist"));
         employee.setUsername(username);
         employee.setEmail(email);
     }
