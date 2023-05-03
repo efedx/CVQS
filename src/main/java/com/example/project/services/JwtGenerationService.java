@@ -19,7 +19,7 @@ import static com.example.project.security.SecurityConstans.JWT_KEY;
 @RequiredArgsConstructor
 public class JwtGenerationService {
 
-    Date now = new Date();
+    Date now = new Date(System.currentTimeMillis());
     Date expiration = new Date(now.getTime() + 360000000);
 
     // used for authentication

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.function.Function;
 import static com.example.project.security.SecurityConstans.JWT_KEY;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     //----------------------------------------------

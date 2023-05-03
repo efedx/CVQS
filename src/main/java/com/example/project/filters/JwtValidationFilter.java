@@ -9,11 +9,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -22,16 +24,25 @@ import java.io.IOException;
 import static com.example.project.security.SecurityConstans.JWT_HEADER;
 import static com.example.project.security.SecurityConstans.JWT_KEY;
 
+@Component
+@RequiredArgsConstructor
 public class JwtValidationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        final String jwt = request.getHeader(JWT_HEADER);
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        final String jwt = authHeader.substring(7);
 
         if(jwt != null) { // todo jwt.isEmpty()
             try {
+                // does the validation and returns the claims
                 Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(jwt).getBody();
 
+                // get the username and authorities to create a UPA token and set authentication in the security context
                 String username = String.valueOf(claims.get("username"));
                 String authorities = (String) claims.get("authorities");
                 UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(username, null,
@@ -48,6 +59,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        // do not do the filter when it is "/login"
         return request.getServletPath().equals("/login");
     }
 

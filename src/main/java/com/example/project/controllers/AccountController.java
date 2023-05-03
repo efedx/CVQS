@@ -2,14 +2,17 @@ package com.example.project.controllers;
 
 import com.example.project.model.Employee;
 import com.example.project.services.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class AccountController {
 
+    @Autowired
     private EmployeeService employeeService;
     @Autowired
     AccountController(EmployeeService employeeService) {
@@ -26,10 +29,10 @@ public class AccountController {
         return employeeService.getDeletedEmployees();
     }
 
-    @PostMapping("register")
-    public void registerNewEmployee(@RequestBody Employee employee) {
-        employeeService.registerNewEmployee(employee);
-        System.out.println(employee);    }
+//    @PostMapping("register") todo deal with that
+//    public void registerNewEmployee(@RequestBody Employee employee) {
+//        employeeService.registerNewEmployee(employee);
+//        System.out.println(employee);    }
 
     @DeleteMapping(path="{id}")
     public void deleteEmployee(@PathVariable Long id) {

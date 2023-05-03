@@ -5,6 +5,7 @@ import com.example.project.security.AuthenticationResponse;
 import com.example.project.security.RegisterRequest;
 import com.example.project.services.RegisterLoginService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RegisterLoginController {
 
+    @Autowired
     private final RegisterLoginService service;
 
     @PostMapping("/register")

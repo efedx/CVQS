@@ -12,6 +12,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,10 +28,15 @@ import static com.example.project.security.SecurityConstans.JWT_KEY;
 @RequiredArgsConstructor
 public class RegisterLoginService {
 
+    @Autowired
     private final EmployeeRepository employeeRepository;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final JwtGenerationService jwtGenerationService;
+
     public AuthenticationResponse register(RegisterRequest request) {
 
         // create an employee and save it to the database

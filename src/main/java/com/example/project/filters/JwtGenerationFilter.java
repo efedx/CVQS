@@ -11,9 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -23,9 +25,11 @@ import java.util.*;
 import static com.example.project.security.SecurityConstans.JWT_HEADER;
 import static com.example.project.security.SecurityConstans.JWT_KEY;
 
+@Component
 @RequiredArgsConstructor
 public class JwtGenerationFilter extends OncePerRequestFilter {
 
+    @Autowired
     private final JwtGenerationService jwtGenerationService;
 
     @Override
@@ -34,8 +38,9 @@ public class JwtGenerationFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication != null) {
+            // generate a jwt based on the authentication object of the security context and set the header with it
             String jwt = jwtGenerationService.generateJwt(authentication);
-            response.setHeader(JWT_HEADER, jwt);
+            response.setHeader("Authorization", jwt);
         }
 
         filterChain.doFilter(request, response);
@@ -43,6 +48,7 @@ public class JwtGenerationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        // do the filter only for "/login"
         return !request.getServletPath().equals("/login"); // return true to avoid
     }
 
