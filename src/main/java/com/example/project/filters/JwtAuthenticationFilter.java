@@ -39,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // since our header starts with "Bearer " 7th index is where our token begins
         jwtToken = authHeader.substring(7);
         tokenUsername = jwtService.extractUsername(jwtToken);
 
@@ -51,10 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         null,
                         userDetails.getAuthorities()
                 );
+
                 upaToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
+                // populate security context holder with the username-password-auth token
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
         }

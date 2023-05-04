@@ -2,7 +2,9 @@ package com.example.project.model;
 
 import com.example.project.security.RoleEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -11,6 +13,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 public class Roles {
 
@@ -19,14 +23,17 @@ public class Roles {
     @GenericGenerator(name = "native", strategy = "native")
     private Long roleId;
 
-    @Column(name = "roleName", nullable = false) // unique = true,
-    @Enumerated(value = EnumType.STRING)
-    private RoleEnum roleName;
+//    @Column(name = "roleName", unique = true, nullable = false)
+//    @Enumerated(value = EnumType.STRING)
+//    private RoleEnum roleName;
+
+    private String roleName;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "roles")
     private Set<Employee> employees = new HashSet<>();
 
-    public Roles(Set<String> ) {
-
+    public Roles(String roleName) {
+        this.roleName = roleName;
     }
+
 }

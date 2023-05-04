@@ -1,5 +1,6 @@
 package com.example.project.services;
 
+import com.example.project.model.Roles;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -49,6 +50,17 @@ public class JwtGenerationService {
                 .setClaims(extraClaims)
                 .claim("username", userDetails.getUsername())
                 .claim("authorities", populateAuthorities(userDetails.getAuthorities()))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateJwt(String username, Set<Roles> roles) {
+        return Jwts.builder()
+                .setIssuer("Toyota Project")
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .claim("username", username)
+                .claim("authorities", roles)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

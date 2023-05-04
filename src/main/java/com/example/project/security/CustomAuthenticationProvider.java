@@ -1,7 +1,9 @@
 package com.example.project.security;
 
 import com.example.project.model.Employee;
+import com.example.project.model.Roles;
 import com.example.project.repository.EmployeeRepository;
+import com.example.project.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,9 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -25,18 +25,29 @@ public class CustomAuthenticationProvider implements org.springframework.securit
     EmployeeRepository employeeRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+        // fetch the employee from the database by username
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
         Optional<Employee> employee = employeeRepository.findByUsername(username); // todo username-mail
 
+        // if there exists a employee with the given username
         if(employee.isPresent()) {
+
             if(passwordEncoder.matches(password, employee.get().getPassword())) {
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(employee.get().getRole().toString()));
-                return new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+                // fetch the granted authorities from the database and create a username-password-authentication token using
+                // that employee's username, password and authorities
+                Set<Roles> roles = employee.get().getRoles();
+                Set<GrantedAuthority> grantedAuthoritiesSet = customUserDetailsService.getSimpleGrantedAuthorities(roles);
+
+                // last parameter is GrantedAuthorities set type
+                return new UsernamePasswordAuthenticationToken(username, password, grantedAuthoritiesSet);
             }
 
             else {

@@ -1,8 +1,8 @@
 package com.example.project.controllers;
 
-import com.example.project.security.AuthenticationRequest;
+import com.example.project.dto.AuthenticationRequestDto;
 import com.example.project.security.AuthenticationResponse;
-import com.example.project.security.RegisterRequest;
+import com.example.project.dto.RegisterRequestDto;
 import com.example.project.services.RegisterLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterLoginController {
 
     @Autowired
-    private final RegisterLoginService service;
+    private final RegisterLoginService registerLoginService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequestDto request) {
+        return ResponseEntity.ok(registerLoginService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.login(request));
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto request) {
+        return ResponseEntity.ok(registerLoginService.login(request));
     }
 
 }

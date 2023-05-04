@@ -1,4 +1,4 @@
-package com.example.project.security;
+package com.example.project.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationRequest {
+public class AuthenticationRequestDto {
     private String username; // todo make this email
     private String password;
 
