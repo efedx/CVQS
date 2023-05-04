@@ -1,21 +1,26 @@
 package com.example.project.model;
 
-import com.example.project.security.Role;
+import com.example.project.security.RoleEnum;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@Data
+import static java.util.stream.Nodes.collect;
+
+@Getter
+@Setter
 @Builder
 @Entity
 @NoArgsConstructor
@@ -28,26 +33,37 @@ import java.util.List;
 
 public class Employee implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long employeeId;
     private String username;
     private String email;
     private String password;
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "employee_roles",
+            joinColumns = {
+                @JoinColumn(name = "employee_id", referencedColumnName = "employeeId")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "role_name", referencedColumnName = "roleName")})
+
+    private Set<Roles> roles = new HashSet<>();
 
     private Boolean deleted = Boolean.FALSE;
 
-    public Employee(String username, String email, String password, Role role) {
+    public Employee(String username, String email, String password, Set<Roles> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
     }
+
+    //-------------------------------------------------------------
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role.name()));
+        return List.of(new SimpleGrantedAuthority(this.getRoles().toString()));
     }
 
     // since only the email will be unique we need it as the username But not here

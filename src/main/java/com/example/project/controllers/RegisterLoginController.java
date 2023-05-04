@@ -19,7 +19,7 @@ public class RegisterLoginController {
     private final RegisterLoginService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> Register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
 

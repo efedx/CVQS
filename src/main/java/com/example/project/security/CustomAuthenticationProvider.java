@@ -31,16 +31,19 @@ public class CustomAuthenticationProvider implements org.springframework.securit
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
         Optional<Employee> employee = employeeRepository.findByUsername(username); // todo username-mail
+
         if(employee.isPresent()) {
             if(passwordEncoder.matches(password, employee.get().getPassword())) {
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(employee.get().getRole().toString()));
                 return new UsernamePasswordAuthenticationToken(username, password, authorities);
             }
+
             else {
                 throw new BadCredentialsException("Invalid password");
             }
         }
+
         else {
             throw new BadCredentialsException("No user registration with this username");
         }

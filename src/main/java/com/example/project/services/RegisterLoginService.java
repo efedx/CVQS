@@ -1,16 +1,12 @@
 package com.example.project.services;
 
 import com.example.project.model.Employee;
+import com.example.project.model.Roles;
 import com.example.project.repository.EmployeeRepository;
 import com.example.project.security.AuthenticationRequest;
 import com.example.project.security.AuthenticationResponse;
 import com.example.project.security.RegisterRequest;
-import com.example.project.security.Role;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import lombok.NoArgsConstructor;
+import com.example.project.security.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
-
-import static com.example.project.security.SecurityConstans.JWT_HEADER;
-import static com.example.project.security.SecurityConstans.JWT_KEY;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +38,17 @@ public class RegisterLoginService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER).build();
+                .roles(commaSeperatedStringtoSet(request.getRoles())).build();
         employeeRepository.save(employee);
 
         // create a jwt using the employee and send it with authentication response
         String jwt = jwtGenerationService.generateJwt(employee);
         return AuthenticationResponse.builder().token(jwt).build();
         }
+
+    private Set<Roles> commaSeperatedStringtoSet(String roles) {
+        return Stream.of(roles.trim().split("[, ]")).map(s -> RoleEnum.valueOf(s)).collect(Collectors.toSet());
+    }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
 

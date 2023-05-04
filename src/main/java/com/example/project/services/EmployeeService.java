@@ -18,11 +18,6 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private EntityManager entityManager;
 
-    @Autowired
-    EmployeeService(EmployeeRepository employeeRepository, EntityManager entityManager) {
-        this.employeeRepository = employeeRepository;
-        this.entityManager = entityManager;
-    }
 
 //    public List<Employee> getAllEmployees(Boolean isDeleted) {
 //
@@ -44,10 +39,18 @@ public class EmployeeService {
         return deletedEmployees;
     }
 
-    public void registerNewEmployee(Employee employee) {
-        Optional<Employee> employeeOptional = employeeRepository.findByEmail(employee.getEmail());
+//    public void registerNewEmployee(Employee employee) {
+//        Optional<Employee> employeeOptional = employeeRepository.findByEmail(employee.getEmail());
+//        if(employeeOptional.isPresent()) {
+//            throw new IllegalStateException("email taken");
+//        }
+//        employeeRepository.save(employee);
+//    }
+
+    public void addNewEmployee(Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findByEmail(employee.getUsername());
         if(employeeOptional.isPresent()) {
-            throw new IllegalStateException("email taken");
+            throw new IllegalStateException("username taken");
         }
         employeeRepository.save(employee);
     }

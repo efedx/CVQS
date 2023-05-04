@@ -17,5 +17,5 @@ public class RegisterRequest {
     private String password;
     //@Enumerated(value = EnumType.STRING) // todo make here work with enums
     // private Role role;
-    private String role;
+    private String roles;
 }
