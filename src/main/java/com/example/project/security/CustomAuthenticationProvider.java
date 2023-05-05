@@ -32,22 +32,22 @@ public class CustomAuthenticationProvider implements org.springframework.securit
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         // fetch the employee from the database by username
-        String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
-        Optional<Employee> employee = employeeRepository.findByUsername(username); // todo username-mail
+        String tokenUsername = authentication.getName();
+        String tokenPassword = authentication.getCredentials().toString();
+        Optional<Employee> employee = employeeRepository.findByUsername(tokenUsername); // todo username-mail
 
-        // if there exists a employee with the given username
+        // if there exists an employee with the given username
         if(employee.isPresent()) {
 
-            if(passwordEncoder.matches(password, employee.get().getPassword())) {
+            if(passwordEncoder.matches(tokenPassword, employee.get().getPassword())) {
 
                 // fetch the granted authorities from the database and create a username-password-authentication token using
                 // that employee's username, password and authorities
-                Set<Roles> roles = employee.get().getRoles();
+                Set<Roles> roles = employee.orElseThrow().getRoles();
                 Set<GrantedAuthority> grantedAuthoritiesSet = customUserDetailsService.getSimpleGrantedAuthorities(roles);
 
-                // last parameter is GrantedAuthorities set type
-                return new UsernamePasswordAuthenticationToken(username, password, grantedAuthoritiesSet);
+                // last parameter is Set<GrantedAuthorities> type
+                return new UsernamePasswordAuthenticationToken(tokenUsername, tokenPassword, grantedAuthoritiesSet);
             }
 
             else {

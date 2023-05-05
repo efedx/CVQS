@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationRequestDto {
+public class LoginRequestDto {
     private String username; // todo make this email
     private String password;
 

@@ -1,15 +1,17 @@
 package com.example.project.services;
 
 import com.example.project.model.Employee;
+import com.example.project.model.Roles;
 import com.example.project.repository.EmployeeRepository;
+import com.example.project.repository.RolesRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +19,7 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private EntityManager entityManager;
+    private final RolesRepository rolesRepository;
 
 
 //    public List<Employee> getAllEmployees(Boolean isDeleted) {
@@ -65,5 +68,15 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new IllegalStateException("employee with id " + id + " does not exist"));
         employee.setUsername(username);
         employee.setEmail(email);
+    }
+
+    public Set<Roles> getRolesFromEmployee(String username) {
+        Optional<Employee> employee = employeeRepository.findByUsername(username);
+        return employee.get().getRoles();
+    }
+
+    public Set<Employee> getEmployeesFromRole(String roleName) {
+        Roles role = rolesRepository.findByRoleName(roleName);
+        return role.getEmployees();
     }
 }

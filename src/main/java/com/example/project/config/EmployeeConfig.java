@@ -38,7 +38,7 @@ public class EmployeeConfig {
 
             Employee one = new Employee("one", "one@mail.com", passwordEncoder.encode("123"), adminLeader);
             Employee two = new Employee("two", "two@mail.com", passwordEncoder.encode("456"), adminLeaderOperator);
-            employeeRepository.saveAll(List.of(one, two));
+            //employeeRepository.saveAll(List.of(one, two));
         };
     }
 }

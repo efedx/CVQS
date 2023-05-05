@@ -3,11 +3,10 @@ package com.example.project.services;
 import com.example.project.model.Employee;
 import com.example.project.model.Roles;
 import com.example.project.repository.EmployeeRepository;
-import com.example.project.dto.AuthenticationRequestDto;
+import com.example.project.dto.LoginRequestDto;
 import com.example.project.repository.RolesRepository;
-import com.example.project.security.AuthenticationResponse;
+import com.example.project.dto.AuthenticationResponseDto;
 import com.example.project.dto.RegisterRequestDto;
-import com.example.project.security.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,10 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.catalina.realm.UserDatabaseRealm.getRoles;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +33,14 @@ public class RegisterLoginService {
     @Autowired
     private final JwtGenerationService jwtGenerationService;
 
-    public AuthenticationResponse register(RegisterRequestDto request) {
+    public AuthenticationResponseDto register(RegisterRequestDto registerRequestDto) {
 
         // create an employee and save it to the database
         Employee employee = Employee.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(getRoles(request.getRoles()))
+                .username(registerRequestDto.getUsername())
+                .email(registerRequestDto.getEmail())
+                .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .roles(getRoles(registerRequestDto.getRoles()))
                 .build();
 
         employeeRepository.save(employee);
@@ -55,14 +50,14 @@ public class RegisterLoginService {
 
         // create a jwt using the employee and send it with authentication response
         String jwt = jwtGenerationService.generateJwt(username, roles);
-        return AuthenticationResponse.builder().token(jwt).build();
+        return AuthenticationResponseDto.builder().token(jwt).build();
         }
 
 
-    public AuthenticationResponse login(AuthenticationRequestDto authenticationRequestDto) {
+    public AuthenticationResponseDto login(LoginRequestDto loginRequestDto) {
 
-        String username = authenticationRequestDto.getUsername();
-        String password = authenticationRequestDto.getPassword();
+        String username = loginRequestDto.getUsername();
+        String password = loginRequestDto.getPassword();
 
         try {
             // it is secure after using this method, throws an exception if it is incorrect
@@ -77,7 +72,7 @@ public class RegisterLoginService {
             String jwt = jwtGenerationService.generateJwt(username, roles);
 
             // send the response with a JWT created
-            return AuthenticationResponse.builder().token(jwt).build();
+            return AuthenticationResponseDto.builder().token(jwt).build();
 
         }
 

@@ -1,7 +1,7 @@
 package com.example.project.controllers;
 
-import com.example.project.dto.AuthenticationRequestDto;
-import com.example.project.security.AuthenticationResponse;
+import com.example.project.dto.LoginRequestDto;
+import com.example.project.dto.AuthenticationResponseDto;
 import com.example.project.dto.RegisterRequestDto;
 import com.example.project.services.RegisterLoginService;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class RegisterLoginController {
     private final RegisterLoginService registerLoginService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequestDto request) {
-        return ResponseEntity.ok(registerLoginService.register(request));
+    public ResponseEntity<AuthenticationResponseDto> register(@RequestBody RegisterRequestDto registerRequestDto) {
+        return ResponseEntity.ok(registerLoginService.register(registerRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequestDto request) {
-        return ResponseEntity.ok(registerLoginService.login(request));
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
+        return ResponseEntity.ok(registerLoginService.login(loginRequestDto));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.project.model;
 
 import com.example.project.security.RoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,8 +30,14 @@ public class Roles {
 
     private String roleName;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "roles")
     private Set<Employee> employees = new HashSet<>();
+
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, targetEntity = Employee.class)
+//    @JoinColumn(name = "customerId")
+//    private Set<Employee> employees = new HashSet<>();
 
     public Roles(String roleName) {
         this.roleName = roleName;

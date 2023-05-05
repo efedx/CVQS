@@ -38,21 +38,21 @@ public class JwtGenerationService {
 
     // used for user details
 
-    public String generateJwt(UserDetails userDetails) {
-        return generateJwt(new HashMap<>(), userDetails);
-    }
-
-    public String generateJwt(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder()
-                .setIssuer("Toyota Project")
-                .setIssuedAt(now)
-                .setExpiration(expiration)
-                .setClaims(extraClaims)
-                .claim("username", userDetails.getUsername())
-                .claim("authorities", populateAuthorities(userDetails.getAuthorities()))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
+//    public String generateJwt(UserDetails userDetails) {
+//        return generateJwt(new HashMap<>(), userDetails);
+//    }
+//
+//    public String generateJwt(Map<String, Object> extraClaims, UserDetails userDetails) {
+//        return Jwts.builder()
+//                .setIssuer("Toyota Project")
+//                .setIssuedAt(now)
+//                .setExpiration(expiration)
+//                .setClaims(extraClaims)
+//                .claim("username", userDetails.getUsername())
+//                .claim("authorities", populateAuthorities(userDetails.getAuthorities()))
+//                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+//                .compact();
+//    }
 
     public String generateJwt(String username, Set<Roles> roles) {
         return Jwts.builder()

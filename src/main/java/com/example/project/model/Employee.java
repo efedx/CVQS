@@ -1,6 +1,8 @@
 package com.example.project.model;
 
 import com.example.project.security.RoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
@@ -17,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.Boolean.FALSE;
 @Getter
 @Setter
 @Builder
@@ -36,9 +39,11 @@ public class Employee {
     private Long employeeId;
     private String username;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "employee_roles",
             joinColumns = {
@@ -48,13 +53,23 @@ public class Employee {
 
     private Set<Roles> roles = new HashSet<>();
 
-    private Boolean deleted = Boolean.FALSE;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "employees", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+//    private Set<Roles> roles = new HashSet<>();
+    private Boolean deleted;
 
     public Employee(String username, String email, String password, Set<Roles> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.roles = roles;
+    }
+
+    @PrePersist
+    void preInsert() {
+        if(this.deleted == null) {
+            this.deleted = FALSE;
+        }
     }
 
     //-------------------------------------------------------------

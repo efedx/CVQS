@@ -1,4 +1,4 @@
-package com.example.project.security;
+package com.example.project.dto;
 
 import lombok.*;
 
@@ -6,6 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationResponse {
+public class AuthenticationResponseDto {
     private String token;
 }
