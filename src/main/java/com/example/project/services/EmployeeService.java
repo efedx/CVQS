@@ -70,8 +70,8 @@ public class EmployeeService {
         employee.setEmail(email);
     }
 
-    public Set<Roles> getRolesFromEmployee(String username) {
-        Optional<Employee> employee = employeeRepository.findByUsername(username);
+    public Set<Roles> getRolesFromEmployee(Long id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
         return employee.get().getRoles();
     }
 

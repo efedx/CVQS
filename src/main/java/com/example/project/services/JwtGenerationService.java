@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.boot.model.source.internal.hbm.CommaSeparatedStringHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,8 @@ import static com.example.project.security.SecurityConstans.JWT_KEY;
 @Service
 @RequiredArgsConstructor
 public class JwtGenerationService {
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
 
     Date now = new Date(System.currentTimeMillis());
     Date expiration = new Date(now.getTime() + 360000000);
@@ -60,7 +63,8 @@ public class JwtGenerationService {
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .claim("username", username)
-                .claim("authorities", roles)
+                //.claim("authorities", roles)
+                .claim("authorities", populateAuthorities(customUserDetailsService.getSimpleGrantedAuthorities(roles)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -70,11 +74,11 @@ public class JwtGenerationService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
-        Set<String> authoritiesSet = new HashSet<>(); // set is an interface, hashset is an implementation
-        for(GrantedAuthority authority: collection) {
-            authoritiesSet.add(authority.getAuthority());
+    private String populateAuthorities(Collection<? extends GrantedAuthority> grantedAuthorityCollection) {
+        Set<String> authoritiesStringSet = new HashSet<>(); // set is an interface, hashset is an implementation
+        for(GrantedAuthority authority: grantedAuthorityCollection) {
+            authoritiesStringSet.add(authority.getAuthority());
         }
-        return String.join(",", authoritiesSet);
+        return String.join(",", authoritiesStringSet);
     }
 }

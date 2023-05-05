@@ -1,5 +1,8 @@
 package com.example.project.filters;
 
+import com.example.project.model.Roles;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import static com.example.project.security.SecurityConstans.JWT_HEADER;
 import static com.example.project.security.SecurityConstans.JWT_KEY;
@@ -44,9 +49,13 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
                 // get the username and authorities to create a UPA token and set authentication in the security context
                 String username = String.valueOf(claims.get("username"));
-                String authorities = (String) claims.get("roles");
+
+                String authorities = String.valueOf(claims.get("authorities")); // (String) claims.get("authorities")
+//                String realRoles = parseRoles(authorities);
+
                 UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(username, null,
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
+//                AuthorityUtils.createAuthorityList(authorities));
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
             catch (Exception e) {
@@ -67,4 +76,9 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+//    private String parseRoles(String keyValue) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode jsonNode = objectMapper.readTree(keyValue);
+//    }
 }

@@ -3,7 +3,7 @@ package com.example.project.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController(value = "terminalListing")
+@RestController()
 @RequiredArgsConstructor
-public class TerminalListingController {
+public class listDefectsController {
 }

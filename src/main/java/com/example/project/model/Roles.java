@@ -19,6 +19,7 @@ import java.util.Set;
 @Entity
 public class Roles {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -31,7 +32,7 @@ public class Roles {
     private String roleName;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "roles")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "roles") // consider cascade type
     private Set<Employee> employees = new HashSet<>();
 
 //    @JsonIgnore
@@ -42,5 +43,4 @@ public class Roles {
     public Roles(String roleName) {
         this.roleName = roleName;
     }
-
 }
