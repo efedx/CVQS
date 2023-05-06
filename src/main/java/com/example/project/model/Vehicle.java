@@ -1,10 +1,7 @@
 package com.example.project.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -22,8 +19,9 @@ public class Vehicle extends Id {
     private Long vehicleNo;
 
     @OneToMany(targetEntity = Defect.class, cascade = CascadeType.ALL)
-    @JsonManagedReference("vehicle-defect")
-    private ArrayList<Defect> defectList = new ArrayList<>();
+    @ElementCollection
+    @JsonManagedReference("vehicle_defect")
+    private List<Defect> defectList = new ArrayList<>();
 
     public Vehicle(Long vehicleNo) {
         this.vehicleNo = vehicleNo;

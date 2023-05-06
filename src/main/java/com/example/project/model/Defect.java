@@ -15,13 +15,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//@Embeddable
 public class Defect extends Id {
 
     private String defectName;
 
     @OneToMany(targetEntity = Location.class, cascade = CascadeType.ALL)
     @JsonManagedReference("defect_location")
-    private ArrayList<Location> locationList = new ArrayList<>();
+    private List<Location> locationList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
@@ -30,5 +31,14 @@ public class Defect extends Id {
 
     public Defect(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+    public Defect(Vehicle vehicle, String defectName) {
+        this.vehicle = vehicle;
+        this.defectName = defectName;
+    }
+
+    public Defect(String defectName, ArrayList<Location> locationList) {
+        this.defectName = defectName;
+        this.locationList = locationList;
     }
 }

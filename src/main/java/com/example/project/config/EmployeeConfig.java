@@ -37,7 +37,11 @@ public class EmployeeConfig {
             Employee two = new Employee("two", "two@mail.com", passwordEncoder.encode("456"), adminLeaderOperator);
             //employeeRepository.saveAll(List.of(one, two));
 
-//            Vehicle vehicle = new Vehicle((long)1, new ArrayList<Defect>());
+//            Location location = Location.builder().location(Arrays.asList(1,2)).build();
+//            List<Location> locationList = new ArrayList<>();
+//
+//            Vehicle vehicle = Vehicle.builder().vehicleNo(Long.getLong("1")).defectList(Defect.builder().defectName("a")
+//                    .locationList(locationList).build().;
 //            vehicleRepository.save(vehicle);
         };
     }

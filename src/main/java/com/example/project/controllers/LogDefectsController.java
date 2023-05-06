@@ -1,6 +1,6 @@
 package com.example.project.controllers;
 
-import com.example.project.dto.LogDefectsDto;
+import com.example.project.dto.LogDefectDto;
 import com.example.project.services.LogDefectsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class LogDefectsController {
     LogDefectsService logDefectsService;
 
     @PostMapping("logDefects")
-    public String logDefects(@RequestBody LogDefectsDto logDefectsDto) {
-        return logDefectsService.logDefects(logDefectsDto);
+    public String logDefects(@RequestBody LogDefectDto logDefectDto) {
+        return logDefectsService.logDefects(logDefectDto);
     }
 }

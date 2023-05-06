@@ -1,11 +1,11 @@
 package com.example.project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "locations")
@@ -14,6 +14,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//@Embeddable
 public class Location extends Id {
 
     @ManyToOne
@@ -21,9 +22,10 @@ public class Location extends Id {
     @JsonBackReference("defect_location")
     Defect defect;
 
-    private int[] location;
+    @ElementCollection
+    private List<Integer> location = new ArrayList<>();
 
-    public Location(int[] location) {
+    public Location(ArrayList<Integer> location) {
         this.location = location;
     }
 }
