@@ -37,13 +37,7 @@ import static java.lang.Boolean.FALSE;
 @FilterDef(name = "deletedEmployeeFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
 @Filter(name = "deletedEmployeeFilter", condition = "deleted = :isDeleted")
 
-public class Employee {
-    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-//    @GenericGenerator(name = "native", strategy = "native")
-    @SequenceGenerator(name = "employee_seq_gen", sequenceName = "employee_seq")
-    @GeneratedValue(generator = "employee_seq_gen", strategy = GenerationType.SEQUENCE)
-    private Long employeeId;
+public class Employee extends Id{
     private String username;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -55,7 +49,7 @@ public class Employee {
     @JoinTable(
             name = "employee_roles",
             joinColumns = {
-                @JoinColumn(name = "employee_id", referencedColumnName = "employeeId")},
+                @JoinColumn(name = "employee_id", referencedColumnName = "id")},
             inverseJoinColumns = {
                 @JoinColumn(name = "role_name", referencedColumnName = "roleName")})
     private Set<Roles> roles = new HashSet<>();

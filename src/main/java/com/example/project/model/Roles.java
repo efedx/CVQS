@@ -17,13 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-public class Roles {
-
-    @JsonIgnore
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long roleId;
+public class Roles extends Id{
 
 //    @Column(name = "roleName", unique = true, nullable = false)
 //    @Enumerated(value = EnumType.STRING)

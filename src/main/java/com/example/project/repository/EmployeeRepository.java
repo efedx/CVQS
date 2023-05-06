@@ -26,6 +26,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     void updateEmployeeById(String username, String password, String email, Set<Roles> roles, Long id);
 
     @Modifying
+    @Query("UPDATE Employee e SET e.username = ?1, e.password = ?2, e.email = ?3 WHERE e.id = ?4")
+    void updateWithoutRoles(String username, String password, String email, Long id);
+
+    @Modifying
     @Query("UPDATE Employee e SET e.roles = ?1 WHERE e.id = ?2")
     void updateRolesById(Set<Roles> roles, Long id);
 

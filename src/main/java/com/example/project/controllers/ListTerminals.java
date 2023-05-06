@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class listTerminals {
+public class ListTerminals {
     @GetMapping("listTerminals")
     public String listTerminals() {
         return "it's done";

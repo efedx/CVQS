@@ -78,11 +78,12 @@ public class UserManagementService {
 
         Long id = updateRequestDto.getId();
         String username = updateRequestDto.getUsername();
-        String password = updateRequestDto.getPassword();
+        String password = passwordEncoder.encode(updateRequestDto.getPassword());
         String email = updateRequestDto.getEmail();
         Set<Roles> rolesSet = getRolesSet(updateRequestDto.getRoles());
         //employeeRepository.updateEmployeeById(username, password, email, rolesSet, id);
-        employeeRepository.updateRolesById(rolesSet, id);
+        //employeeRepository.updateRolesById(rolesSet, id);
+        employeeRepository.updateWithoutRoles(username, password, email, id);
         return "employee updated";
     }
 
@@ -92,7 +93,8 @@ public class UserManagementService {
     private Set<Roles> getRolesSet(String[] roles) {
         Set<Roles> rolesSet = new HashSet<>();
         for(String roleStr: roles) {
-            rolesSet.add(rolesRepository.findByRoleName(roleStr));
+            // rolesSet.add(rolesRepository.findByRoleName(roleStr));
+            rolesSet.add(new Roles(roleStr));
         }
         return rolesSet;
     }
