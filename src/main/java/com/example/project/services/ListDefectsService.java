@@ -1,6 +1,7 @@
 package com.example.project.services;
 
 import com.example.project.model.Defect;
+import com.example.project.model.Location;
 import com.example.project.repository.DefectRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class ListDefectsService {
 
         Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
         //Optional<Defect> defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
+        List<Location> locationList = defect.getLocationList();
 
         BufferedImage bufferedImage = ImageIO.read(defect.getDefectImageBlob().getBinaryStream());
 
@@ -45,7 +48,7 @@ public class ListDefectsService {
         byte[] defectImageByte = defectImageBlob.getBytes(1, (int) defectImageBlob.length());
         int[] defectImageDimensions = getImageDimensionsFromBlob(defectImageBlob);
 
-        Document document = createDocument(defectImageDimensions[0], defectImageDimensions[1]);
+        Document document = createDocument(defectImageDimensions[0], defectImageDimensions[1], locationList);
         byte[] SVGImageByte = generateImageFromSVG(document);
         byte[] combinedImageByte = combineSVGImageWithDefectImage(SVGImageByte, defectImageByte, defectImageDimensions[0], defectImageDimensions[1]);
 
@@ -55,7 +58,7 @@ public class ListDefectsService {
     }
 
     // this returns a svg object
-    private Document createDocument(int imageWidth, int imageHeight) throws Exception {
+    private Document createDocument(int imageWidth, int imageHeight, List<Location> locationList) throws Exception {
 
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
@@ -67,17 +70,20 @@ public class ListDefectsService {
         root.setAttributeNS(null, "width", String.valueOf(imageWidth));
         root.setAttributeNS(null, "height", String.valueOf(imageHeight));
 
-        // Add some content to the document
-        Element circle = document.createElementNS(svgNS, "circle");
-        circle.setAttributeNS(null, "cx", "100");
-        circle.setAttributeNS(null, "cy", "100");
-        circle.setAttributeNS(null, "r", "100");
-        circle.setAttributeNS(null, "style", "fill:green");
-        root.appendChild(circle);
+        for(Location location: locationList) {
+            // Add some content to the document
+            Element circle = document.createElementNS(svgNS, "circle");
+            circle.setAttributeNS(null, "cx", String.valueOf(location.getLocation().get(0)));
+            circle.setAttributeNS(null, "cy", String.valueOf(location.getLocation().get(1)));
+            circle.setAttributeNS(null, "r", "10");
+            circle.setAttributeNS(null, "style", "fill:green");
+            root.appendChild(circle);
+        }
 
         return document;
     }
 
+    // creates a png from a SVG
     private byte[] generateImageFromSVG(Document document) throws Exception {
 
         // create a JPEG transcoder
@@ -100,6 +106,8 @@ public class ListDefectsService {
         return renderedImageFromSVG;
     }
 
+
+    // combines svg-image and defect-image
     private byte[] combineSVGImageWithDefectImage(byte[] SVGImageByte, byte[] defectImageByte, int imageWidth, int imageHeight) throws IOException {
 
         InputStream inputStream = new ByteArrayInputStream(defectImageByte);
@@ -128,6 +136,8 @@ public class ListDefectsService {
 
         //transcoder.addTranscodingHint(JPEGTranscoder.KEY_BACKGROUND_COLOR, Color.WHITE);
     }
+
+    // returns the dimesions of an image
     public int[] getImageDimensionsFromBlob(Blob defectBlobImage) throws Exception {
         // Convert the BLOB to an InputStream
         InputStream inputStream = defectBlobImage.getBinaryStream();
