@@ -21,19 +21,21 @@ public class LogDefectsService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    public String logDefects(LogDefectDto logDefectDto, byte[] defectImageBytes) throws Exception {
+    public String logDefects(List<LogDefectDto> logDefectDtoList, byte[] defectImageBytes) throws Exception {
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
 
-        Vehicle vehicle = new Vehicle();
+        for(LogDefectDto logDefectDto: logDefectDtoList) {
+            Vehicle vehicle = new Vehicle();
 
-        List<Defect> defectList = defectDto2Defect(vehicle, logDefectDto, defectImageBytes);
+            List<Defect> defectList = defectDto2Defect(vehicle, logDefectDto, defectImageBytes);
 
-        vehicle.setVehicleNo(logDefectDto.getVehicleNo());
-        vehicle.setDefectList(defectList);
+            vehicle.setVehicleNo(logDefectDto.getVehicleNo());
+            vehicle.setDefectList(defectList);
 
-        vehicleRepository.save(vehicle);
+            vehicleRepository.save(vehicle);
+        }
 
         return "Defect logged";
     }
