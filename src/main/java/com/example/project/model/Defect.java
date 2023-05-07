@@ -29,6 +29,9 @@ public class Defect extends Id {
     @JsonBackReference("vehicle_defect")
     Vehicle vehicle;
 
+    @Lob
+    private byte[] image;
+
     public Defect(Vehicle vehicle) {
         this.vehicle = vehicle;
     }

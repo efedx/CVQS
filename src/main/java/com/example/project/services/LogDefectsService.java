@@ -19,14 +19,14 @@ public class LogDefectsService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    public String logDefects(LogDefectDto logDefectDto) {
+    public String logDefects(LogDefectDto logDefectDto, byte[] defectImageBytes) {
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
 
         Vehicle vehicle = new Vehicle();
 
-        List<Defect> defectList = defectDto2Defect(vehicle, logDefectDto);
+        List<Defect> defectList = defectDto2Defect(vehicle, logDefectDto, defectImageBytes);
 
         vehicle.setVehicleNo(logDefectDto.getVehicleNo());
         vehicle.setDefectList(defectList);
@@ -37,16 +37,18 @@ public class LogDefectsService {
     }
 
     // returns a List<Defect> populated with locations given in a LogDefectDto object
-    private List<Defect> defectDto2Defect(Vehicle vehicle, LogDefectDto logDefectDto) {
+    private List<Defect> defectDto2Defect(Vehicle vehicle, LogDefectDto logDefectDto, byte[] defectImageBytes) {
 
         List<Defect> defectsList = new ArrayList<>();
+
+        // Byte[] defectImageBytes = defectImage.getBytes();
 
         // defectDto has a defect name and locations specified with that defect. Such as ["A", (100, 200), (500, 600)]
         for(LogDefectDto.DefectDto defectDto: logDefectDto.getDefectList()) {
 
             List<Location> locationList = new ArrayList<>();
 
-            Defect defect = new Defect(defectDto.getDefectName(),locationList, vehicle);
+            Defect defect = new Defect(defectDto.getDefectName(),locationList, vehicle, defectImageBytes);
 
             // for the specified defect gives the locations by one by
             for(LogDefectDto.LocationDto locationDto: defectDto.getLocationList()) {

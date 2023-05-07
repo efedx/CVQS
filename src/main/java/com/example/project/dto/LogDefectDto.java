@@ -21,6 +21,7 @@ public class LogDefectDto {
     @Data
     public static class DefectDto {
         private String defectName;
+        //private Byte[] defectImage;
         // private ArrayList<ArrayList<Integer>> locationList;
         private ArrayList<LocationDto> locationList;
     }
