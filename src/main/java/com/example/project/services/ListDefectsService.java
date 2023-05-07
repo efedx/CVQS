@@ -1,10 +1,144 @@
 package com.example.project.services;
 
+import com.example.project.model.Defect;
+import com.example.project.repository.DefectRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
 
 @Service
 @RequiredArgsConstructor
 public class ListDefectsService {
 
+    @Autowired
+    DefectRepository defectRepository;
+
+    @Transactional
+    public byte[] getDefectImage(Long defectId) throws Exception {
+
+        Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
+        //Optional<Defect> defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
+
+        BufferedImage bufferedImage = ImageIO.read(defect.getDefectImageBlob().getBinaryStream());
+
+        Blob defectImageBlob = defect.getDefectImageBlob();
+        byte[] defectImageByte = defectImageBlob.getBytes(1, (int) defectImageBlob.length());
+        int[] defectImageDimensions = getImageDimensionsFromBlob(defectImageBlob);
+
+        Document document = createDocument(defectImageDimensions[0], defectImageDimensions[1]);
+        byte[] SVGImageByte = generateImageFromSVG(document);
+        byte[] combinedImageByte = combineSVGImageWithDefectImage(SVGImageByte, defectImageByte, defectImageDimensions[0], defectImageDimensions[1]);
+
+        defectImageBlob.free();
+
+        return combinedImageByte;
+    }
+
+    // this returns a svg object
+    private Document createDocument(int imageWidth, int imageHeight) throws Exception {
+
+        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+
+        Document document = impl.createDocument(svgNS, "svg", null);
+
+        // Get the root element (the 'svg' element).
+        Element root = document.getDocumentElement();
+        root.setAttributeNS(null, "width", String.valueOf(imageWidth));
+        root.setAttributeNS(null, "height", String.valueOf(imageHeight));
+
+        // Add some content to the document
+        Element circle = document.createElementNS(svgNS, "circle");
+        circle.setAttributeNS(null, "cx", "100");
+        circle.setAttributeNS(null, "cy", "100");
+        circle.setAttributeNS(null, "r", "100");
+        circle.setAttributeNS(null, "style", "fill:green");
+        root.appendChild(circle);
+
+        return document;
+    }
+
+    private byte[] generateImageFromSVG(Document document) throws Exception {
+
+        // create a JPEG transcoder
+        PNGTranscoder pngTranscoder = new PNGTranscoder();
+        //pngTranscoder.addTranscodingHint(JPEGTranscoder.KEY_FORCE_TRANSPARENT_WHITE, Color.WHITE);
+
+        // Set the transcoder input
+        TranscoderInput transcoderInput = new TranscoderInput(document);
+
+        //  set the transcoder output
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        TranscoderOutput transcoderOutput = new TranscoderOutput(byteArrayOutputStream);
+
+
+        pngTranscoder.transcode(transcoderInput, transcoderOutput);
+        byte[] renderedImageFromSVG = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.flush();
+        byteArrayOutputStream.close();
+
+        return renderedImageFromSVG;
+    }
+
+    private byte[] combineSVGImageWithDefectImage(byte[] SVGImageByte, byte[] defectImageByte, int imageWidth, int imageHeight) throws IOException {
+
+        InputStream inputStream = new ByteArrayInputStream(defectImageByte);
+        BufferedImage bufferedDefectImage = ImageIO.read(inputStream);
+
+        InputStream inputStream2 = new ByteArrayInputStream(SVGImageByte);
+        BufferedImage bufferedSVGImage = ImageIO.read(inputStream2);
+
+        BufferedImage bufferedCombinedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g = bufferedCombinedImage.createGraphics(); //a Graphics2D, used for drawing into this image.
+
+        g.drawImage(bufferedDefectImage, 0, 0, null);
+        g.drawImage(bufferedSVGImage, 0, 0, null);
+        //graphics2D.dispose();
+
+        ByteArrayOutputStream combinedImageByteOutputStream = new ByteArrayOutputStream();
+        //OutputStream combinedImageByteOutputStream = new ByteArrayOutputStream();
+
+
+        ImageIO.write(bufferedCombinedImage, "png", combinedImageByteOutputStream);
+
+
+        byte[] combinedImageByte = combinedImageByteOutputStream.toByteArray();
+        return combinedImageByte;
+
+        //transcoder.addTranscodingHint(JPEGTranscoder.KEY_BACKGROUND_COLOR, Color.WHITE);
+    }
+    public int[] getImageDimensionsFromBlob(Blob defectBlobImage) throws Exception {
+        // Convert the BLOB to an InputStream
+        InputStream inputStream = defectBlobImage.getBinaryStream();
+
+        // Read the image from the InputStream
+        BufferedImage image = ImageIO.read(inputStream);
+
+        // Get the image width and height
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        return new int[] {width, height};
+    }
 }

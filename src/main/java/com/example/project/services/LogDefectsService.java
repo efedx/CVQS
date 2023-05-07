@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class LogDefectsService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    public String logDefects(LogDefectDto logDefectDto, byte[] defectImageBytes) {
+    public String logDefects(LogDefectDto logDefectDto, byte[] defectImageBytes) throws Exception {
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
@@ -37,9 +39,10 @@ public class LogDefectsService {
     }
 
     // returns a List<Defect> populated with locations given in a LogDefectDto object
-    private List<Defect> defectDto2Defect(Vehicle vehicle, LogDefectDto logDefectDto, byte[] defectImageBytes) {
+    private List<Defect> defectDto2Defect(Vehicle vehicle, LogDefectDto logDefectDto, byte[] defectImageByte) throws Exception {
 
         List<Defect> defectsList = new ArrayList<>();
+        Blob defectImageBlob = new SerialBlob(defectImageByte);
 
         // Byte[] defectImageBytes = defectImage.getBytes();
 
@@ -48,7 +51,7 @@ public class LogDefectsService {
 
             List<Location> locationList = new ArrayList<>();
 
-            Defect defect = new Defect(defectDto.getDefectName(),locationList, vehicle, defectImageBytes);
+            Defect defect = new Defect(defectDto.getDefectName(),locationList, vehicle, defectImageBlob);
 
             // for the specified defect gives the locations by one by
             for(LogDefectDto.LocationDto locationDto: defectDto.getLocationList()) {

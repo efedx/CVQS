@@ -19,17 +19,18 @@ public class LogDefectsController {
     LogDefectsService logDefectsService;
 
     @PostMapping("logDefects")
-    public String logDefects(@RequestPart("logDefectDto") LogDefectDto logDefectDto, @RequestPart("defectImage") MultipartFile defectImage) {
+    public String logDefects(@RequestPart("logDefectDto") LogDefectDto logDefectDto, @RequestPart("defectImage") MultipartFile defectImage) throws Exception {
 
-        byte[] defectImageBytes;
+
+        byte[] defectImageByte;
 
         try {
-            defectImageBytes = defectImage.getBytes();
+            defectImageByte = defectImage.getBytes();
         } catch (IOException e) {
             // handle the exception, e.g. log an error message or return an error response
             return "error";
         }
 
-        return logDefectsService.logDefects(logDefectDto, defectImageBytes);
+        return logDefectsService.logDefects(logDefectDto, defectImageByte);
     }
 }

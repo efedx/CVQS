@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class Defect extends Id {
     Vehicle vehicle;
 
     @Lob
-    private byte[] image;
+    private Blob defectImageBlob;
 
     public Defect(Vehicle vehicle) {
         this.vehicle = vehicle;
