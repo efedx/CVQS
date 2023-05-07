@@ -1,11 +1,13 @@
 package com.example.project.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 
 import java.sql.Blob;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class Defect extends Id {
 
     private String defectName;
 
+    @JsonIgnore
     @OneToMany(targetEntity = Location.class, cascade = CascadeType.ALL)
     @JsonManagedReference("defect_location")
     private List<Location> locationList = new ArrayList<>();
@@ -31,6 +34,9 @@ public class Defect extends Id {
     Vehicle vehicle;
 
     @Lob
+    @JdbcTypeCode(Types.BLOB)
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Blob defectImageBlob;
 
     public Defect(Vehicle vehicle) {

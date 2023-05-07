@@ -30,7 +30,7 @@ public class CustomSecurityFilterChain {
                 .requestMatchers("/register", "/login").permitAll() // white list that does not require authentication
                 .requestMatchers("/userManagement/**").hasAuthority("ADMIN")
                 .requestMatchers("/listDefects/**").hasAuthority("LEADER")
-                .requestMatchers("/logDefects").hasAuthority("OPERATOR")
+                .requestMatchers("/registerDefects").hasAuthority("OPERATOR")
                 .anyRequest().authenticated(); // but any other url must be authenticated
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // do not produce JSessionIDs and HTTP sessions

@@ -18,7 +18,7 @@ public class Vehicle extends Id {
 
     private Long vehicleNo;
 
-    @OneToMany(targetEntity = Defect.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Defect.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ElementCollection
     @JsonManagedReference("vehicle_defect")
     private List<Defect> defectList = new ArrayList<>();

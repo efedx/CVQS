@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LogDefectDto {
+public class registerDefectDto {
     // private String[][][] defects;
 
     private Long vehicleNo;
