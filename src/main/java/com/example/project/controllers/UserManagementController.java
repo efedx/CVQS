@@ -41,8 +41,8 @@ public class UserManagementController {
     }
 
     @PutMapping("/userManagement/updateEmployeeById/{id}")
-    public String updateEmployeeById(@RequestBody UpdateRequestDto updateRequestDto) {
-        return userManagementService.updateEmployee(updateRequestDto);
+    public String updateEmployeeById(@PathVariable Long id, @RequestBody UpdateRequestDto updateRequestDto) {
+        return userManagementService.updateEmployee(id, updateRequestDto);
     }
 
 

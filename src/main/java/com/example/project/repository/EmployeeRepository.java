@@ -2,6 +2,7 @@ package com.example.project.repository;
 
 import com.example.project.model.Employee;
 import com.example.project.model.Roles;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,6 +33,15 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Query("UPDATE Employee e SET e.roles = ?1 WHERE e.id = ?2")
     void updateRolesById(Set<Roles> roles, Long id);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Employee e SET e.username = COALESCE(:username, e.username), e.password = COALESCE(:password, e.password)," +
+            " e.email = COALESCE(:email, e.email), e.roles = COALESCE(:roles, e.roles)")
+    void updateEmployeeWithField(String username, String password, String email, Set<Roles> roles);
+
+
 
     @Modifying
     @Query("UPDATE Employee e SET e.deleted = true WHERE id =?1")

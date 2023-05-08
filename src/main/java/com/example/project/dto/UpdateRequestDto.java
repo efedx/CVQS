@@ -1,5 +1,6 @@
 package com.example.project.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,15 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class UpdateRequestDto {
-    private Long id;
+
+    @Nullable
     private String username;
+    @Nullable
     @Size(min = 5, message = "Passwords must be at least 5 characters long")
     private String password;
+    @Nullable
     //@Email(message = "Provide a valid email address")
     private String email;
+    @Nullable
     private String[] roles;
 }

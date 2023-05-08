@@ -74,16 +74,17 @@ public class UserManagementService {
     }
 
     @Transactional
-    public String updateEmployee(UpdateRequestDto updateRequestDto) {
+    public String updateEmployee(Long id, UpdateRequestDto updateRequestDto) {
 
-        Long id = updateRequestDto.getId();
+
         String username = updateRequestDto.getUsername();
         String password = passwordEncoder.encode(updateRequestDto.getPassword());
         String email = updateRequestDto.getEmail();
         Set<Roles> rolesSet = getRolesSet(updateRequestDto.getRoles());
         //employeeRepository.updateEmployeeById(username, password, email, rolesSet, id);
         //employeeRepository.updateRolesById(rolesSet, id);
-        employeeRepository.updateWithoutRoles(username, password, email, id);
+        //employeeRepository.updateWithoutRoles(username, password, email, id);
+        employeeRepository.updateEmployeeWithField(username, password, email, rolesSet);
         return "employee updated";
     }
 
