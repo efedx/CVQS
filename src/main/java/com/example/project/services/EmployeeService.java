@@ -75,8 +75,8 @@ public class EmployeeService {
         return employee.get().getRoles();
     }
 
-    public Set<Employee> getEmployeesFromRole(String roleName) {
-        Roles role = rolesRepository.findByRoleName(roleName);
-        return role.getEmployees();
-    }
+//    public Set<Employee> getEmployeesFromRole(String roleName) {
+//        Roles role = rolesRepository.findByRoleName(roleName);
+//        return role.getEmployeeSet();
+//    }
 }

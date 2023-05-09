@@ -25,7 +25,7 @@ public class JwtGenerationService {
     CustomUserDetailsService customUserDetailsService;
 
     Date now = new Date(System.currentTimeMillis());
-    Date expiration = new Date(now.getTime() + 360000000);
+        Date expiration = new Date(now.getTime() + 3600000); // 360000000
 
     // used for authentication
     public String generateJwt(Authentication authentication) {

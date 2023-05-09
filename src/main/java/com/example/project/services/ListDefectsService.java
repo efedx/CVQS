@@ -12,9 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ public class ListDefectsService {
     }
 
     @Transactional
-    public Page<Vehicle> getVehicles(int pageNumber, String sortField, String sortDirection) {
+    public Page<Vehicle> getDefectsByVehiclePage(int pageNumber, String sortField, String sortDirection) {
 
         int pageSize = 5;
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
@@ -61,14 +58,14 @@ public class ListDefectsService {
 //        return vehiclesPage;
 //    }
 @Transactional
-public Page<Vehicle>getVehicles(int pageNumber, String sortField, String sortDirection, String defectName) {
+public Page<Vehicle> getDefectsByVehiclePage(int pageNumber, String sortField, String sortDirection, String defectName) {
 
     int pageSize = 5;
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
             : Sort.by("sortField").descending());
 
 //        List<Vehicle> vehiclesPage = vehicleRepository.findAllWithDefectNames();
-    int i = 5;
+
     Page<Vehicle> vehiclesPage = vehicleRepository.findByDefectName(defectName, pageable);
 
     return vehiclesPage;

@@ -1,6 +1,6 @@
 package com.example.project.services;
 
-import com.example.project.dto.registerDefectDto;
+import com.example.project.dto.RegisterDefectDto;
 import com.example.project.model.Defect;
 import com.example.project.model.Location;
 import com.example.project.model.Vehicle;
@@ -21,12 +21,12 @@ public class RegisterDefectsService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    public String logDefects(List<registerDefectDto> registerDefectDtoList, byte[] defectImageBytes) throws Exception {
+    public String registerDefects(List<RegisterDefectDto> registerDefectDtoList, byte[] defectImageBytes) throws Exception {
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
 
-        for(registerDefectDto registerDefectDto : registerDefectDtoList) {
+        for(RegisterDefectDto registerDefectDto : registerDefectDtoList) {
             Vehicle vehicle = new Vehicle();
 
             List<Defect> defectList = defectDto2Defect(vehicle, registerDefectDto, defectImageBytes);
@@ -41,7 +41,7 @@ public class RegisterDefectsService {
     }
 
     // returns a List<Defect> populated with locations given in a LogDefectDto object
-    private List<Defect> defectDto2Defect(Vehicle vehicle, registerDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
+    private List<Defect> defectDto2Defect(Vehicle vehicle, RegisterDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
 
         List<Defect> defectsList = new ArrayList<>();
         Blob defectImageBlob = new SerialBlob(defectImageByte);
@@ -49,14 +49,14 @@ public class RegisterDefectsService {
         // Byte[] defectImageBytes = defectImage.getBytes();
 
         // defectDto has a defect name and locations specified with that defect. Such as ["A", (100, 200), (500, 600)]
-        for(registerDefectDto.DefectDto defectDto: registerDefectDto.getDefectList()) {
+        for(RegisterDefectDto.DefectDto defectDto: registerDefectDto.getDefectList()) {
 
             List<Location> locationList = new ArrayList<>();
 
             Defect defect = new Defect(defectDto.getDefectName(),locationList, vehicle, defectImageBlob);
 
             // for the specified defect gives the locations by one by
-            for(registerDefectDto.LocationDto locationDto: defectDto.getLocationList()) {
+            for(RegisterDefectDto.LocationDto locationDto: defectDto.getLocationList()) {
 
                 Location location = new Location(defect, locationDto.getLocation());
                 locationList.add(location);

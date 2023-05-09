@@ -1,13 +1,16 @@
 package com.example.project.dto;
 
+import com.example.project.model.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +26,10 @@ public class RegisterRequestDto {
     //@Enumerated(value = EnumType.STRING) // todo make here work with enums
     // private Role role;
     @NotEmpty(message = "Roles cannot be null or empty")
-    private String[] roles;
+    private Set<RoleDto> roleSet;
+
+    @Data
+    public static class RoleDto {
+        private String roleName;
+    }
 }

@@ -1,28 +1,21 @@
 package com.example.project.model;
 
-import com.example.project.security.RoleEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
+
+import javax.management.relation.Role;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.Boolean.FALSE;
 @Getter
@@ -44,20 +37,12 @@ public class Employee extends Id{
     private String password;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // consider cascade type
-    @NotEmpty
-    @JoinTable(
-            name = "employee_roles",
-            joinColumns = {
-                @JoinColumn(name = "employee_id", referencedColumnName = "id")},
-            inverseJoinColumns = {
-                @JoinColumn(name = "role_name", referencedColumnName = "roleName")})
+    @OneToMany(mappedBy = "id", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true)
+    @JsonManagedReference("employee_roles")
+    @ElementCollection
     private Set<Roles> roles = new HashSet<>();
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "employees", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-//    private Set<Roles> roles = new HashSet<>();
     private Boolean deleted;
+
 
     public Employee(String username, String email, String password, Set<Roles> roles) {
         this.username = username;
@@ -65,6 +50,10 @@ public class Employee extends Id{
         this.password = password;
         this.roles = roles;
     }
+
+//    public void addRoleSet(Set<Roles> roleSet) {
+//        this.roles.addAll(roleSet);
+//    }
 
     @PrePersist
     void preInsert() {

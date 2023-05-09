@@ -43,7 +43,7 @@ public class CustomAuthenticationProvider implements org.springframework.securit
 
                 // fetch the granted authorities from the database and create a username-password-authentication token using
                 // that employee's username, password and authorities
-                Set<Roles> roles = employee.orElseThrow().getRoles();
+                Set<Roles> roles = employee.get().getRoles();
                 Set<GrantedAuthority> grantedAuthoritiesSet = customUserDetailsService.getSimpleGrantedAuthorities(roles);
 
                 // last parameter is Set<GrantedAuthorities> type

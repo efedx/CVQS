@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController("listDefects")
 @RequiredArgsConstructor
 public class ListDefectsController {
@@ -43,14 +41,14 @@ public class ListDefectsController {
         return ResponseEntity.ok().body(listDefectsService.getDefectsByVehicle(vehicleId, pageNumber, sortField, sortDirection));
     }
 
-    @GetMapping("getVehicles/page/{pageNumber}")
-    public ResponseEntity<Page<Vehicle>> getVehiclesPage(@PathVariable int pageNumber, @RequestParam String sortDirection,
+    @GetMapping("getDefectsByVehicle/page/{pageNumber}")
+    public ResponseEntity<Page<Vehicle>> getDefectsByVehiclePage(@PathVariable int pageNumber, @RequestParam String sortDirection,
                                                          @RequestParam String sortField, @RequestParam(required = false) String defectName) {
         if(defectName != null) {
-            return ResponseEntity.ok().body(listDefectsService.getVehicles(pageNumber, sortField, sortDirection, defectName));
+            return ResponseEntity.ok().body(listDefectsService.getDefectsByVehiclePage(pageNumber, sortField, sortDirection, defectName));
         }
         else {
-            return ResponseEntity.ok().body(listDefectsService.getVehicles(pageNumber, sortField, sortDirection));
+            return ResponseEntity.ok().body(listDefectsService.getDefectsByVehiclePage(pageNumber, sortField, sortDirection));
         }
     }
 

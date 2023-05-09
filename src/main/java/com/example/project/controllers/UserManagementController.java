@@ -1,11 +1,10 @@
 package com.example.project.controllers;
 
 import com.example.project.dto.AuthenticationResponseDto;
+import com.example.project.dto.LoginRequestDto;
 import com.example.project.dto.RegisterRequestDto;
 import com.example.project.dto.UpdateRequestDto;
 import com.example.project.model.Roles;
-import com.example.project.repository.EmployeeRepository;
-import com.example.project.security.RoleEnum;
 import com.example.project.services.EmployeeService;
 import com.example.project.services.UserManagementService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,10 +29,15 @@ public class UserManagementController {
 
     //------------------------------------------------------
 
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
+        return ResponseEntity.ok(userManagementService.login(loginRequestDto));
+    }
+
     @Validated
     @PostMapping("/userManagement/registerEmployee") // todo only admins can do that
-    public ResponseEntity<AuthenticationResponseDto> registerNewEmployee(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
-        return ResponseEntity.ok(userManagementService.registerNewEmployee(registerRequestDto));
+    public ResponseEntity<AuthenticationResponseDto> registerNewEmployee(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
+        return ResponseEntity.ok(userManagementService.registerNewEmployee(registerRequestDtoList));
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")
@@ -48,9 +53,9 @@ public class UserManagementController {
 
 
 
-    @PutMapping("/userManagement/modifyRoles/{id}")
-    public void modifyRoles(@RequestBody RoleEnum roleEnum) {
-    }
+//    @PutMapping("/userManagement/modifyRoles/{id}")
+//    public void modifyRoles(@RequestBody RoleEnum roleEnum) {
+//    }
 
     @GetMapping("/userManagement/getRoles/{id}")
     public Set<Roles> getRoles(@PathVariable Long id) {

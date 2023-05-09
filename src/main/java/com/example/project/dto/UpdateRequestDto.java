@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,5 +25,11 @@ public class UpdateRequestDto {
     //@Email(message = "Provide a valid email address")
     private String email;
     @Nullable
-    private String[] roles;
+    private Set<RegisterRequestDto.RoleDto> roleSet;
+
+//    @Data
+//    @Nullable
+//    public static class RoleDto {
+//        private String roleName;
+//    }
 }
