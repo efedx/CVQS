@@ -23,6 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,7 +71,10 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // do not do the filter when it is "/login"
-        return request.getServletPath().equals("/login");
+//        return request.getServletPath().equals("/login");
+        List<String> excludedUrls = Arrays.asList("userManagement/registerAdmin", "userManagement/login");
+        String requestUrl = request.getServletPath();
+        return excludedUrls.stream().anyMatch(url -> requestUrl.matches(url));
     }
 
     private SecretKey getSigningKey() {

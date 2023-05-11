@@ -9,6 +9,7 @@ import com.example.project.services.EmployeeService;
 import com.example.project.services.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,25 +20,33 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping // ("/userManagement")
 public class UserManagementController {
 
     @Autowired
     private EmployeeService employeeService;
-
     @Autowired
     private UserManagementService userManagementService;
 
     //------------------------------------------------------
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
-        return ResponseEntity.ok(userManagementService.login(loginRequestDto));
+    @Validated
+    @PostMapping("/registerAdmin") // todo only admins can do that
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<AuthenticationResponseDto> registerAdmin(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
+        return ResponseEntity.ok(userManagementService.registerNewEmployee(registerRequestDtoList));
     }
 
     @Validated
     @PostMapping("/userManagement/registerEmployee") // todo only admins can do that
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AuthenticationResponseDto> registerNewEmployee(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
         return ResponseEntity.ok(userManagementService.registerNewEmployee(registerRequestDtoList));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
+        return ResponseEntity.ok(userManagementService.login(loginRequestDto));
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")

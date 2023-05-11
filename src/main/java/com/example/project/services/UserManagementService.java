@@ -9,6 +9,7 @@ import com.example.project.model.Roles;
 import com.example.project.repository.EmployeeRepository;
 import com.example.project.repository.RolesRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserManagementService {
 
     @Autowired
@@ -67,6 +69,7 @@ public class UserManagementService {
 //                    .build();
 
             employeeRepository.save(employee);
+            log.info("Employee {} is saved", employee.getUsername());
 
             // create a jwt using the employee and send it with authentication response
             String jwt = jwtGenerationService.generateJwt(username, employee.getRoles());
