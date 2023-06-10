@@ -50,9 +50,9 @@ public class UserManagementController {
     @Validated
     @PostMapping("/userManagement/registerEmployee") // todo only admins can do that
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerNewEmployee(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList,
-                                                      @RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(userManagementService.registerEmployee(registerRequestDtoList, authorizationHeader));
+    public ResponseEntity<String> registerNewEmployee(@RequestHeader("Authorization") String authorizationHeader,
+                                                      @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
+        return ResponseEntity.ok(userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList));
     }
 
     @PostMapping("/login")
@@ -69,17 +69,17 @@ public class UserManagementController {
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")
-    public String deleteEmployeeById(@RequestHeader("Authorization") String jwt,
-                                     @PathVariable Long id,
-                                     @RequestHeader("Authorization") String authorizationHeader) {
-        return userManagementService.deleteEmployeeById(jwt, id, authorizationHeader);
+    public String deleteEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
+                                     @PathVariable Long id) {
+
+        return userManagementService.deleteEmployeeById(authorizationHeader, id);
     }
 
     @PutMapping("/userManagement/updateEmployeeById/{id}")
-    public String updateEmployeeById(@RequestHeader("Authorization") String jwt, @PathVariable Long id,
-                                     @RequestBody UpdateRequestDto updateRequestDto,
-                                     @RequestHeader("Authorization") String authorizationHeader) {
-        return userManagementService.updateEmployee(jwt, id, updateRequestDto, authorizationHeader);
+    public String updateEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
+                                     @PathVariable Long id,
+                                     @RequestBody UpdateRequestDto updateRequestDto) {
+        return userManagementService.updateEmployee(authorizationHeader, id, updateRequestDto);
     }
 
     @GetMapping("/userManagement/{id}")

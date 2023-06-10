@@ -43,7 +43,7 @@ public class Employee {
     private String password;
 
     @JsonIgnore
-//    @OneToMany(mappedBy = "id", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true)
+//  @OneToMany(mappedBy = "id", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true)
     @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true,fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JsonManagedReference("employee_roles")

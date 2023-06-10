@@ -8,7 +8,9 @@ import com.example.repository.TerminalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +18,23 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ListTerminalsService {
+    private static final String securityTerminalsUrl = "http://security:8083/terminals";
 
     @Autowired
     TerminalRepository terminalRepository;
     @Autowired
     DepartmentRepository departmentRepository;
+    @Autowired
+    RestTemplate restTemplate;
 
-    public Page<TerminalResponseDto> getActiveTerminalsPage(int pageNumber, String sortDirection, String terminalName) {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection, String terminalName) {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 5;
 
@@ -50,7 +62,14 @@ public class ListTerminalsService {
 
     }
 
-    public Page<TerminalResponseDto> getActiveTerminalsPage(int pageNumber, String sortDirection) {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 5;
 

@@ -16,7 +16,7 @@ public class JwtValidationController {
     JwtValidaitonService jwtValidaitonService;
 
     @PostMapping("/isTokenValid") // todo only admins can do that
-    public ResponseEntity<Boolean> isTokenValid(@RequestHeader String jwt) {
+    public ResponseEntity<Boolean> isTokenValid(@RequestHeader("Authorization") String jwt) {
         return ResponseEntity.ok(jwtValidaitonService.isTokenValid(jwt));
     }
 

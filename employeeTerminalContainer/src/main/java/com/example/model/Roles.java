@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,13 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-public class Roles extends Id {
+public class Roles {
+
+    @Id
+    @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1)
+    @GeneratedValue(generator = "seq_gen", strategy = GenerationType.SEQUENCE)
+    private Long roleId;
+
 
 //    public enum RoleNameEnum {
 //        ADMIN,

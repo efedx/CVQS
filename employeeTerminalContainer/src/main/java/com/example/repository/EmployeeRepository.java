@@ -33,6 +33,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             " e.email = COALESCE(:email, e.email), e.roles = COALESCE(:roles, e.roles) WHERE e.id = :id") // e.roles = COALESCE(:roles, e.roles) todo impelent roles
     void updateEmployeeById(Long id, String username, String password, String email, Set<Roles> roles);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Employee e SET e.username = COALESCE(:username, e.username), e.password = COALESCE(:password, e.password)," +
+            " e.email = COALESCE(:email, e.email) WHERE e.id = :id") // e.roles = COALESCE(:roles, e.roles) todo impelent roles
+    void updateEmployeeById(Long id, String username, String password, String email);
+
 //    @Modifying
 //    @Transactional
 //    @Query("UPDATE Employee e SET e.roles = :roles WHERE e.id = :id") // e.roles = COALESCE(:roles, e.roles)

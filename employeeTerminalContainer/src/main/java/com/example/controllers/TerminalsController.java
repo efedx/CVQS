@@ -24,21 +24,24 @@ public class TerminalsController {
     @Autowired
     ListTerminalsService listTerminalsService;
 
-    @PostMapping("registerTerminals")
+    @PostMapping("/registerTerminals")
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerDefects(@RequestBody List<RegisterTerminalDto> registerTerminalDtoList) {
-        return registerTerminalsService.registerTerminals(registerTerminalDtoList);
+    public String registerDefects(@RequestHeader("Authorization") String authorizationHeader,
+                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) {
+        return registerTerminalsService.registerTerminals(authorizationHeader, registerTerminalDtoList);
     }
 
-    @GetMapping("listTerminals/page/{pageNumber}")
+    @GetMapping("/listTerminals/page/{pageNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<TerminalResponseDto>> getTerminalsPage(@PathVariable int pageNumber, @RequestParam String sortDirection,
+    public ResponseEntity<Page<TerminalResponseDto>> getTerminalsPage(@RequestHeader("Authorization") String authorizationHeader,
+                                                                      @PathVariable int pageNumber,
+                                                                      @RequestParam String sortDirection,
                                                                       @RequestParam(required = false) String terminalName) {
         if(terminalName != null) {
-            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(pageNumber, sortDirection, terminalName));
+            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(authorizationHeader, pageNumber, sortDirection, terminalName));
         }
         else {
-            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(pageNumber, sortDirection));
+            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(authorizationHeader, pageNumber, sortDirection));
         }
     }
 

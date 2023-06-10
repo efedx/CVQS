@@ -7,7 +7,9 @@ import com.example.model.Vehicle;
 import com.example.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
@@ -17,13 +19,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RegisterDefectsService {
-
+    private static final String securityUserManagementUrl = "http://security:8083/defects";
     @Autowired
     private VehicleRepository vehicleRepository;
+    @Autowired
+    RestTemplate restTemplate;
 
-    public String registerDefects(List<RegisterDefectDto> registerDefectDtoList,
-                                  byte[] defectImageBytes,
-                                  String authorizationHeader) throws Exception {
+    public String registerDefects(String authorizationHeader, List<RegisterDefectDto> registerDefectDtoList,
+                                  byte[] defectImageBytes) throws Exception {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);

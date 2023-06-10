@@ -26,10 +26,10 @@ public class CustomSecurityFilterChain {
         http.csrf().disable();
 
         http.authorizeHttpRequests()
-                .requestMatchers("/registerAdmin", "/login", "/test").permitAll() // white list that does not require authentication
-                .requestMatchers("/userManagement/**").hasAuthority("ADMIN")
+                .requestMatchers("/registerAdmin", "/login").permitAll() // white list that does not require authentication
+                .requestMatchers("/userManagement").hasAuthority("ADMIN")
                 .requestMatchers("/defects").hasAuthority("OPERATOR")
-                .requestMatchers("/listDefects/**").hasAuthority("LEADER")
+                .requestMatchers("/listDefects").hasAuthority("LEADER")
                 .anyRequest().authenticated(); // but any other url must be authenticated
 
 

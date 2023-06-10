@@ -33,7 +33,7 @@ public class Roles {
 
     //@JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    @JoinColumn(name = "employee_id") // , referencedColumnName = "id"
     //@ElementCollection
     @JsonBackReference("employee_roles")
     private Employee employee;

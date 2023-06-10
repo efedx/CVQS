@@ -25,6 +25,7 @@ public class UserManagementService {
     private static final String securityRegisterAdminUrl = "http://security:8083/registerAdmin";
     private static final String securityLoginUrl = "http://security:8083/login";
     private static final String securityJwtValidationUrl = "http://security:8083/isTokenValid";
+    private static final String securityUserManagementUrl = "http://security:8083/userManagement";
 
     @Autowired
     private RolesRepository rolesRepository;
@@ -71,14 +72,14 @@ public class UserManagementService {
 //        return AuthenticationResponseDto.builder().tokenList(jwtList).build();
 //    }
 
-    public String registerEmployee(List<RegisterRequestDto> registerRequestDtoList, String authorizationHeader) {
+    public String registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("Authorization", authorizationHeader);
         HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-        //ResponseEntity<Object> validationResponse = restTemplate.exchange(securityRegisterEmployeeUrl, HttpMethod.POST, requestEntity, Object.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
 
@@ -142,14 +143,14 @@ public class UserManagementService {
 
 
     @Transactional
-    public String deleteEmployeeById(String jwt, Long id, String authorizationHeader) {
+    public String deleteEmployeeById(String authorizationHeader, Long id) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", "Bearer " + jwt);
+        httpHeaders.set("Authorization", authorizationHeader);
         HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityJwtValidationUrl, HttpMethod.POST, requestEntity, Object.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         if(!employeeRepository.existsById(id)) throw new IllegalStateException(id + " does not exists");
 
@@ -160,14 +161,14 @@ public class UserManagementService {
     }
 
     @Transactional
-    public String updateEmployee(String jwt, Long id, UpdateRequestDto updateRequestDto, String authorizationHeader) {
+    public String updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", "Bearer " + jwt);
+        httpHeaders.set("Authorization", authorizationHeader);
         HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityJwtValidationUrl, HttpMethod.POST, requestEntity, Object.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         String username = updateRequestDto.getUsername();
 
@@ -177,8 +178,10 @@ public class UserManagementService {
         }
 
         String email = updateRequestDto.getEmail();
-        Set<Roles> rolesSet = getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
-        employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
+        //Set<Roles> rolesSet = getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
+        //employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
+        employeeRepository.updateEmployeeById(id, username, password, email);
+
         //employeeRepository.updateEmployeeRoles(id, rolesSet);
 //        Null nul = null;
 //        employeeRepository.deleteRoles(id, nul);
