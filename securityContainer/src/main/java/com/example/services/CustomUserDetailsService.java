@@ -1,9 +1,9 @@
-package com.example.project.services;
+package com.example.services;
 
-import com.example.project.model.Employee;
-import com.example.project.model.Roles;
-import com.example.project.repository.EmployeeRepository;
-import com.example.project.repository.RolesRepository;
+import com.example.model.Employee;
+import com.example.model.Roles;
+import com.example.repository.EmployeeRepository;
+import com.example.repository.RolesRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + username));
 
         Set<Roles> roles = employee.getRoles();
-        Set<GrantedAuthority> grantedAuthorities = getSimpleGrantedAuthoritiesFromRolesSet(roles);
+        Set<GrantedAuthority> grantedAuthorities = getSimpleGrantedAuthorities(roles);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(employee.getUsername())
@@ -53,7 +53,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     // using a set of roles, this method yields a set of granted authorities
-    public Set<GrantedAuthority> getSimpleGrantedAuthoritiesFromRolesSet(Set<Roles> rolesSet) {
+    public Set<GrantedAuthority> getSimpleGrantedAuthorities(Set<Roles> rolesSet) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         for(Roles role: rolesSet) {

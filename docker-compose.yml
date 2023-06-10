@@ -1,13 +1,35 @@
 version: '3.8'
 
 services:
-  app:
-    image: 'toyotaproject:latest'
+#  defect-container:
+#    image: 'defect-container'
+#    ports:
+#      - "8082:8082"
+#    build:
+#      context: .
+#    container_name: defect
+#    depends_on:
+#      - db
+#      - security-container
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+#    networks:
+#      - micro-service-network
+
+
+  security-container:
+    image: 'security'
+    hostname: security
     ports:
-      - "8080:8080"
+      - "8083:8083"
+    expose:
+      - "8083"
     build:
       context: .
-    container_name: app
+    container_name: security
     depends_on:
       - db
     environment:
@@ -15,6 +37,28 @@ services:
       - SPRING_DATASOURCE_USERNAME=compose-postgres
       - SPRING_DATASOURCE_PASSWORD=compose-postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    networks:
+      - micro-service-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  employee-terminal-container:
+    image: 'employee-terminal-container'
+    ports:
+      - "8081:8080"
+    build:
+      context: .
+    container_name: employeeTerminal
+    depends_on:
+      - db
+#      - security-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    networks:
+      - micro-service-network
 
   db:
     image: 'postgres:13.1-alpine'
@@ -27,5 +71,12 @@ services:
       - POSTGRES_DB=compose-postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - micro-service-network
+
 volumes:
   pgdata:
+
+networks:
+  micro-service-network:
+    driver: bridge
