@@ -5,6 +5,7 @@ import com.example.project.dto.LoginRequestDto;
 import com.example.project.dto.RegisterRequestDto;
 import com.example.project.dto.UpdateRequestDto;
 import com.example.project.model.Roles;
+import com.example.project.repository.EmployeeRepository;
 import com.example.project.services.EmployeeService;
 import com.example.project.services.UserManagementService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class UserManagementController {
     private EmployeeService employeeService;
     @Autowired
     private UserManagementService userManagementService;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     //------------------------------------------------------
 
@@ -59,6 +62,10 @@ public class UserManagementController {
         return userManagementService.updateEmployee(id, updateRequestDto);
     }
 
+    @GetMapping("/userManagement/{id}")
+    public Set<Roles> get(@PathVariable String id) {
+        return employeeRepository.findByUsername(id).get().getRoles();
+    }
 
 
 
