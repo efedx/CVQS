@@ -30,6 +30,7 @@ public class RegisterRequestDto {
 
     @Data
     public static class RoleDto {
+        //private Long roleId;
         private String roleName;
     }
 }

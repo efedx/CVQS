@@ -1,23 +1,25 @@
 version: '3.8'
 
 services:
-#  defect-container:
-#    image: 'defect-container'
-#    ports:
-#      - "8082:8082"
-#    build:
-#      context: .
-#    container_name: defect
-#    depends_on:
-#      - db
-#      - security-container
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
-#      - SPRING_DATASOURCE_USERNAME=compose-postgres
-#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#    networks:
-#      - micro-service-network
+  defect-container:
+    image: 'defect-container'
+    ports:
+      - "8082:8082"
+    expose:
+      - "8082"
+    build:
+      context: .
+    container_name: defect
+    depends_on:
+      - db
+      - security-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    networks:
+      - micro-service-network
 
 
   security-container:
@@ -45,7 +47,7 @@ services:
   employee-terminal-container:
     image: 'employee-terminal-container'
     ports:
-      - "8081:8080"
+      - "8081:8081"
     build:
       context: .
     container_name: employeeTerminal

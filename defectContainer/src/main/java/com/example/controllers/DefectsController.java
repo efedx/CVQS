@@ -38,7 +38,7 @@ public class DefectsController {
     public ResponseEntity<byte[]> getDefectImage(@RequestHeader("Authorization") String authorizationHeader,
                                                  @PathVariable Long defectId) throws Exception {
 
-        byte[] combinedImageByte = defectImageService.getDefectImage(defectId);
+        byte[] combinedImageByte = defectImageService.getDefectImage(authorizationHeader, defectId);
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(combinedImageByte);
     }
@@ -48,7 +48,7 @@ public class DefectsController {
                                                         @PathVariable Long vehicleId,
                                                         @PathVariable int pageNumber,
                                                         @RequestParam String sortDirection,
-                                                        @RequestParam String sortField,) {
+                                                        @RequestParam String sortField) {
         return ResponseEntity.ok().body(listDefectsService.getDefectsByVehicle(authorizationHeader, vehicleId, pageNumber, sortField, sortDirection));
     }
 

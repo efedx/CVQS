@@ -24,8 +24,17 @@ public class UpdateRequestDto {
     @Nullable
     //@Email(message = "Provide a valid email address")
     private String email;
+//    @Nullable
+//    private Set<RegisterRequestDto.RoleDto> roleSet;
+
     @Nullable
-    private Set<RegisterRequestDto.RoleDto> roleSet;
+    private Set<RoleDto> roleSet;
+
+    @Data
+    public static class RoleDto {
+        //private Long roleId;
+        private String roleName;
+    }
 
 //    @Data
 //    @Nullable

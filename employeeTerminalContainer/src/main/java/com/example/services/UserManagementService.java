@@ -163,12 +163,12 @@ public class UserManagementService {
     @Transactional
     public String updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         String username = updateRequestDto.getUsername();
 
@@ -178,9 +178,14 @@ public class UserManagementService {
         }
 
         String email = updateRequestDto.getEmail();
+
         //Set<Roles> rolesSet = getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
-        //employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
-        employeeRepository.updateEmployeeById(id, username, password, email);
+
+//       employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
+
+        //employeeRepository.updateEmployeeById(id, username, password, email);
+
+        getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
 
         //employeeRepository.updateEmployeeRoles(id, rolesSet);
 //        Null nul = null;
@@ -216,14 +221,30 @@ public class UserManagementService {
         return newRolesSet;
     }
 
-    private Set<Roles> getRolesSetRoleFromDtoSet(Long id, Set<RegisterRequestDto.RoleDto> roleDtoSet) {
+    private Set<Roles> getRolesSetRoleFromDtoSet(Long id, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
         Set<Roles> newRolesSet = new HashSet<>();
         Employee employee = employeeRepository.findById(id).orElseThrow();
-        for (RegisterRequestDto.RoleDto roleDto : roleDtoSet) {
+        for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {
 
             Roles role = new Roles(employee, roleDto.getRoleName());
             newRolesSet.add(role);
         }
         return newRolesSet;
+    }
+
+    private void getRolesSetRoleFromDtoSet2(Long id, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
+
+        Employee employee = employeeRepository.findById(id).orElseThrow();
+        employee.getRoles().clear();
+
+//        for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {
+//
+//            Roles role = new Roles();
+//            role.setEmployee(employee);
+//            role.setRoleName(roleDto.getRoleName());
+//
+//            employee.getRoles().add(role);
+//        }
+        employeeRepository.save(employee);
     }
 }

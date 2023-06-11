@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RegisterDefectsService {
-    private static final String securityUserManagementUrl = "http://security:8083/defects";
+    private static final String securityDefectsUrl = "http://security:8083/defects";
     @Autowired
     private VehicleRepository vehicleRepository;
     @Autowired
@@ -33,7 +33,7 @@ public class RegisterDefectsService {
         httpHeaders.set("Authorization", authorizationHeader);
         HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         //ObjectMapper objectMapper = new ObjectMapper();
         //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
