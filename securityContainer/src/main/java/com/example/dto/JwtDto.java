@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class JwtDto {
+    private String userName;
     private String token;
     private List<String> tokenList;
 }

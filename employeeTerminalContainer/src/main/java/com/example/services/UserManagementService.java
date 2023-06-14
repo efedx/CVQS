@@ -72,7 +72,7 @@ public class UserManagementService {
 //        return AuthenticationResponseDto.builder().tokenList(jwtList).build();
 //    }
 
-    public String registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
+    public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -81,31 +81,7 @@ public class UserManagementService {
 
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
-        for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
-
-            Optional<Employee> employeeControl = employeeRepository.findByUsername(registerRequestDto.getUsername());
-
-            // check if the user with that username exists
-            if(employeeControl.isPresent()) {
-                throw new IllegalStateException("Username taken");
-            }
-
-            // if not create an employee
-            String  username = registerRequestDto.getUsername();
-
-            Employee employee = new Employee();
-            employee.setUsername(username);
-            employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
-            employee.setEmail(registerRequestDto.getEmail());
-            employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
-
-            employeeRepository.save(employee);
-            log.info("Employee {} is saved", employee.getUsername());
-        }
-        return "Employees registered";
-    }
-
-    public String registerAdmin(List<RegisterRequestDto> registerRequestDtoList) {
+        Set<Employee> employeeSet = new HashSet<>();
 
         for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
 
@@ -125,20 +101,46 @@ public class UserManagementService {
             employee.setEmail(registerRequestDto.getEmail());
             employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
 
-            employeeRepository.save(employee);
-            log.info("Employee {} is saved", employee.getUsername());
+            employeeSet.add(employeeRepository.save(employee));
         }
-        return "Employees registered";
+        return employeeSet;
     }
 
-    public String login(LoginRequestDto loginRequestDto) {
+    public Set<Employee> registerAdmin(List<RegisterRequestDto> registerRequestDtoList) {
+
+        Set<Employee> employeeSet = new HashSet<>();
+
+        for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
+
+            Optional<Employee> employeeControl = employeeRepository.findByUsername(registerRequestDto.getUsername());
+
+            // check if the user with that username exists
+            if(employeeControl.isPresent()) {
+                throw new IllegalStateException("Username taken");
+            }
+
+            // if not create an employee
+            String  username = registerRequestDto.getUsername();
+
+            Employee employee = new Employee();
+            employee.setUsername(username);
+            employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
+            employee.setEmail(registerRequestDto.getEmail());
+            employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
+
+            employeeSet.add(employeeRepository.save(employee));
+        }
+        return employeeSet;
+    }
+
+    public JwtDto login(LoginRequestDto loginRequestDto) {
 
         HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto); // first parameter is the body
         ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange(securityLoginUrl, HttpMethod.POST, requestEntity, JwtDto.class);
 
-        String jwt = jwtResponse.getBody().getToken();
+        JwtDto jwtDto = jwtResponse.getBody();
 
-        return jwt;
+        return jwtDto;
     }
 
 

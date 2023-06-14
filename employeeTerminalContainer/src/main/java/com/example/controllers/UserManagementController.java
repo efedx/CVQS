@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import com.example.dto.JwtDto;
 import com.example.dto.LoginRequestDto;
 import com.example.dto.RegisterRequestDto;
 import com.example.dto.UpdateRequestDto;
@@ -8,6 +9,9 @@ import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.services.UserManagementService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +28,10 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
+@Slf4j
 public class UserManagementController {
+
+//    private static final Logger logger = LogManager.getLogger(UserManagementController.class);
 
     @Autowired
     private UserManagementService userManagementService;
@@ -32,8 +39,9 @@ public class UserManagementController {
 
     //------------------------------------------------------
 
-    @GetMapping("test1")
+    @GetMapping("/test1")
     public String test1() {
+        log.info("test log");
         return "test";
     }
     @GetMapping("/test2")
@@ -44,7 +52,10 @@ public class UserManagementController {
     @PostMapping("/registerAdmin") // todo only admins can do that
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
-        return ResponseEntity.ok(userManagementService.registerAdmin(registerRequestDtoList));
+       // logger.info("created");
+
+        Set<Employee> employeeSet = userManagementService.registerAdmin(registerRequestDtoList);
+        return ResponseEntity.ok("Employees saved");
     }
 
     @Validated
@@ -52,20 +63,21 @@ public class UserManagementController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerNewEmployee(@RequestHeader("Authorization") String authorizationHeader,
                                                       @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
-        return ResponseEntity.ok(userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList));
+        Set<Employee> employeeSet = userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList);
+        return ResponseEntity.ok("Employees saved");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
 
-        String jwt = userManagementService.login(loginRequestDto);
-
+        JwtDto jwt = userManagementService.login(loginRequestDto);
+        String token = jwt.getToken();
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "Bearer " + jwt);
+        httpHeaders.set("Authorization", "Bearer " + token);
 
         //String username = employeeRepository.findByUsername("1").get().getUsername();
 
-        return ResponseEntity.ok().headers(httpHeaders).body(jwt);
+        return ResponseEntity.ok().headers(httpHeaders).body(token);
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")

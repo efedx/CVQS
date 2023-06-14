@@ -24,6 +24,7 @@ import static java.lang.Boolean.FALSE;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "employees")
 //@SQLDelete(sql = "UPDATE employees SET deleted = true WHERE id=?")
 //@Where(clause = "deleted = false")

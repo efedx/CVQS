@@ -6,6 +6,8 @@ import com.example.model.Terminal;
 import com.example.services.ListTerminalsService;
 import com.example.services.RegisterTerminalsService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ import java.util.List;
 @RequestMapping("/terminals")
 @RequiredArgsConstructor
 public class TerminalsController {
+
+    private static final Logger logger = LogManager.getLogger(TerminalsController.class);
 
     @Autowired
     RegisterTerminalsService registerTerminalsService;
