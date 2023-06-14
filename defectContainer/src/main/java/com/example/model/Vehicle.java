@@ -14,11 +14,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Vehicle extends Id {
 
     private Long vehicleNo;
 
-    @OneToMany(targetEntity = Defect.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Defect.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ElementCollection
     @JsonManagedReference("vehicle_defect")
     private List<Defect> defectList = new ArrayList<>();

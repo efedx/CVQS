@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Set;
 
 //import org.apache.logging.log4j.LogManager;
@@ -68,9 +69,21 @@ public class UserManagementServiceLogAspect {
     @Around("LoggingPointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        logger.info(proceedingJoinPoint.getSignature() + " begins");
+        String methodName = proceedingJoinPoint.getSignature().getName();
+        logger.info(methodName + " begins");
+
+        Object[] args = proceedingJoinPoint.getArgs();
+        logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
         Object object = proceedingJoinPoint.proceed();
+
+        try {
+            object = proceedingJoinPoint.proceed();
+        } catch (Throwable throwable) {
+            // Log the error
+            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
+            throw throwable; // Rethrow the exception after logging
+        }
 
         if(object instanceof Set<?> && ((Set<?>) object).stream().allMatch(element -> element instanceof Employee)) {
             Set<Employee> employeeSet = (Set<Employee>) object;
@@ -87,7 +100,7 @@ public class UserManagementServiceLogAspect {
         }
 
         else if(object instanceof Long id) {
-            logger.info("Id with " + id + "deleted");
+            logger.info("Employee with id " + id + "deleted");
         }
 
         else if(object instanceof Employee employee) {

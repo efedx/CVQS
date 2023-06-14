@@ -77,10 +77,10 @@ public class DefectsController {
             defectImageByte = defectImage.getBytes();
         } catch (IOException e) {
             // handle the exception, e.g. log an error message or return an error response
-            return "error";
+            return "An error occurred while creating defect image";
         }
-
-        return registerDefectsService.registerDefects(authorizationHeader, registerDefectDtoList, defectImageByte);
+        registerDefectsService.registerDefects(authorizationHeader, registerDefectDtoList, defectImageByte);
+        return "Defects saved";
     }
 
 }

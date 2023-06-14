@@ -148,12 +148,12 @@ public class UserManagementService {
     @Transactional
     public Long deleteEmployeeById(String authorizationHeader, Long id) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+//
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         if(!employeeRepository.existsById(id)) throw new IllegalStateException(id + " does not exists");
 
@@ -161,6 +161,8 @@ public class UserManagementService {
             employeeRepository.setDeletedTrue(id);
             return id;
         }
+
+
     }
 
     @Transactional

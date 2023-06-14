@@ -29,12 +29,12 @@ public class ListDefectsService {
 
     public Page<Defect> getDefectsByVehicle(String authorizationHeader, Long vehicleId, int pageNumber, String sortField, String sortDirection) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+//
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 2;
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
@@ -46,12 +46,12 @@ public class ListDefectsService {
     @Transactional
     public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+//
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 5;
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
@@ -80,12 +80,12 @@ public class ListDefectsService {
 @Transactional
 public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection, String defectName) {
 
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-    httpHeaders.set("Authorization", authorizationHeader);
-    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-    ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+//    HttpHeaders httpHeaders = new HttpHeaders();
+//    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//    httpHeaders.set("Authorization", authorizationHeader);
+//    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+//
+//    ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
     int pageSize = 5;
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()

@@ -45,6 +45,7 @@ public class JwtValidaitonService {
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
             catch (Exception e) {
+
                 throw new BadCredentialsException("Invalid Token Received");
             }
         }

@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Set;
 
 @Aspect
@@ -32,7 +33,11 @@ public class TerminalLogAspect {
     @Around("RegisterTerminalsPointCut()")
     public Object registerTerminals(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        logger.info(proceedingJoinPoint.getSignature() + " begins");
+        String methodName = proceedingJoinPoint.getSignature().getName();
+        logger.info(methodName + " begins");
+
+        Object[] args = proceedingJoinPoint.getArgs();
+        logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
         Object object = proceedingJoinPoint.proceed();
 
@@ -52,7 +57,11 @@ public class TerminalLogAspect {
     @Around("ListTerminalsPointCut()")
     public Object listTerminals(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        logger.info(proceedingJoinPoint.getSignature() + " begins");
+        String methodName = proceedingJoinPoint.getSignature().getName();
+        logger.info(methodName + " begins");
+
+        Object[] args = proceedingJoinPoint.getArgs();
+        logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
         Object object = proceedingJoinPoint.proceed();
 
