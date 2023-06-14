@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +26,16 @@ public class RegisterTerminalsService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) {
+    public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+//
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
+        Set<Department> departmentSet = new HashSet<>();
 
         for(RegisterTerminalDto registerTerminalDto: registerTerminalDtoList) {
 
@@ -39,9 +43,9 @@ public class RegisterTerminalsService {
             department.setDepartmentName(registerTerminalDto.getDepartmentName());
             department.setTerminalList(getTerminalListFromTerminalDtoList(department, registerTerminalDto.getTerminalList()));
 
-            departmentRepository.save(department);
+            departmentSet.add(departmentRepository.save(department));
         }
-        return "Terminals registered";
+        return departmentSet;
     }
 
     private List<Terminal> getTerminalListFromTerminalDtoList(Department department, ArrayList<RegisterTerminalDto.TerminalDto> terminalDtoList) {

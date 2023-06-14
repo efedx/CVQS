@@ -37,7 +37,7 @@ public class UserManagementService {
         // create a jwt using the employee and send it with authentication response
         String jwt = jwtGenerationService.generateJwt(username, rolesSet);
 
-        return JwtDto.builder().token(jwt).build();
+        return JwtDto.builder().username(username).token(jwt).build();
     }
 
     public String login(LoginRequestDto loginRequestDto) {

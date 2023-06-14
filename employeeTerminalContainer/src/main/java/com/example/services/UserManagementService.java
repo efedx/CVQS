@@ -7,6 +7,7 @@ import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -145,7 +146,7 @@ public class UserManagementService {
 
 
     @Transactional
-    public String deleteEmployeeById(String authorizationHeader, Long id) {
+    public Long deleteEmployeeById(String authorizationHeader, Long id) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -158,19 +159,19 @@ public class UserManagementService {
 
         else {
             employeeRepository.setDeletedTrue(id);
-            return "employee deleted";
+            return id;
         }
     }
 
     @Transactional
-    public String updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
+    public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
 
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.set("Authorization", authorizationHeader);
-//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
         String username = updateRequestDto.getUsername();
 
@@ -185,9 +186,9 @@ public class UserManagementService {
 
 //       employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
 
-        //employeeRepository.updateEmployeeById(id, username, password, email);
+        employeeRepository.updateEmployeeById(id, username, password, email);
 
-        getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
+//        getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
 
         //employeeRepository.updateEmployeeRoles(id, rolesSet);
 //        Null nul = null;
@@ -206,7 +207,11 @@ public class UserManagementService {
         //employeeRepository.putRoles(id, rolesSet);
 
         //employeeRepository.updateEmployeeRoles(id, rolesSet);
-        return "employee updated";
+
+
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalIdentifierException("Id" + id + "does not exist"));
+
     }
 
     //-----------------------------------------------------

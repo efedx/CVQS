@@ -70,28 +70,31 @@ public class UserManagementController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
 
-        JwtDto jwt = userManagementService.login(loginRequestDto);
-        String token = jwt.getToken();
+        JwtDto jwtDto = userManagementService.login(loginRequestDto);
+        String username = jwtDto.getUsername();
+        String token = jwtDto.getToken();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + token);
 
         //String username = employeeRepository.findByUsername("1").get().getUsername();
 
-        return ResponseEntity.ok().headers(httpHeaders).body(token);
+        return ResponseEntity.ok().headers(httpHeaders).body("Username with " + username + "'s token is: " + token);
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")
-    public String deleteEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
+    public ResponseEntity<String> deleteEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
                                      @PathVariable Long id) {
 
-        return userManagementService.deleteEmployeeById(authorizationHeader, id);
+        userManagementService.deleteEmployeeById(authorizationHeader, id);
+        return ResponseEntity.ok().body("Id with " + id + " deleted");
     }
 
     @PutMapping("/userManagement/updateEmployeeById/{id}")
-    public String updateEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
+    public ResponseEntity<String> updateEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
                                      @PathVariable Long id,
                                      @RequestBody UpdateRequestDto updateRequestDto) {
-        return userManagementService.updateEmployee(authorizationHeader, id, updateRequestDto);
+        userManagementService.updateEmployee(authorizationHeader, id, updateRequestDto);
+        return ResponseEntity.ok().body("Id with " + id + " updated");
     }
 
     @GetMapping("/userManagement/{id}")

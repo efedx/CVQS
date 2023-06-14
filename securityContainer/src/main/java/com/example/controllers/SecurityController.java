@@ -74,7 +74,7 @@ public class SecurityController {
 
     @PostMapping("/login") // todo only admins can do that
     public ResponseEntity<JwtDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        return ResponseEntity.ok(JwtDto.builder().token(userManagementService.login(loginRequestDto)).build());
+        return ResponseEntity.ok(JwtDto.builder().username(loginRequestDto.getUsername()).token(userManagementService.login(loginRequestDto)).build());
     }
 
     @PostMapping("/userManagement") // todo only admins can do that /registerEmployee

@@ -1,10 +1,7 @@
 package com.example.dto;
 
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 
@@ -12,6 +9,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class TerminalResponseDto {
     private Long id;
 

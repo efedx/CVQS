@@ -38,7 +38,7 @@ public class Employee extends Id {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true, fetch = FetchType.EAGER)
     @JsonManagedReference("employee_roles")
     @ElementCollection
     private Set<Roles> roles = new HashSet<>();

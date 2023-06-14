@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN">
+<!--    xmlns="http://logging.apache.org/log4j/2.0/config"-->
+
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{HH:MM:ss:SSS} [%t] %-5level %-50c{1.} - %msg %n
+        </Property>
+        <Property name="LOG_DIR">
+            C:\Users\efedo\OneDrive\Desktop\codes\sec\project\employeeTerminalContainer\logs
+        </Property>
+    </Properties>
+
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+
+<!--        <File name="MyFile" fileName="logs/app.log">-->
+<!--            <PatternLayout pattern="${LOG_PATTERN}"/>-->
+<!--        </File>-->
+
+
+        <RollingFile name="rollingFile"
+                     fileName="${LOG_DIR}/app.log"
+                     filePattern="${LOG_DIR}/app.%i.log"
+                     ignoreExceptions="false">
+
+<!--            <PatternLayout>-->
+<!--                <Pattern>${LOG_PATTERN}</Pattern>-->
+<!--            </PatternLayout>-->
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_DIR}" maxDepth="2">
+                    <IfFileName glob="*/app-*.log.gz" />
+                    <IfLastModified age="P30D" />
+                </Delete>
+            </DefaultRolloverStrategy>
+
+        </RollingFile>
+
+    </Appenders>
+
+<!--    <File name="File" fileName="log.log">-->
+<!--        <PatternLayout pattern="%d{HH:MM:ss:SSS} [%t] %-5level %-50c{1.} - %msg %n" />-->
+<!--    </File>-->
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console" />
+<!--            <AppenderRef ref="File" />-->
+        </Root>
+
+<!--        <Root level="info">-->
+<!--            <AppenderRef ref="RollingFile" />-->
+<!--        </Root>-->
+    </Loggers>
+</Configuration>

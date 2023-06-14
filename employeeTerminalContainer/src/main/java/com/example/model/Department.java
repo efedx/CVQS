@@ -14,11 +14,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Department extends Id {
 
     private String departmentName;
 
-    @OneToMany(targetEntity = Terminal.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Terminal.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ElementCollection
     @JsonManagedReference("department-terminal")
     private List<Terminal> terminalList = new ArrayList<>();;

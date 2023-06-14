@@ -4,19 +4,14 @@ package com.example.logAspect;
 import com.example.dto.JwtDto;
 import com.example.model.Employee;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 //import org.apache.logging.log4j.LogManager;
@@ -30,11 +25,11 @@ import java.util.Set;
 @Aspect
 @Log4j2
 @Component
-public class LogAspect {
+public class UserManagementServiceLogAspect {
 
-    private final Logger logger = LogManager.getLogger(LogAspect.class);
+    private final Logger logger = LogManager.getLogger(UserManagementServiceLogAspect.class);
 
-    @Pointcut("execution(* com.example.services.*.*(..))") // return type, class, method with any parameters
+    @Pointcut("execution(* com.example.services.UserManagementService.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
 
 //    @Before("LoggingPointCut()")
@@ -73,7 +68,7 @@ public class LogAspect {
     @Around("LoggingPointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        logger.info("Register employee begins" + proceedingJoinPoint.getSignature());
+        logger.info(proceedingJoinPoint.getSignature() + " begins");
 
         Object object = proceedingJoinPoint.proceed();
 
@@ -81,16 +76,25 @@ public class LogAspect {
             Set<Employee> employeeSet = (Set<Employee>) object;
 
             for(Employee employee: employeeSet) {
-                logger.info("saved employee is: " + employee);
+                logger.info("Saved employee is: " + employee);
             }
-            logger.info("Register employee terminates" + proceedingJoinPoint.getSignature());
         }
 
-        else if(object instanceof JwtDto) {
-            logger.info("After method invoked " + object);
+        else if(object instanceof JwtDto jwtDto) {
+            String username = jwtDto.getUsername();
+            String token = jwtDto.getToken();
+            logger.info("Username with " + username + "'s token is: " + token);
         }
 
+        else if(object instanceof Long id) {
+            logger.info("Id with " + id + "deleted");
+        }
 
+        else if(object instanceof Employee employee) {
+            logger.info("Id with " + employee.getId() + " updated to " + employee.toString());
+        }
+
+        logger.info(proceedingJoinPoint.getSignature() + " terminates");
 
         return object;
     }

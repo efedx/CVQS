@@ -30,9 +30,10 @@ public class TerminalsController {
 
     @PostMapping("/registerTerminals")
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerDefects(@RequestHeader("Authorization") String authorizationHeader,
-                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) {
-        return registerTerminalsService.registerTerminals(authorizationHeader, registerTerminalDtoList);
+    public ResponseEntity<String> registerTerminals(@RequestHeader("Authorization") String authorizationHeader,
+                                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) {
+        registerTerminalsService.registerTerminals(authorizationHeader, registerTerminalDtoList);
+        return ResponseEntity.ok().body("Terminals registered");
     }
 
     @GetMapping("/listTerminals/page/{pageNumber}")
