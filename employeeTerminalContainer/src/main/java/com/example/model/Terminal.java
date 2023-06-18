@@ -30,4 +30,11 @@ public class Terminal extends Id {
             this.isActive = FALSE;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Terminal{" +
+                "terminalName='" + terminalName + '\'' +
+                '}';
+    }
 }

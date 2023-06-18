@@ -1,6 +1,5 @@
 package com.example.services;
 
-import com.example.dto.JwtDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -13,13 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.net.http.HttpRequest;
 
 import static com.example.security.SecurityConstans.JWT_KEY;
 
 @Service
 @RequiredArgsConstructor
-public class JwtValidaitonService {
+public class JwtValidationService {
 
     public boolean isTokenValid(String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -45,7 +43,6 @@ public class JwtValidaitonService {
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
             catch (Exception e) {
-
                 throw new BadCredentialsException("Invalid Token Received");
             }
         }

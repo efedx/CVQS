@@ -56,9 +56,9 @@ public class ListTerminalsService {
             terminalResponseDtoList.add(terminalResponseDto);
         }
 
-        Page<TerminalResponseDto> terminalResponsePage = new PageImpl<>(terminalResponseDtoList, pageable, totalRecords);
+        Page<TerminalResponseDto> terminalResponsePageList = new PageImpl<>(terminalResponseDtoList, pageable, totalRecords);
 
-        return terminalResponsePage;
+        return terminalResponsePageList;
 
     }
 
@@ -91,8 +91,8 @@ public class ListTerminalsService {
             terminalResponseDtoList.add(terminalResponseDto);
         }
 
-        Page<TerminalResponseDto> terminalResponsePage = new PageImpl<>(terminalResponseDtoList, pageable, totalRecords);
+        Page<TerminalResponseDto> terminalResponsePageList = new PageImpl<>(terminalResponseDtoList, pageable, totalRecords);
 
-        return terminalResponsePage;
+        return terminalResponsePageList;
     }
 }

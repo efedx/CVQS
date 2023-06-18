@@ -39,7 +39,15 @@ public class TerminalLogAspect {
         Object[] args = proceedingJoinPoint.getArgs();
         logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
-        Object object = proceedingJoinPoint.proceed();
+        Object object;
+
+        try {
+            object = proceedingJoinPoint.proceed();
+        } catch (Throwable throwable) {
+            // Log the error
+            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
+            throw throwable; // Rethrow the exception after logging
+        }
 
         if(object instanceof Set<?> && ((Set<?>) object).stream().allMatch(element -> element instanceof Department)) {
             Set<Department> departmentSet = (Set<Department>) object;

@@ -75,7 +75,7 @@ public class UserManagementServiceLogAspect {
         Object[] args = proceedingJoinPoint.getArgs();
         logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
-        Object object = proceedingJoinPoint.proceed();
+        Object object;
 
         try {
             object = proceedingJoinPoint.proceed();

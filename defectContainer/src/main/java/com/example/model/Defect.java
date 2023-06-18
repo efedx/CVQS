@@ -23,6 +23,14 @@ public class Defect extends Id {
 
     private String defectName;
 
+    @Override
+    public String toString() {
+        return "Defect{" +
+                "defectName='" + defectName + '\'' +
+                ", locationList=" + locationList.toString() +
+                '}';
+    }
+
     @JsonIgnore
     @OneToMany(targetEntity = Location.class, cascade = CascadeType.ALL)
     @JsonManagedReference("defect_location")

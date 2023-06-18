@@ -15,20 +15,12 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-//import org.aspectj.lang.JoinPoint;
-//import org.aspectj.lang.annotation.Aspect;
-//import org.aspectj.lang.annotation.Before;
-//import org.aspectj.lang.annotation.Pointcut;
-
-
 @Aspect
 @Log4j2
 @Component
-public class DefectsServiceLogginAspect {
+public class DefectServiceLoggingAspect {
 
-    private final Logger logger = LogManager.getLogger(DefectsServiceLogginAspect.class);
+    private final Logger logger = LogManager.getLogger(DefectServiceLoggingAspect.class);
 
     @Pointcut("execution(* com.example.services.*.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
@@ -42,7 +34,15 @@ public class DefectsServiceLogginAspect {
         Object[] args = proceedingJoinPoint.getArgs();
         logger.info(methodName + "'s arguments are " + Arrays.toString(args));
 
-        Object object = proceedingJoinPoint.proceed();
+        Object object;
+
+        try {
+            object = proceedingJoinPoint.proceed();
+        } catch (Throwable throwable) {
+            // Log the error
+            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
+            throw throwable; // Rethrow the exception after logging
+        }
 
         if(object instanceof List<?> && ((List<?>) object).stream().allMatch(element -> element instanceof Vehicle)) {
             List<Vehicle> vehicleList = (List<Vehicle>) object;
@@ -76,5 +76,4 @@ public class DefectsServiceLogginAspect {
 
         return object;
     }
-
 }

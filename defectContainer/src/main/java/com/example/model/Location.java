@@ -28,4 +28,11 @@ public class Location extends Id {
     public Location(ArrayList<Integer> location) {
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "location=" + location +
+                '}';
+    }
 }

@@ -6,7 +6,7 @@ import com.example.dto.RegisterRequestDto;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
-import com.example.services.JwtValidaitonService;
+import com.example.services.JwtValidationService;
 import com.example.services.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class SecurityController {
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
-    JwtValidaitonService jwtValidaitonService;
+    JwtValidationService jwtValidationService;
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -79,21 +79,21 @@ public class SecurityController {
 
     @PostMapping("/userManagement") // todo only admins can do that /registerEmployee
     public ResponseEntity<Boolean> userManagement(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidaitonService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
     }
 
     @PostMapping("/defects") // todo only admins can do that /registerEmployee
     public ResponseEntity<Boolean> defects(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidaitonService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
     }
 
     @PostMapping("/listDefects") // todo only admins can do that /registerEmployee
     public ResponseEntity<Boolean> listDefects(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidaitonService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
     }
 
     @PostMapping("/terminals") // todo only admins can do that /registerEmployee
     public ResponseEntity<Boolean> terminals(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidaitonService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
     }
 }

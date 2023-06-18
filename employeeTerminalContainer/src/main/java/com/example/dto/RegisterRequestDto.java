@@ -32,5 +32,6 @@ public class RegisterRequestDto {
     public static class RoleDto {
         //private Long roleId;
         private String roleName;
+
     }
 }

@@ -5,6 +5,7 @@ import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
@@ -19,59 +20,20 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@AllArgsConstructor
 public class UserManagementService {
 
-    private static final String securityRegisterEmployeeUrl = "http://security:8083/userManagement/registerEmployee";
-    private static final String securityRegisterAdminUrl = "http://security:8083/registerAdmin";
     private static final String securityLoginUrl = "http://security:8083/login";
-    private static final String securityJwtValidationUrl = "http://security:8083/isTokenValid";
     private static final String securityUserManagementUrl = "http://security:8083/userManagement";
 
-    @Autowired
-    private RolesRepository rolesRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
     private RestTemplate restTemplate;
-
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     //--------------------------------------------------
-
-//    public AuthenticationResponseDto registerNewEmployee(List<RegisterRequestDto> registerRequestDtoList) {
-//
-//        ArrayList<String> jwtList = new ArrayList<>();
-//
-//        for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
-//
-//            Optional<Employee> employeeControl = employeeRepository.findByUsername(registerRequestDto.getUsername());
-//
-//            // check if the user with that username exists
-//            if(employeeControl.isPresent()) {
-//                throw new IllegalStateException("Username taken");
-//            }
-//
-//            // if not create an employee
-//            String  username = registerRequestDto.getUsername();
-//
-//            Employee employee = new Employee();
-//            employee.setUsername(username);
-//            employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
-//            employee.setEmail(registerRequestDto.getEmail());
-//            employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
-//
-//            employeeRepository.save(employee);
-//            log.info("Employee {} is saved", employee.getUsername());
-//
-//            // create a jwt using the employee and send it with authentication response
-//            String jwt = jwtGenerationService.generateJwt(username, employee.getRoles());
-//
-//            jwtList.add(jwt);
-//        }
-//        return AuthenticationResponseDto.builder().tokenList(jwtList).build();
-//    }
 
     public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
 
@@ -95,7 +57,6 @@ public class UserManagementService {
 
             // if not create an employee
             String  username = registerRequestDto.getUsername();
-
             Employee employee = new Employee();
             employee.setUsername(username);
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
@@ -148,21 +109,19 @@ public class UserManagementService {
     @Transactional
     public Long deleteEmployeeById(String authorizationHeader, Long id) {
 
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.set("Authorization", authorizationHeader);
-//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-//
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
 
-        if(!employeeRepository.existsById(id)) throw new IllegalStateException(id + " does not exists");
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+
+        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists");
 
         else {
             employeeRepository.setDeletedTrue(id);
             return id;
         }
-
-
     }
 
     @Transactional
@@ -175,11 +134,14 @@ public class UserManagementService {
 
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
+        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists");
+
         String username = updateRequestDto.getUsername();
 
         String password = null;
         if(updateRequestDto.getPassword() != null) {
-             password = passwordEncoder.encode(updateRequestDto.getPassword());
+             //password = passwordEncoder.encode(updateRequestDto.getPassword());
+             password = updateRequestDto.getPassword();
         }
 
         String email = updateRequestDto.getEmail();
@@ -189,6 +151,11 @@ public class UserManagementService {
 //       employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
 
         employeeRepository.updateEmployeeById(id, username, password, email);
+
+        return employeeRepository.findById(id).get();
+
+//        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+//        return employeeOptional.orElseGet(employeeOptional::get);
 
 //        getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
 
@@ -209,22 +176,18 @@ public class UserManagementService {
         //employeeRepository.putRoles(id, rolesSet);
 
         //employeeRepository.updateEmployeeRoles(id, rolesSet);
-
-
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalIdentifierException("Id" + id + "does not exist"));
-
     }
 
     //-----------------------------------------------------
 
     // create a Set<roles> from the array of String roles received from RegisterRequestDto
-    private Set<Roles> getRolesSetFromRoleDtoSet(Employee employee, Set<RegisterRequestDto.RoleDto> roleDtoSet) {
+    public Set<Roles> getRolesSetFromRoleDtoSet(Employee employee, Set<RegisterRequestDto.RoleDto> roleDtoSet) {
         Set<Roles> newRolesSet = new HashSet<>();
 
         for (RegisterRequestDto.RoleDto roleDto : roleDtoSet) {
 
             Roles role = new Roles(employee, roleDto.getRoleName());
+            //Roles role = Roles.builder().employee(employee).roleName(roleDto.getRoleName()).build();
             newRolesSet.add(role);
         }
         return newRolesSet;

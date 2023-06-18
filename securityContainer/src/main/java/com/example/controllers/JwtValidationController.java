@@ -1,10 +1,8 @@
 package com.example.controllers;
 
-import com.example.dto.LoginRequestDto;
-import com.example.services.JwtValidaitonService;
+import com.example.services.JwtValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 public class JwtValidationController {
 
     @Autowired
-    JwtValidaitonService jwtValidaitonService;
+    JwtValidationService jwtValidationService;
 
     @PostMapping("/isTokenValid") // todo only admins can do that
     public ResponseEntity<Boolean> isTokenValid(@RequestHeader("Authorization") String jwt) {
-        return ResponseEntity.ok(jwtValidaitonService.isTokenValid(jwt));
+        return ResponseEntity.ok(jwtValidationService.isTokenValid(jwt));
     }
 
 }

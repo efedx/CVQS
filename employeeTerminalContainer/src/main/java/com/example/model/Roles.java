@@ -19,7 +19,14 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
+@Builder
 public class Roles {
+    @Override
+    public String toString() {
+        return "Roles{" +
+                "roleName='" + roleName + '\'' +
+                '}';
+    }
 
     @Id
     @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1)

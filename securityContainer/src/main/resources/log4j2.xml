@@ -7,20 +7,15 @@
         <Property name="LOG_PATTERN">
             %d{HH:MM:ss:SSS} [%t] %-5level %-50c{1.} - %msg %n
         </Property>
-<!--        <Property name="LOG_DIR">-->
-<!--            ${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/defectLog.log-->
-<!--        </Property>-->
+        <Property name="LOG_DIR">
+            ${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/securityLog.log
+        </Property>
     </Properties>
-
-
-<!--        <File name="MyFile" fileName="logs/app.log">-->
-<!--            <PatternLayout pattern="${LOG_PATTERN}"/>-->
-<!--        </File>-->
 
     <Appenders>
         <RollingFile name="RollingFile"
-                     fileName="${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/defect.log"
-                     filePattern="${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/defect-%d{MM-dd-yyyy}-%i.log.gz"
+                     fileName="${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/security.log"
+                     filePattern="${sys:user.home}/OneDrive/Desktop/codes/sec/project/target/logs/security-%d{MM-dd-yyyy}-%i.log.gz"
                      ignoreExceptions="false">
 
             <!--            <PatternLayout pattern="${LOG_PATTERN}"/>-->
