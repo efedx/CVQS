@@ -33,39 +33,6 @@ public class UserManagementServiceLogAspect {
     @Pointcut("execution(* com.example.services.UserManagementService.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
 
-//    @Before("LoggingPointCut()")
-//    public void before(JoinPoint joinPoint) {
-//        log.info("Before method invoked: "); //, joinPoint.getSignature()
-//    }
-//
-//    @After("LoggingPointCut()")
-//    public void after(JoinPoint joinPoint) {
-//        log.info("After method invoked: "); //, joinPoint.getSignature()
-//    }
-//
-//    @AfterReturning(value = "LoggingPointCut()", returning = "string")
-//    public void afterReturning(JoinPoint joinPoint, String string) {
-//        log.info("After returning invoked: " + string); //, joinPoint.getSignature()
-//    }
-
-//    @Around("LoggingPointCut()")
-//    public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-//
-//            log.info("Before method invoked" + proceedingJoinPoint.getSignature());
-//
-//            Object object = proceedingJoinPoint.proceed();
-//
-//            log.info("Before method invoked" + proceedingJoinPoint.getTarget());
-//
-//            if(object instanceof String) {
-//                log.info("After method invoked" + object);
-//            }
-//            else if(object instanceof Employee) {
-//                log.info("After method invoked " + object);
-//            }
-//            return object;
-//    }
-
     @Around("LoggingPointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
@@ -81,11 +48,17 @@ public class UserManagementServiceLogAspect {
             object = proceedingJoinPoint.proceed();
         } catch (Throwable throwable) {
             // Log the error
-            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
+            logger.error("An error occurred: " + throwable.toString());
             throw throwable; // Rethrow the exception after logging
         }
 
-        if(object instanceof Set<?> && ((Set<?>) object).stream().allMatch(element -> element instanceof Employee)) {
+        if(object instanceof JwtDto jwtDto) {
+            String username = jwtDto.getUsername();
+            String token = jwtDto.getToken();
+            logger.info("Username with " + username + "'s token is: " + token);
+        }
+
+        else if(object instanceof Set<?> && ((Set<?>) object).stream().allMatch(element -> element instanceof Employee)) {
             Set<Employee> employeeSet = (Set<Employee>) object;
 
             for(Employee employee: employeeSet) {
@@ -93,11 +66,6 @@ public class UserManagementServiceLogAspect {
             }
         }
 
-        else if(object instanceof JwtDto jwtDto) {
-            String username = jwtDto.getUsername();
-            String token = jwtDto.getToken();
-            logger.info("Username with " + username + "'s token is: " + token);
-        }
 
         else if(object instanceof Long id) {
             logger.info("Employee with id " + id + "deleted");
@@ -106,7 +74,6 @@ public class UserManagementServiceLogAspect {
         else if(object instanceof Employee employee) {
             logger.info("Id with " + employee.getId() + " updated to " + employee.toString());
         }
-
         logger.info(proceedingJoinPoint.getSignature() + " terminates");
 
         return object;

@@ -30,15 +30,12 @@ public class RegisterDefectsService {
     public List<Vehicle> registerDefects(String authorizationHeader, List<RegisterDefectDto> registerDefectDtoList,
                                   byte[] defectImageBytes) throws Exception {
 
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.set("Authorization", authorizationHeader);
-//        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-//
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
 
-        //ObjectMapper objectMapper = new ObjectMapper();
-        //Vehicle vehicle = objectMapper.convertValue(logDefectDto, Vehicle.class);
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         List<Vehicle> vehicleList = new ArrayList<>();
 
