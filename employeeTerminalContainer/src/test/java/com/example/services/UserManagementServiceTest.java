@@ -1,9 +1,7 @@
 package com.example.services;
 
-import com.example.configuration.ConfigurationForTests;
 import com.example.dto.*;
 import com.example.model.Employee;
-import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,16 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -95,7 +87,7 @@ class UserManagementServiceTest {
         employee.setUsername(registerRequestDto1.getUsername());
         employee.setPassword(passwordEncoder.encode(registerRequestDto1.getPassword()));
         employee.setEmail(registerRequestDto1.getEmail());
-        employee.setRoles(underTestUserManagementService.getRolesSetFromRoleDtoSet(employee, registerRequestDto1.getRoleSet()));
+        employee.setRoles(underTestUserManagementService.getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto1.getRoleSet()));
 
 //        Set<RegisterRequestDto.RoleDto> roleDtoSet = Set.of(new RegisterRequestDto(username, password, email,
 //                Set.of(new RegisterRequestDto.RoleDto("ADMIN"))));

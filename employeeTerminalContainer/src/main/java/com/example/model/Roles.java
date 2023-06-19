@@ -53,9 +53,9 @@ public class Roles {
 //    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "roles") // consider cascade type
 //    @NotEmpty
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
-    //@ElementCollection
+    @ElementCollection
     @JsonBackReference("employee_roles")
     private Employee employee;
 

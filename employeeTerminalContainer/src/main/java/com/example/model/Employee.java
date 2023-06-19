@@ -38,11 +38,27 @@ public class Employee extends Id {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=false, fetch = FetchType.LAZY)
+    //@JoinColumn(name = "employee")
     @JsonManagedReference("employee_roles")
     @ElementCollection
     private Set<Roles> roles = new HashSet<>();
     private Boolean deleted;
+
+    public void updateRoles(Set<Roles> rolesSet) {
+        //if(rolesSet.size() != 0) {
+            //this.roles.clear();
+            //this.roles.addAll(rolesSet);
+            this.setRoles(rolesSet);
+        //}
+
+//        if(rolesSet.size() == 0) {
+//            this.roles =
+//        }
+//        if (rolesSet.size() != 0) {
+//            this.roles.addAll(rolesSet);
+//        }
+    }
 
 
     public Employee(String username, String email, String password, Set<Roles> roles) {

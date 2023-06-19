@@ -7,8 +7,6 @@ import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,9 +30,18 @@ public class UserManagementService {
     private RestTemplate restTemplate;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RolesRepository rolesRepository;
 
     //--------------------------------------------------
 
+    /**
+     Registers new employees based on the provided authorization header and a list of registration request data.
+     @param authorizationHeader The authorization header containing the authentication token.
+     @param registerRequestDtoList A list of RegisterRequestDto objects containing the registration data for each employee.
+     @return A Set<Employee> containing the newly registered employees.
+     @throws IllegalStateException if the provided username already exists for any employee in the database.
+     */
     public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -57,11 +64,16 @@ public class UserManagementService {
 
             // if not create an employee
             String  username = registerRequestDto.getUsername();
+
+            if(registerRequestDto.getRoleSet().size() == 0) {
+                throw new IllegalStateException("An employee mush have at least one role");
+            }
+
             Employee employee = new Employee();
             employee.setUsername(username);
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             employee.setEmail(registerRequestDto.getEmail());
-            employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
+            employee.setRoles(getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
 
             employeeSet.add(employeeRepository.save(employee));
         }
@@ -80,22 +92,31 @@ public class UserManagementService {
             if(employeeControl.isPresent()) {
                 throw new IllegalStateException("Username taken");
             }
+            // check if the register request contains at least one role
+            if(registerRequestDto.getRoleSet().size() == 0) {
+                throw new IllegalStateException("An employee mush have at least one role");
+            }
 
             // if not create an employee
             String  username = registerRequestDto.getUsername();
-
             Employee employee = new Employee();
             employee.setUsername(username);
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             employee.setEmail(registerRequestDto.getEmail());
-            employee.setRoles(getRolesSetFromRoleDtoSet(employee, registerRequestDto.getRoleSet()));
+            employee.setRoles(getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
 
             employeeSet.add(employeeRepository.save(employee));
         }
         return employeeSet;
     }
 
+    /**
+     Performs a login request with the provided login credentials and retrieves a JWT token.
+     @param loginRequestDto The LoginRequestDto object containing the login credentials.
+     @return A JwtDto object containing the JWT token retrieved from the login response.
+     */
     public JwtDto login(LoginRequestDto loginRequestDto) {
+        Employee employeee = employeeRepository.findById(52L).get();
 
         HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto); // first parameter is the body
         ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange(securityLoginUrl, HttpMethod.POST, requestEntity, JwtDto.class);
@@ -105,7 +126,13 @@ public class UserManagementService {
         return jwtDto;
     }
 
-
+    /**
+     Deletes an employee by their ID, authenticated with the provided authorization header.
+     @param authorizationHeader The authorization header containing the authentication token.
+     @param id The ID of the employee to be deleted.
+     @return The ID of the deleted employee.
+     @throws IllegalStateException if no employee exists with the provided ID.
+     */
     @Transactional
     public Long deleteEmployeeById(String authorizationHeader, Long id) {
 
@@ -124,6 +151,14 @@ public class UserManagementService {
         }
     }
 
+    /**
+     Updates an employee with the provided authorization header, employee ID, and update request data.
+     @param authorizationHeader The authorization header containing the authentication token.
+     @param id The ID of the employee to be updated.
+     @param updateRequestDto The UpdateRequestDto object containing the updated employee data.
+     @return The updated Employee object.
+     @throws IllegalStateException if no employee exists with the provided ID.
+     */
     @Transactional
     public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
 
@@ -146,42 +181,32 @@ public class UserManagementService {
 
         String email = updateRequestDto.getEmail();
 
-        //Set<Roles> rolesSet = getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
-
-//       employeeRepository.updateEmployeeById(id, username, password, email, rolesSet);
-
         employeeRepository.updateEmployeeById(id, username, password, email);
 
-        return employeeRepository.findById(id).get();
 
-//        Optional<Employee> employeeOptional = employeeRepository.findById(id);
-//        return employeeOptional.orElseGet(employeeOptional::get);
+        Employee employee = employeeRepository.findById(id).get();
 
-//        getRolesSetRoleFromDtoSet(id, updateRequestDto.getRoleSet());
+        Set<Roles> rolesSet = getRolesSetFromUpdateRoleDtoSet(employee, updateRequestDto.getRoleSet());
 
-        //employeeRepository.updateEmployeeRoles(id, rolesSet);
-//        Null nul = null;
-//        employeeRepository.deleteRoles(id, nul);
+        if(rolesSet.size() != 0) {
+            rolesRepository.deleteRoleById(employee.getId());
+            //employee.getRoles().clear();
+            employee.updateRoles(rolesSet);
+        }
+        employeeRepository.save(employee);
 
-
-
-//        Employee employee = employeeRepository.findById(id).orElseThrow();
-//        rolesRepository.deleteByEmployeeId(id);
-//        rolesRepository.saveAll(rolesSet);
-
-//        employee.addRoleSet(rolesSet);
-//
-//        employeeRepository.deleteById(id);
-//        employeeRepository.save(employee);
-        //employeeRepository.putRoles(id, rolesSet);
-
-        //employeeRepository.updateEmployeeRoles(id, rolesSet);
+        return employee;
     }
 
     //-----------------------------------------------------
 
-    // create a Set<roles> from the array of String roles received from RegisterRequestDto
-    public Set<Roles> getRolesSetFromRoleDtoSet(Employee employee, Set<RegisterRequestDto.RoleDto> roleDtoSet) {
+    /**
+     Converts a Set of RegisterRequestDto.RoleDto objects into a Set of Roles objects associated with the provided employee.
+     @param employee The Employee object to associate with the roles.
+     @param roleDtoSet A Set of RegisterRequestDto.RoleDto objects containing role data.
+     @return A Set of Roles objects associated with the provided employee and extracted from the roleDtoSet.
+     */
+    public Set<Roles> getRolesSetFromRegisterRoleDtoSet(Employee employee, Set<RegisterRequestDto.RoleDto> roleDtoSet) {
         Set<Roles> newRolesSet = new HashSet<>();
 
         for (RegisterRequestDto.RoleDto roleDto : roleDtoSet) {
@@ -193,11 +218,10 @@ public class UserManagementService {
         return newRolesSet;
     }
 
-    private Set<Roles> getRolesSetRoleFromDtoSet(Long id, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
+    private Set<Roles> getRolesSetFromUpdateRoleDtoSet(Employee employee, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
         Set<Roles> newRolesSet = new HashSet<>();
-        Employee employee = employeeRepository.findById(id).orElseThrow();
-        for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {
 
+        for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {
             Roles role = new Roles(employee, roleDto.getRoleName());
             newRolesSet.add(role);
         }

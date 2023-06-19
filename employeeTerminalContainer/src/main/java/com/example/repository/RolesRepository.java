@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface RolesRepository extends JpaRepository<Roles, Long> {
     public Roles findByRoleName(String roleName);
 
+    @Modifying
+    @Query("DELETE Roles r WHERE r.employee.id= :id")
+    void deleteRoleById(Long id);
+
 //    @Modifying
 //    @Transactional
 //    @Query("UPDATE v FROM Vehicle v LEFT JOIN v.defectList d WHERE d.defectName = :defectName")
