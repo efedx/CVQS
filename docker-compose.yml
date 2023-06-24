@@ -9,7 +9,7 @@ services:
       - "8082"
     build:
       context: .
-    container_name: defect
+    container_name: defect-container
     depends_on:
       - db
       - security-container
@@ -20,10 +20,12 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
     networks:
       - micro-service-network
+    volumes:
+      - logs:/var/lib/docker/volumes/logs/_data
 
 
   security-container:
-    image: 'security'
+    image: 'security-container'
     hostname: security
     ports:
       - "8083:8083"
@@ -31,7 +33,7 @@ services:
       - "8083"
     build:
       context: .
-    container_name: security
+    container_name: security-container
     depends_on:
       - db
     environment:
@@ -42,7 +44,7 @@ services:
     networks:
       - micro-service-network
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - logs:/var/lib/docker/volumes/logs/_data
 
   employee-terminal-container:
     image: 'employee-terminal-container'
@@ -50,7 +52,7 @@ services:
       - "8081:8081"
     build:
       context: .
-    container_name: employeeTerminal
+    container_name: employee-terminal-container
     depends_on:
       - db
 #      - security-container
@@ -61,6 +63,8 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
     networks:
       - micro-service-network
+    volumes:
+      - logs:/var/lib/docker/volumes/logs/_data
 
   db:
     image: 'postgres:13.1-alpine'
@@ -78,6 +82,7 @@ services:
 
 volumes:
   pgdata:
+  logs:
 
 networks:
   micro-service-network:

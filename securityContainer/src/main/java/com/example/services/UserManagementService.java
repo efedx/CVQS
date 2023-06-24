@@ -1,8 +1,7 @@
 package com.example.services;
 
-import com.example.dto.JwtDto;
-import com.example.dto.JwtGenerationRequestDto;
 import com.example.dto.LoginRequestDto;
+import com.example.exceptions.CustomBadCredentialsException;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
@@ -29,17 +28,6 @@ public class UserManagementService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public JwtDto generateJwt(JwtGenerationRequestDto jwtGenerationRequestDto) {
-
-        String  username = jwtGenerationRequestDto.getUsername();
-        Set<Roles> rolesSet = jwtGenerationRequestDto.getRolesSet();
-
-        // create a jwt using the employee and send it with authentication response
-        String jwt = jwtGenerationService.generateJwt(username, rolesSet);
-
-        return JwtDto.builder().username(username).token(jwt).build();
-    }
-
     public String login(LoginRequestDto loginRequestDto) {
 
         String username = loginRequestDto.getUsername();
@@ -63,7 +51,7 @@ public class UserManagementService {
             // send the response with a JWT created
 
         } catch (AuthenticationException exception) {
-            throw new IllegalStateException("Bad credentials");
+            throw new CustomBadCredentialsException("Bad credentials");
         }
     }
 }

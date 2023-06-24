@@ -12,7 +12,6 @@ import org.hibernate.annotations.*;
 
 
 import javax.management.relation.Role;
-import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

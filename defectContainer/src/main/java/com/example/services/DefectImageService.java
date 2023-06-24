@@ -1,5 +1,6 @@
 package com.example.services;
 
+import com.example.exceptions.NoDefectWithIdException;
 import com.example.model.Defect;
 import com.example.model.Location;
 import com.example.repository.DefectRepository;
@@ -10,6 +11,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefectImageService {
 
-    private static final String securityDefectsUrl = "http://security:8083/defects";
+    @Value("${url.security.defects}")
+    private String securityDefectsUrl;
+
     @Autowired
     DefectRepository defectRepository;
     @Autowired
@@ -47,7 +51,7 @@ public class DefectImageService {
 
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
-        Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
+        Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new NoDefectWithIdException("Defect with id " + defectId + " does not exist"));
         //Optional<Defect> defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
         List<Location> locationList = defect.getLocationList();
 

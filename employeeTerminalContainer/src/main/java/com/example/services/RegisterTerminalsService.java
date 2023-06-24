@@ -8,6 +8,7 @@ import com.example.repository.DepartmentRepository;
 import com.example.repository.TerminalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +21,10 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class RegisterTerminalsService {
-    private static final String securityTerminalsUrl = "http://security:8083/terminals";
+
+    @Value("${url.security.terminals}")
+    String securityTerminalsUrl;
+
     @Autowired
     private DepartmentRepository departmentRepository;
     @Autowired

@@ -1,5 +1,6 @@
 package com.example.security;
 
+import com.example.exceptions.CustomBadCredentialsException;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
@@ -51,12 +52,12 @@ public class CustomAuthenticationProvider implements org.springframework.securit
             }
 
             else {
-                throw new BadCredentialsException("Invalid password");
+                throw new CustomBadCredentialsException("Invalid password");
             }
         }
 
         else {
-            throw new BadCredentialsException("No user registration with this username");
+            throw new CustomBadCredentialsException("No user registration with this username");
         }
     }
 

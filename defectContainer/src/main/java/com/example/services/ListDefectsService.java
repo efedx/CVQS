@@ -6,6 +6,7 @@ import com.example.repository.DefectRepository;
 import com.example.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class ListDefectsService {
-    private static final String securityListDefectsUrl = "http://security:8083/listDefects";
+
+    @Value("${url.security.listDefects}")
+    private String securityListDefectsUrl;
+
     @Autowired
     VehicleRepository vehicleRepository;
     @Autowired
@@ -46,12 +50,12 @@ public class ListDefectsService {
     @Transactional
     public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection) {
 
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.set("Authorization", authorizationHeader);
-//        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-//
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 5;
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
@@ -80,12 +84,12 @@ public class ListDefectsService {
 @Transactional
 public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection, String defectName) {
 
-//    HttpHeaders httpHeaders = new HttpHeaders();
-//    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//    httpHeaders.set("Authorization", authorizationHeader);
-//    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-//
-//    ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    httpHeaders.set("Authorization", authorizationHeader);
+    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+    ResponseEntity<Object> validationResponse = restTemplate.exchange(securityListDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
     int pageSize = 5;
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()

@@ -1,13 +1,19 @@
 package com.example.services;
 
 import com.example.dto.*;
+import com.example.exceptions.NoRolesException;
+import com.example.exceptions.SecurityExceptionResponse;
+import com.example.exceptions.TakenUserNameException;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,8 +27,10 @@ import java.util.*;
 @AllArgsConstructor
 public class UserManagementService {
 
-    private static final String securityLoginUrl = "http://security:8083/login";
-    private static final String securityUserManagementUrl = "http://security:8083/userManagement";
+    @Value("${url.security.login}")
+    String securityLoginUrl;
+    @Value("${url.security.userManagement}")
+    String securityUserManagementUrl;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -51,6 +59,10 @@ public class UserManagementService {
 
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
+        if(validationResponse.getStatusCode().isError()) {
+            throw new SecurityException(validationResponse.getBody().toString(), validationResponse.getStatusCode());
+        }
+
         Set<Employee> employeeSet = new HashSet<>();
 
         for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
@@ -59,14 +71,14 @@ public class UserManagementService {
 
             // check if the user with that username exists
             if(employeeControl.isPresent()) {
-                throw new IllegalStateException("Username taken");
+                throw new TakenUserNameException("Username: " + employeeControl.get().getUsername() + " is taken");
             }
 
             // if not create an employee
             String  username = registerRequestDto.getUsername();
 
             if(registerRequestDto.getRoleSet().size() == 0) {
-                throw new IllegalStateException("An employee mush have at least one role");
+                throw new NoRolesException("An employee mush have at least one role");
             }
 
             Employee employee = new Employee();
@@ -90,11 +102,11 @@ public class UserManagementService {
 
             // check if the user with that username exists
             if(employeeControl.isPresent()) {
-                throw new IllegalStateException("Username taken");
+                throw new TakenUserNameException("Username: " + employeeControl.get().getUsername() + " is taken");
             }
             // check if the register request contains at least one role
             if(registerRequestDto.getRoleSet().size() == 0) {
-                throw new IllegalStateException("An employee mush have at least one role");
+                throw new NoRolesException("An employee mush have at least one role");
             }
 
             // if not create an employee
@@ -169,7 +181,7 @@ public class UserManagementService {
 
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
 
-        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists");
+        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists"); // string builder
 
         String username = updateRequestDto.getUsername();
 
@@ -199,6 +211,12 @@ public class UserManagementService {
     }
 
     //-----------------------------------------------------
+
+    private ResponseEntity<Object> sendResponseEntity(ResponseEntity<Object> responseEntity) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SecurityExceptionResponse securityExceptionResponse = objectMapper.readValue(responseEntity.getBody().toString(), SecurityExceptionResponse.class);
+        throw new SecurityException(securityExceptionResponse.getMessage());
+    }
 
     /**
      Converts a Set of RegisterRequestDto.RoleDto objects into a Set of Roles objects associated with the provided employee.
@@ -232,15 +250,6 @@ public class UserManagementService {
 
         Employee employee = employeeRepository.findById(id).orElseThrow();
         employee.getRoles().clear();
-
-//        for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {
-//
-//            Roles role = new Roles();
-//            role.setEmployee(employee);
-//            role.setRoleName(roleDto.getRoleName());
-//
-//            employee.getRoles().add(role);
-//        }
         employeeRepository.save(employee);
     }
 }

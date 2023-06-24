@@ -4,10 +4,13 @@ import com.example.dto.JwtDto;
 import com.example.dto.LoginRequestDto;
 import com.example.dto.RegisterRequestDto;
 import com.example.dto.UpdateRequestDto;
+import com.example.exceptions.TakenUserNameException;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.services.UserManagementService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +23,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,17 +43,19 @@ public class UserManagementController {
 
     @GetMapping("/test1")
     public String test1() {
-        log.info("test log");
-        return "test";
+        int id = 5;
+        throw new TakenUserNameException("Id " + 5 + " taken");
     }
     @GetMapping("/test2")
     public String test2() {
         return "test";
     }
+
+
     @Validated
     @PostMapping("/registerAdmin") // todo only admins can do that
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerAdmin(@Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
+    //@ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> registerAdmin(@RequestBody List<@Valid RegisterRequestDto> registerRequestDtoList) {
        // logger.info("created");
 
         Set<Employee> employeeSet = userManagementService.registerAdmin(registerRequestDtoList);
@@ -63,12 +67,12 @@ public class UserManagementController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerNewEmployee(@RequestHeader("Authorization") String authorizationHeader,
                                                       @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
-        Set<Employee> employeeSet = userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList);
+        userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList);
         return ResponseEntity.ok("Employees saved");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
 
         JwtDto jwtDto = userManagementService.login(loginRequestDto);
         String username = jwtDto.getUsername();

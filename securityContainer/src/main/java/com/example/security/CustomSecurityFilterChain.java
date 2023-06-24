@@ -1,5 +1,8 @@
 package com.example.security;
 
+import com.example.config.CustomAccessDeniedHandler;
+import com.example.config.CustomAuthenticationEntryPoint;
+import com.example.filters.ExceptionHandlerFilter;
 import com.example.filters.JwtValidationFilter;
 import com.example.services.JwtGenerationService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -32,12 +36,17 @@ public class CustomSecurityFilterChain {
                 .requestMatchers("/listDefects").hasAuthority("LEADER")
                 .anyRequest().authenticated(); // but any other url must be authenticated
 
+        http.exceptionHandling()
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // do not produce JSessionIDs and HTTP sessions
 
         http.authenticationProvider(customAuthenticationProvider)
                 //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtValidationFilter(), UsernamePasswordAuthenticationFilter.class) // todo new JwtValidationFilter(jwtGenerationService)
+                //.addFilterAfter(new JwtValidationFilter(), UsernamePasswordAuthenticationFilter.class) // todo new JwtValidationFilter(jwtGenerationService)
+                .addFilterBefore(new ExceptionHandlerFilter(), ChannelProcessingFilter.class)
                 .addFilterBefore(new JwtValidationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

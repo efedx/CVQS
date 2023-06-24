@@ -40,7 +40,7 @@ public class DefectServiceLoggingAspect {
             object = proceedingJoinPoint.proceed();
         } catch (Throwable throwable) {
             // Log the error
-            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
+            logger.error("An error occurred: " + throwable.toString(), throwable); //.getMessage() spring trace
             throw throwable; // Rethrow the exception after logging
         }
 

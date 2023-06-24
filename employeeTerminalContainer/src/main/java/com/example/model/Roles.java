@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

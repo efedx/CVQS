@@ -8,6 +8,7 @@ import com.example.repository.VehicleRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class RegisterDefectsService {
-    private static final String securityDefectsUrl = "http://security:8083/defects";
+
+    @Value("${url.security.defects}")
+    private String securityDefectsUrl;
+
     @Autowired
     private VehicleRepository vehicleRepository;
     @Autowired

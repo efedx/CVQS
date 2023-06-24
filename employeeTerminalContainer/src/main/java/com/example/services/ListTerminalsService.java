@@ -7,6 +7,7 @@ import com.example.repository.DepartmentRepository;
 import com.example.repository.TerminalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ListTerminalsService {
-    private static final String securityTerminalsUrl = "http://security:8083/terminals";
+
+    @Value("${url.security.terminals}")
+    String securityTerminalsUrl;
 
     @Autowired
     TerminalRepository terminalRepository;
@@ -64,12 +67,12 @@ public class ListTerminalsService {
 
     public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) {
 
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.set("Authorization", authorizationHeader);
-//        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-//
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", authorizationHeader);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         int pageSize = 5;
 

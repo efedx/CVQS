@@ -1,6 +1,7 @@
 package com.example.filters;
 
 
+import com.example.exceptions.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -58,7 +59,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
             catch (Exception e) {
-                throw new BadCredentialsException("Invalid Token Received");
+                throw new InvalidTokenException("Invalid token received");
             }
         }
 
