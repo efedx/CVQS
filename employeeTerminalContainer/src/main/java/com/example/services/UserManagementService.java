@@ -2,14 +2,12 @@ package com.example.services;
 
 import com.example.dto.*;
 import com.example.exceptions.NoRolesException;
-import com.example.exceptions.SecurityExceptionResponse;
 import com.example.exceptions.TakenUserNameException;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +16,13 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class UserManagementService {
+public class UserManagementService implements com.example.interfaces.UserManagementService {
 
     @Value("${url.security.login}")
     String securityLoginUrl;
@@ -35,11 +32,11 @@ public class UserManagementService {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RolesRepository rolesRepository;
+    @Autowired
+    private SecurityContainerService securityContainerService;
 
     //--------------------------------------------------
 
@@ -50,18 +47,10 @@ public class UserManagementService {
      @return A Set<Employee> containing the newly registered employees.
      @throws IllegalStateException if the provided username already exists for any employee in the database.
      */
-    public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) {
+    @Override
+    public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
-
-        if(validationResponse.getStatusCode().isError()) {
-            throw new SecurityException(validationResponse.getBody().toString(), validationResponse.getStatusCode());
-        }
+        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
 
         Set<Employee> employeeSet = new HashSet<>();
 
@@ -127,11 +116,10 @@ public class UserManagementService {
      @param loginRequestDto The LoginRequestDto object containing the login credentials.
      @return A JwtDto object containing the JWT token retrieved from the login response.
      */
+    @Override
     public JwtDto login(LoginRequestDto loginRequestDto) {
-        Employee employeee = employeeRepository.findById(52L).get();
 
-        HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto); // first parameter is the body
-        ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange(securityLoginUrl, HttpMethod.POST, requestEntity, JwtDto.class);
+        ResponseEntity<JwtDto> jwtResponse = securityContainerService.loginValidation(loginRequestDto, securityLoginUrl);
 
         JwtDto jwtDto = jwtResponse.getBody();
 
@@ -146,14 +134,10 @@ public class UserManagementService {
      @throws IllegalStateException if no employee exists with the provided ID.
      */
     @Transactional
-    public Long deleteEmployeeById(String authorizationHeader, Long id) {
+    @Override
+    public Long deleteEmployeeById(String authorizationHeader, Long id) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
 
         if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists");
 
@@ -172,14 +156,10 @@ public class UserManagementService {
      @throws IllegalStateException if no employee exists with the provided ID.
      */
     @Transactional
-    public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) {
+    @Override
+    public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityUserManagementUrl, HttpMethod.POST, requestEntity, Object.class);
+        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
 
         if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists"); // string builder
 
@@ -212,11 +192,7 @@ public class UserManagementService {
 
     //-----------------------------------------------------
 
-    private ResponseEntity<Object> sendResponseEntity(ResponseEntity<Object> responseEntity) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SecurityExceptionResponse securityExceptionResponse = objectMapper.readValue(responseEntity.getBody().toString(), SecurityExceptionResponse.class);
-        throw new SecurityException(securityExceptionResponse.getMessage());
-    }
+
 
     /**
      Converts a Set of RegisterRequestDto.RoleDto objects into a Set of Roles objects associated with the provided employee.
@@ -244,12 +220,5 @@ public class UserManagementService {
             newRolesSet.add(role);
         }
         return newRolesSet;
-    }
-
-    private void getRolesSetRoleFromDtoSet2(Long id, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
-
-        Employee employee = employeeRepository.findById(id).orElseThrow();
-        employee.getRoles().clear();
-        employeeRepository.save(employee);
     }
 }

@@ -3,7 +3,6 @@ package com.example.services;
 import com.example.dto.*;
 import com.example.model.Employee;
 import com.example.repository.EmployeeRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +50,7 @@ class UserManagementServiceTest {
     }
 
     @Test
-    void registerEmployee() throws JsonProcessingException {
+    void registerEmployee() {
 
         RegisterRequestDto.RoleDto role1 = new RegisterRequestDto.RoleDto();
         role1.setRoleName("OPERATOR");
@@ -136,7 +135,7 @@ class UserManagementServiceTest {
     }
 
     @Test
-    void deleteEmployeeById() throws JsonProcessingException {
+    void deleteEmployeeById() {
         // given
         Long id = anyLong();
         given(employeeRepository.existsById(id)).willReturn(true);
@@ -165,7 +164,7 @@ class UserManagementServiceTest {
     }
 
     @Test
-    void updateEmployee() throws JsonProcessingException {
+    void updateEmployee() {
         // given
         Long id = 1L;
         String username = "username";

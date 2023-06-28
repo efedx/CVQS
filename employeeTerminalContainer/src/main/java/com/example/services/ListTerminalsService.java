@@ -6,6 +6,7 @@ import com.example.model.Terminal;
 import com.example.repository.DepartmentRepository;
 import com.example.repository.TerminalRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.ast.tree.expression.Over;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ListTerminalsService {
+public class ListTerminalsService implements com.example.interfaces.ListTerminalsService {
 
     @Value("${url.security.terminals}")
     String securityTerminalsUrl;
@@ -30,6 +31,7 @@ public class ListTerminalsService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Override
     public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection, String terminalName) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -65,6 +67,7 @@ public class ListTerminalsService {
 
     }
 
+    @Override
     public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) {
 
         HttpHeaders httpHeaders = new HttpHeaders();

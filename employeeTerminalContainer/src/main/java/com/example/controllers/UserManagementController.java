@@ -9,6 +9,7 @@ import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.services.UserManagementService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class UserManagementController {
     @PostMapping("/userManagement/registerEmployee") // todo only admins can do that
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerNewEmployee(@RequestHeader("Authorization") String authorizationHeader,
-                                                      @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) {
+                                                      @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
         userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList);
         return ResponseEntity.ok("Employees saved");
     }
@@ -87,7 +88,7 @@ public class UserManagementController {
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")
     public ResponseEntity<String> deleteEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
-                                     @PathVariable Long id) {
+                                     @PathVariable Long id) throws JsonProcessingException {
 
         userManagementService.deleteEmployeeById(authorizationHeader, id);
         return ResponseEntity.ok().body("Id with " + id + " deleted");
@@ -96,7 +97,7 @@ public class UserManagementController {
     @PutMapping("/userManagement/updateEmployeeById/{id}")
     public ResponseEntity<String> updateEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
                                      @PathVariable Long id,
-                                     @RequestBody UpdateRequestDto updateRequestDto) {
+                                     @RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
         userManagementService.updateEmployee(authorizationHeader, id, updateRequestDto);
         return ResponseEntity.ok().body("Id with " + id + " updated");
     }

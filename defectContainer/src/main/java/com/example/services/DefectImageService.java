@@ -31,7 +31,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class DefectImageService {
+public class DefectImageService implements com.example.interfaces.DefectImageService {
 
     @Value("${url.security.defects}")
     private String securityDefectsUrl;
@@ -41,6 +41,7 @@ public class DefectImageService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Override
     @Transactional
     public byte[] getDefectImage(String authorizationHeader, Long defectId) throws Exception {
 

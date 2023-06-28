@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class RegisterDefectsService {
+public class RegisterDefectsService implements com.example.interfaces.RegisterDefectsService {
 
     @Value("${url.security.defects}")
     private String securityDefectsUrl;
@@ -31,8 +31,9 @@ public class RegisterDefectsService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Override
     public List<Vehicle> registerDefects(String authorizationHeader, List<RegisterDefectDto> registerDefectDtoList,
-                                  byte[] defectImageBytes) throws Exception {
+                                         byte[] defectImageBytes) throws Exception {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);

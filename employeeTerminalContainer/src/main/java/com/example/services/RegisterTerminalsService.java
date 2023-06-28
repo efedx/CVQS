@@ -20,7 +20,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterTerminalsService {
+public class RegisterTerminalsService implements com.example.interfaces.RegisterTerminalsService {
 
     @Value("${url.security.terminals}")
     String securityTerminalsUrl;
@@ -30,6 +30,7 @@ public class RegisterTerminalsService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Override
     public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) {
 
         HttpHeaders httpHeaders = new HttpHeaders();

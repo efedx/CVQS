@@ -29,7 +29,7 @@ public class UserManagementSecurityLogging {
 
     private final Logger logger = LogManager.getLogger(UserManagementSecurityLogging.class);
 
-    @Pointcut("execution(* com.example.services.UserManagementService.*(..))") // return type, class, method with any parameters
+    @Pointcut("execution(* com.example.services.LoginService.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
 
     @Around("LoggingPointCut()")

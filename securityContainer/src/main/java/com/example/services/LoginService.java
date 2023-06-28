@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserManagementService {
+public class LoginService implements com.example.interfaces.LoginService {
 
     @Autowired
     private JwtGenerationService jwtGenerationService;
@@ -28,6 +28,7 @@ public class UserManagementService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Override
     public String login(LoginRequestDto loginRequestDto) {
 
         String username = loginRequestDto.getUsername();
