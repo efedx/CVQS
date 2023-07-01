@@ -7,12 +7,10 @@ import com.example.repository.EmployeeRepository;
 import com.example.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +20,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 
-    @Autowired
-    EmployeeRepository employeeRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
+    private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -45,18 +40,15 @@ public class CustomAuthenticationProvider implements org.springframework.securit
                 // fetch the granted authorities from the database and create a username-password-authentication token using
                 // that employee's username, password and authorities
                 Set<Roles> roles = employee.get().getRoles();
-                Set<GrantedAuthority> grantedAuthoritiesSet = customUserDetailsService.getSimpleGrantedAuthorities(roles);
+                Set<GrantedAuthority> grantedAuthoritiesSet = customUserDetailsService.getSimpleGrantedAuthoritiesFromRolesSet(roles);
 
                 // last parameter is Set<GrantedAuthorities> type
                 return new UsernamePasswordAuthenticationToken(tokenUsername, tokenPassword, grantedAuthoritiesSet);
-            }
-
-            else {
+            } else {
                 throw new CustomBadCredentialsException("Invalid password");
             }
-        }
 
-        else {
+        } else {
             throw new CustomBadCredentialsException("No user registration with this username");
         }
     }

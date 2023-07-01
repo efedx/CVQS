@@ -16,18 +16,11 @@ import java.util.ArrayList;
 public class RegisterTerminalDto {
 
     private String departmentName;
-
     private ArrayList<TerminalDto> terminalList;
-
     @Data
     public static class TerminalDto {
         private String terminalName;
         @Nullable
         private Boolean isActive;
     }
-
-//    public ArrayList<TerminalDto> getTerminalList() {
-//        return this.terminalList;
-//    }
-
 }

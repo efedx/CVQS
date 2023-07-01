@@ -16,12 +16,6 @@ import java.util.Set;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByUsername(String username);
-    Optional<Employee> findByEmail(String email);
-    //Optional<List<Employee>> findByDeletedTrue();
-
-    //you can use queries here
-    List<Employee> findByDeletedTrue();
-    List<Employee> findByDeletedFalse();
 
     @Modifying
     @Query("UPDATE Employee e SET e.deleted = true WHERE id =?1")

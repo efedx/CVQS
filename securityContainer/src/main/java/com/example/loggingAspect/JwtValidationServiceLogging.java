@@ -43,9 +43,9 @@ public class JwtValidationServiceLogging {
         try {
             object = proceedingJoinPoint.proceed();
         } catch (Throwable throwable) {
-            // Log the error
-            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
-            throw throwable; // Rethrow the exception after logging
+
+            logger.error("An error occurred: " + throwable.toString());
+            throw throwable;
         }
 
         if(object instanceof Boolean isValid) {

@@ -34,13 +34,10 @@ import java.util.Set;
 @Slf4j
 public class UserManagementController {
 
-//    private static final Logger logger = LogManager.getLogger(UserManagementController.class);
-
-    @Autowired
-    private UserManagementService userManagementService;
+    private final UserManagementService userManagementService;
     private final EmployeeRepository employeeRepository;
 
-    //------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------
 
     @GetMapping("/test1")
     public String test1() {
@@ -57,7 +54,6 @@ public class UserManagementController {
     @PostMapping("/registerAdmin") // todo only admins can do that
     //@ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerAdmin(@RequestBody List<@Valid RegisterRequestDto> registerRequestDtoList) {
-       // logger.info("created");
 
         Set<Employee> employeeSet = userManagementService.registerAdmin(registerRequestDtoList);
         return ResponseEntity.ok("Employees saved");
@@ -80,8 +76,6 @@ public class UserManagementController {
         String token = jwtDto.getToken();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + token);
-
-        //String username = employeeRepository.findByUsername("1").get().getUsername();
 
         return ResponseEntity.ok().headers(httpHeaders).body("Username with " + username + "'s token is: " + token);
     }
@@ -106,25 +100,8 @@ public class UserManagementController {
     public Set<Roles> getRoles(@PathVariable String id) {
         Employee employee = employeeRepository
                 .findByUsername(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + id));;
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + id));
         Set<Roles> rolesSet = employee.getRoles();
         return rolesSet;
     }
-
-
-
-
-//    @PutMapping("/userManagement/modifyRoles/{id}")
-//    public void modifyRoles(@RequestBody RoleEnum roleEnum) {
-//    }
-//
-//    @GetMapping("/userManagement/getRoles/{id}")
-//    public Set<Roles> getRoles(@PathVariable Long id) {
-//        return employeeService.getRolesFromEmployee(id);
-//    }
-
-//    @GetMapping("/userManagement/getEmployees/{roleName}")
-//    public Set<Roles> getEmployees(@PathVariable String roleName) {
-//        return employeeService.getRolesFromEmployee(roleName);
-//    }
 }

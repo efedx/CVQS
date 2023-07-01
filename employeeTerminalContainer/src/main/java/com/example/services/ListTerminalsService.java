@@ -1,16 +1,13 @@
 package com.example.services;
 
 import com.example.dto.TerminalResponseDto;
-import com.example.model.Department;
 import com.example.model.Terminal;
-import com.example.repository.DepartmentRepository;
 import com.example.repository.TerminalRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.ast.tree.expression.Over;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,22 +21,26 @@ public class ListTerminalsService implements com.example.interfaces.ListTerminal
     @Value("${url.security.terminals}")
     String securityTerminalsUrl;
 
-    @Autowired
-    TerminalRepository terminalRepository;
-    @Autowired
-    DepartmentRepository departmentRepository;
-    @Autowired
-    RestTemplate restTemplate;
+    private final TerminalRepository terminalRepository;
+    private final SecurityContainerService securityContainerService;
+    private final RestTemplate restTemplate;
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Retrieves a paginated list of active terminals with the specified terminal name.
+     *
+     * @param authorizationHeader The authorization header containing the authentication token.
+     * @param pageNumber         The page number to retrieve.
+     * @param sortDirection      The sort direction for the results ("asc" for ascending, "desc" for descending).
+     * @param terminalName       The terminal name to filter the results (can be null or empty for no filtering).
+     * @return A Page object containing the list of TerminalResponseDto objects and pagination information.
+     * @throws JsonProcessingException if an error occurs during JSON processing.
+     */
     @Override
-    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection, String terminalName) {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection, String terminalName) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
+        securityContainerService.jwtValidation(authorizationHeader, securityTerminalsUrl);
 
         int pageSize = 5;
 
@@ -64,18 +65,23 @@ public class ListTerminalsService implements com.example.interfaces.ListTerminal
         Page<TerminalResponseDto> terminalResponsePageList = new PageImpl<>(terminalResponseDtoList, pageable, totalRecords);
 
         return terminalResponsePageList;
-
     }
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Retrieves a paginated list of active terminals without filtering by terminal name.
+     *
+     * @param authorizationHeader The authorization header containing the authentication token.
+     * @param pageNumber         The page number to retrieve.
+     * @param sortDirection      The sort direction for the results ("asc" for ascending, "desc" for descending).
+     * @return A Page object containing the list of TerminalResponseDto objects and pagination information.
+     * @throws JsonProcessingException if an error occurs during JSON processing.
+     */
     @Override
-    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
+        securityContainerService.jwtValidation(authorizationHeader, securityTerminalsUrl);
 
         int pageSize = 5;
 

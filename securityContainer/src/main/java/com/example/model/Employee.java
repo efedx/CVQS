@@ -31,12 +31,7 @@ import static java.lang.Boolean.FALSE;
 @FilterDef(name = "deletedEmployeeFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
 @Filter(name = "deletedEmployeeFilter", condition = "deleted = :isDeleted")
 
-public class Employee {
-
-    @Id
-    @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1)
-    @GeneratedValue(generator = "seq_gen", strategy = GenerationType.SEQUENCE)
-    private Long id;
+public class Employee extends com.example.model.Id {
     private String username;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -44,7 +39,7 @@ public class Employee {
 
     @JsonIgnore
 //  @OneToMany(mappedBy = "id", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true)
-    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee", targetEntity = Roles.class, cascade = CascadeType.ALL, orphanRemoval=true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JsonManagedReference("employee_roles")
     @ElementCollection
@@ -59,24 +54,10 @@ public class Employee {
         this.roles = roles;
     }
 
-//    public void addRoleSet(Set<Roles> roleSet) {
-//        this.roles.addAll(roleSet);
-//    }
-
     @PrePersist
     void preInsert() {
         if(this.deleted == null) {
             this.deleted = FALSE;
         }
-//        if(this.roles == null || (this.roles.size() == 0)) {
-//            Set<Roles> rolesSet = new HashSet<>();
-//            rolesSet.add(new Roles("ADMIN"));
-//            this.roles = rolesSet;
-//        }
     }
-
-
-    //-------------------------------------------------------------
-
-    // since only the email will be unique we need it as the username But not here
 }

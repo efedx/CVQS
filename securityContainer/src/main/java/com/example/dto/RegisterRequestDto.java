@@ -42,14 +42,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class RegisterRequestDto {
-    //@NotEmpty
     private String username;
     @Size(min = 5, message = "Passwords must be at least 5 characters long")
     private String password;
-    //@Email(message = "Provide a valid email address")
     private String email;
-    //@Enumerated(value = EnumType.STRING) // todo make here work with enums
-    // private Role role;
     @NotEmpty(message = "Roles cannot be null or empty")
     private Set<RoleDto> roleSet;
 

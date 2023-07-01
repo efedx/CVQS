@@ -12,8 +12,6 @@ import java.util.ArrayList;
 @ToString
 public class TerminalResponseDto {
     private Long id;
-
     private String departmentName;
-
     private String terminalName;
 }

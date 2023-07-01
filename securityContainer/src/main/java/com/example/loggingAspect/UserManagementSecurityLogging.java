@@ -8,19 +8,9 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
-
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-//import org.aspectj.lang.JoinPoint;
-//import org.aspectj.lang.annotation.Aspect;
-//import org.aspectj.lang.annotation.Before;
-//import org.aspectj.lang.annotation.Pointcut;
-
 
 @Aspect
 @Log4j2
@@ -46,9 +36,9 @@ public class UserManagementSecurityLogging {
         try {
             object = proceedingJoinPoint.proceed();
         } catch (Throwable throwable) {
-            // Log the error
-            logger.error("An error occurred: " + throwable.toString()); //.getMessage()
-            throw throwable; // Rethrow the exception after logging
+
+            logger.error("An error occurred: " + throwable.toString());
+            throw throwable;
         }
 
         if(object instanceof String token) {

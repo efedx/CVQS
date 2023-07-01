@@ -3,6 +3,7 @@ package com.example.services;
 import com.example.dto.*;
 import com.example.model.Employee;
 import com.example.repository.EmployeeRepository;
+import com.example.repository.RolesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,17 +34,13 @@ class UserManagementServiceTest {
     @Mock
     EmployeeRepository employeeRepository;
     @Mock
-    RestTemplate restTemplate;
-//    @Autowired
-    @Mock
     PasswordEncoder passwordEncoder;
-//    @InjectMocks
+    @Mock
+    RolesRepository rolesRepository;
+    @Mock
+    SecurityContainerService securityContainerService;
     @InjectMocks
     UserManagementService underTestUserManagementService;
-
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @BeforeEach
     void setUp() {
@@ -58,58 +55,41 @@ class UserManagementServiceTest {
         RegisterRequestDto.RoleDto role2 = new RegisterRequestDto.RoleDto();
         role2.setRoleName("ADMIN");
 
-        // Create a Set of RoleDto objects
-        Set<RegisterRequestDto.RoleDto> roleDtoSet1 = new HashSet<>();
-        roleDtoSet1.add(role1);
-        roleDtoSet1.add(role2);
+        Set<RegisterRequestDto.RoleDto> roleDtoSet = new HashSet<>();
+        roleDtoSet.add(role1);
+        roleDtoSet.add(role2);
 
-//        Set<RegisterRequestDto.RoleDto> roleDtoSet2 = new HashSet<>();
-//        roleDtoSet2.add(role1);
-
-        // Create RegisterRequestDto object and set values
-        RegisterRequestDto registerRequestDto1 = new RegisterRequestDto();
-        registerRequestDto1.setUsername("username1");
-        registerRequestDto1.setPassword("password1");
-        registerRequestDto1.setEmail("user1@email.com");
-        registerRequestDto1.setRoleSet(roleDtoSet1);
-
-//        RegisterRequestDto registerRequestDto2 = new RegisterRequestDto();
-//        registerRequestDto2.setUsername("username2");
-//        registerRequestDto2.setPassword("password2");
-//        registerRequestDto2.setEmail("user2@email.com");
-//        registerRequestDto2.setRoleSet(roleDtoSet2);
-
-        given(passwordEncoder.encode(any())).willReturn(registerRequestDto1.getPassword());
+        RegisterRequestDto registerRequestDto = new RegisterRequestDto();
+        registerRequestDto.setUsername("username");
+        registerRequestDto.setPassword("password");
+        registerRequestDto.setEmail("user@email.com");
+        registerRequestDto.setRoleSet(roleDtoSet);
 
         List<RegisterRequestDto> registerRequestDtoList = new ArrayList<>();
-        registerRequestDtoList.add(registerRequestDto1);
+        registerRequestDtoList.add(registerRequestDto);
 
         Employee employee = new Employee();
-        employee.setUsername(registerRequestDto1.getUsername());
-        employee.setPassword(passwordEncoder.encode(registerRequestDto1.getPassword()));
-        employee.setEmail(registerRequestDto1.getEmail());
-        employee.setRoles(underTestUserManagementService.getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto1.getRoleSet()));
-
-//        Set<RegisterRequestDto.RoleDto> roleDtoSet = Set.of(new RegisterRequestDto(username, password, email,
-//                Set.of(new RegisterRequestDto.RoleDto("ADMIN"))));
-
-         //given(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class) , eq(Object.class))).willReturn(ResponseEntity.ok("true"));
+        employee.setUsername(registerRequestDto.getUsername());
+        employee.setPassword(registerRequestDto.getPassword());
+        employee.setEmail(registerRequestDto.getEmail());
+        employee.setRoles(underTestUserManagementService.getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
 
         // when
-        Mockito.when(employeeRepository.findByUsername(registerRequestDto1.getUsername())).thenReturn(Optional.empty());
-        Mockito.when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+        when(employeeRepository.findByUsername(registerRequestDto.getUsername())).thenReturn(Optional.empty());
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+        when(passwordEncoder.encode(any(String.class))).thenReturn(registerRequestDto.getPassword());
+//        doNothing().when(securityContainerService).jwtValidation(anyString(), anyString());
+
 
         Set<Employee> employeeSet = underTestUserManagementService.registerEmployee("token", registerRequestDtoList);
 
-        Set<Employee> result = underTestUserManagementService.registerAdmin(registerRequestDtoList);
-
         // then
-        assertThat(result).contains(employee);
-        Employee employeeItereator = result.iterator().next();
-        assertThat(registerRequestDto1.getUsername()).isEqualTo(employee.getUsername());
-        assertThat(registerRequestDto1.getEmail()).isEqualTo(employee.getEmail());
-        assertThat(registerRequestDto1.getPassword()).isEqualTo(employee.getPassword());
-        assertThat(registerRequestDto1.getRoleSet().size()).isEqualTo(employee.getRoles().size());
+        assertThat(employeeSet).contains(employee);
+        Employee employeeItereator = employeeSet.iterator().next();
+        assertThat(registerRequestDto.getUsername()).isEqualTo(employee.getUsername());
+        assertThat(registerRequestDto.getEmail()).isEqualTo(employee.getEmail());
+        assertThat(registerRequestDto.getPassword()).isEqualTo(employee.getPassword());
+        assertThat(registerRequestDto.getRoleSet().size()).isEqualTo(employee.getRoles().size());
     }
 
     @Test
@@ -122,10 +102,10 @@ class UserManagementServiceTest {
         HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto);
 
         // when
-        ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange("securityLoginUrl", HttpMethod.POST, requestEntity, JwtDto.class);
+        //ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange("securityLoginUrl", HttpMethod.POST, requestEntity, JwtDto.class);
 
         // then
-        Mockito.verify(restTemplate).exchange(eq("securityLoginUrl"), eq(HttpMethod.POST), requestEntityCaptor.capture(), eq(JwtDto.class));
+        //Mockito.verify(restTemplate).exchange(eq("securityLoginUrl"), eq(HttpMethod.POST), requestEntityCaptor.capture(), eq(JwtDto.class));
 
         HttpEntity<LoginRequestDto> capturedRequestEntity = requestEntityCaptor.getValue();
         LoginRequestDto capturedLoginRequestDto = capturedRequestEntity.getBody();

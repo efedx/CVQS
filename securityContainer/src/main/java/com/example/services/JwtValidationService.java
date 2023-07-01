@@ -3,10 +3,7 @@ package com.example.services;
 import com.example.exceptions.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,13 +11,24 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 
-import static com.example.security.SecurityConstans.JWT_KEY;
-
 @Service
 @RequiredArgsConstructor
-public class JwtValidationService {
+public class JwtValidationService implements com.example.interfaces.JwtValidationService {
 
+    private final SecretKey signingKey;
+
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Checks if the provided authorization token is a valid token.
+     *
+     * @param authorizationHeader The authorization header containing the token. It should be in the format "Bearer <token>".
+     * @return {@code true} if the token is valid, {@code false} otherwise.
+     * @throws InvalidTokenException If the token is invalid or cannot be parsed.
+     */
+    @Override
     public boolean isTokenValid(String authorizationHeader) {
+
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;
         }
@@ -30,7 +38,7 @@ public class JwtValidationService {
         if(jwt != null) { // todo jwt.isEmpty()
             try {
                 // does the validation and returns the claims
-                Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(jwt).getBody();
+                Claims claims = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(jwt).getBody();
 
                 // get the username and authorities to create a UPA token and set authentication in the security context
                 String username = String.valueOf(claims.get("username"));
@@ -49,10 +57,4 @@ public class JwtValidationService {
         }
         return true;
     }
-
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JWT_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
 }

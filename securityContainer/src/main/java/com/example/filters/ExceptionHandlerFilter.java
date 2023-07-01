@@ -28,14 +28,15 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             HttpStatus badRequest = HttpStatus.BAD_REQUEST;
 
             ExceptionResponse exceptionResponse = new ExceptionResponse(
-                    e.getMessage(),
-                    badRequest);
+                    e.getMessage());
 
             response.setStatus(badRequest.value());
             response.setContentType("application/json");
             response.getWriter().write(convertObjectToJson(exceptionResponse));
         }
     }
+
+    //-----------------------------------------------------------------------------------------------
 
     public static String convertObjectToJson(Object object) throws JsonProcessingException {
         if (object == null) {

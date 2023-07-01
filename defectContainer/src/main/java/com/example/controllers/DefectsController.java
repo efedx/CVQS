@@ -18,21 +18,14 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/defects")
 @RequiredArgsConstructor
 public class DefectsController {
 
-    @Autowired
-    ListDefectsService listDefectsService;
-    @Autowired
-    DefectImageService defectImageService;
-    @Autowired
-    RegisterDefectsService registerDefectsService;
+    private final ListDefectsService listDefectsService;
+    private final DefectImageService defectImageService;
+    private final RegisterDefectsService registerDefectsService;
 
-//    @GetMapping("getDefectImage/{defectId}")
-//    public DefectImageResponseDto getdDefectImage(@PathVariable Long defectId) {
-//        return listDefectsService.getDefectImage(defectId);
-//    }
+    //-----------------------------------------------------------------------------------------------
 
     @GetMapping("/defects/getDefectImage/{defectId}")
     public ResponseEntity<byte[]> getDefectImage(@RequestHeader("Authorization") String authorizationHeader,

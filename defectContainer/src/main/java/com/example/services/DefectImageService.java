@@ -36,11 +36,20 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
     @Value("${url.security.defects}")
     private String securityDefectsUrl;
 
-    @Autowired
-    DefectRepository defectRepository;
-    @Autowired
-    RestTemplate restTemplate;
+    private final DefectRepository defectRepository;
+    private final RestTemplate restTemplate;
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Retrieves the defect image and combines it with additional SVG information to generate an image with defects located
+     *
+     * @param authorizationHeader The authorization header containing the authentication token.
+     * @param defectId            The ID of the defect for which the image is requested.
+     * @return The combined image as a byte array.
+     * @throws NoDefectWithIdException       If no defect exists with the given defect ID.
+     * @throws IOException                   If an I/O error occurs while reading the defect image.
+     */
     @Override
     @Transactional
     public byte[] getDefectImage(String authorizationHeader, Long defectId) throws Exception {
@@ -53,7 +62,6 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
         ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new NoDefectWithIdException("Defect with id " + defectId + " does not exist"));
-        //Optional<Defect> defect = defectRepository.findById(defectId).orElseThrow(() -> new IllegalStateException("defect with id " + defectId + " does not exist"));
         List<Location> locationList = defect.getLocationList();
 
         BufferedImage bufferedImage = ImageIO.read(defect.getDefectImageBlob().getBinaryStream());
@@ -70,6 +78,8 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
 
         return combinedImageByte;
     }
+
+    //-----------------------------------------------------------------------------------------------
 
     private Document createDocument(int imageWidth, int imageHeight, List<Location> locationList) throws Exception {
 
@@ -96,6 +106,8 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
         return document;
     }
 
+    //-----------------------------------------------------------------------------------------------
+
     // creates a png from an SVG
     private byte[] generateImageFromSVG(Document document) throws Exception {
 
@@ -118,6 +130,9 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
 
         return renderedImageFromSVG;
     }
+
+    //-----------------------------------------------------------------------------------------------
+
 
     // combines svg-image and defect-image
     private byte[] combineSVGImageWithDefectImage(byte[] SVGImageByte, byte[] defectImageByte, int imageWidth, int imageHeight) throws IOException {
@@ -148,6 +163,8 @@ public class DefectImageService implements com.example.interfaces.DefectImageSer
 
         //transcoder.addTranscodingHint(JPEGTranscoder.KEY_BACKGROUND_COLOR, Color.WHITE);
     }
+
+    //-----------------------------------------------------------------------------------------------
 
     // returns the dimensions of an image
     public int[] getImageDimensionsFromBlob(Blob defectBlobImage) throws Exception {

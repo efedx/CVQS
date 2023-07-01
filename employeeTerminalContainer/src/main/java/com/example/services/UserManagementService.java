@@ -1,6 +1,7 @@
 package com.example.services;
 
 import com.example.dto.*;
+import com.example.exceptions.NoEmployeeWithIdException;
 import com.example.exceptions.NoRolesException;
 import com.example.exceptions.TakenUserNameException;
 import com.example.model.Employee;
@@ -8,9 +9,7 @@ import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import com.example.repository.RolesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +20,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class UserManagementService implements com.example.interfaces.UserManagementService {
 
     @Value("${url.security.login}")
@@ -29,23 +27,22 @@ public class UserManagementService implements com.example.interfaces.UserManagem
     @Value("${url.security.userManagement}")
     String securityUserManagementUrl;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private RolesRepository rolesRepository;
-    @Autowired
-    private SecurityContainerService securityContainerService;
+    private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RolesRepository rolesRepository;
+    private final SecurityContainerService securityContainerService;
 
-    //--------------------------------------------------
+    //-----------------------------------------------------------------------------------------------
 
     /**
-     Registers new employees based on the provided authorization header and a list of registration request data.
-     @param authorizationHeader The authorization header containing the authentication token.
-     @param registerRequestDtoList A list of RegisterRequestDto objects containing the registration data for each employee.
-     @return A Set<Employee> containing the newly registered employees.
-     @throws IllegalStateException if the provided username already exists for any employee in the database.
+     * Registers multiple employees with the provided user details and saves them to the database.
+     *
+     * @param authorizationHeader    The authorization header containing the authentication token.
+     * @param registerRequestDtoList The list of RegisterRequestDto objects containing the employee details for registration.
+     * @return The set of registered employees.
+     * @throws JsonProcessingException if an error occurs during JSON processing.
+     * @throws TakenUserNameException  if the username is already taken by an existing employee.
+     * @throws NoRolesException        if an employee does not have at least one role assigned.
      */
     @Override
     public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
@@ -58,12 +55,10 @@ public class UserManagementService implements com.example.interfaces.UserManagem
 
             Optional<Employee> employeeControl = employeeRepository.findByUsername(registerRequestDto.getUsername());
 
-            // check if the user with that username exists
             if(employeeControl.isPresent()) {
                 throw new TakenUserNameException("Username: " + employeeControl.get().getUsername() + " is taken");
             }
 
-            // if not create an employee
             String  username = registerRequestDto.getUsername();
 
             if(registerRequestDto.getRoleSet().size() == 0) {
@@ -81,6 +76,16 @@ public class UserManagementService implements com.example.interfaces.UserManagem
         return employeeSet;
     }
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Registers multiple admin employees with the provided user details and saves them to the database.
+     *
+     * @param registerRequestDtoList The list of RegisterRequestDto objects containing the admin employee details for registration.
+     * @return The set of registered admin employees.
+     * @throws TakenUserNameException if the username is already taken by an existing employee.
+     * @throws NoRolesException       if an employee does not have at least one role assigned.
+     */
     public Set<Employee> registerAdmin(List<RegisterRequestDto> registerRequestDtoList) {
 
         Set<Employee> employeeSet = new HashSet<>();
@@ -111,6 +116,8 @@ public class UserManagementService implements com.example.interfaces.UserManagem
         return employeeSet;
     }
 
+    //-----------------------------------------------------------------------------------------------
+
     /**
      Performs a login request with the provided login credentials and retrieves a JWT token.
      @param loginRequestDto The LoginRequestDto object containing the login credentials.
@@ -119,19 +126,23 @@ public class UserManagementService implements com.example.interfaces.UserManagem
     @Override
     public JwtDto login(LoginRequestDto loginRequestDto) {
 
-        ResponseEntity<JwtDto> jwtResponse = securityContainerService.loginValidation(loginRequestDto, securityLoginUrl);
+        ResponseEntity<JwtDto> jwtResponse = securityContainerService.login(loginRequestDto, securityLoginUrl);
 
         JwtDto jwtDto = jwtResponse.getBody();
 
         return jwtDto;
     }
 
+    //-----------------------------------------------------------------------------------------------
+
     /**
-     Deletes an employee by their ID, authenticated with the provided authorization header.
-     @param authorizationHeader The authorization header containing the authentication token.
-     @param id The ID of the employee to be deleted.
-     @return The ID of the deleted employee.
-     @throws IllegalStateException if no employee exists with the provided ID.
+     * Deletes an employee with the specified ID by marking it as deleted in the database.
+     *
+     * @param authorizationHeader The authorization header containing the authentication token.
+     * @param id                  The ID of the employee to delete.
+     * @return The ID of the deleted employee.
+     * @throws JsonProcessingException   if an error occurs during JSON processing.
+     * @throws NoEmployeeWithIdException if no employee with the specified ID exists.
      */
     @Transactional
     @Override
@@ -139,7 +150,7 @@ public class UserManagementService implements com.example.interfaces.UserManagem
 
         securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
 
-        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists");
+        if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists");
 
         else {
             employeeRepository.setDeletedTrue(id);
@@ -147,13 +158,17 @@ public class UserManagementService implements com.example.interfaces.UserManagem
         }
     }
 
+    //-----------------------------------------------------------------------------------------------
+
     /**
-     Updates an employee with the provided authorization header, employee ID, and update request data.
-     @param authorizationHeader The authorization header containing the authentication token.
-     @param id The ID of the employee to be updated.
-     @param updateRequestDto The UpdateRequestDto object containing the updated employee data.
-     @return The updated Employee object.
-     @throws IllegalStateException if no employee exists with the provided ID.
+     * Updates the details of an employee with the specified ID.
+     *
+     * @param authorizationHeader The authorization header containing the authentication token.
+     * @param id                  The ID of the employee to update.
+     * @param updateRequestDto    The UpdateRequestDto object containing the updated employee details.
+     * @return The updated Employee object.
+     * @throws JsonProcessingException    if an error occurs during JSON processing.
+     * @throws NoEmployeeWithIdException      if no employee with the specified ID exists.
      */
     @Transactional
     @Override
@@ -161,13 +176,12 @@ public class UserManagementService implements com.example.interfaces.UserManagem
 
         securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
 
-        if(!employeeRepository.existsById(id)) throw new IllegalStateException("Employee with id " + id + " does not exists"); // string builder
+        if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists"); // string builder
 
         String username = updateRequestDto.getUsername();
 
         String password = null;
         if(updateRequestDto.getPassword() != null) {
-             //password = passwordEncoder.encode(updateRequestDto.getPassword());
              password = updateRequestDto.getPassword();
         }
 
@@ -182,7 +196,6 @@ public class UserManagementService implements com.example.interfaces.UserManagem
 
         if(rolesSet.size() != 0) {
             rolesRepository.deleteRoleById(employee.getId());
-            //employee.getRoles().clear();
             employee.updateRoles(rolesSet);
         }
         employeeRepository.save(employee);
@@ -190,9 +203,7 @@ public class UserManagementService implements com.example.interfaces.UserManagem
         return employee;
     }
 
-    //-----------------------------------------------------
-
-
+    //-----------------------------------------------------------------------------------------------
 
     /**
      Converts a Set of RegisterRequestDto.RoleDto objects into a Set of Roles objects associated with the provided employee.

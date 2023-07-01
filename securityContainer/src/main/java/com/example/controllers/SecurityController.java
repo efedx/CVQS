@@ -2,27 +2,21 @@ package com.example.controllers;
 
 import com.example.dto.JwtDto;
 import com.example.dto.LoginRequestDto;
-import com.example.repository.EmployeeRepository;
 import com.example.services.JwtValidationService;
 import com.example.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class SecurityController {
 
-    @Autowired
-    LoginService loginService;
-    @Autowired
-    EmployeeRepository employeeRepository;
-    @Autowired
-    JwtValidationService jwtValidationService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final LoginService loginService;
+    private final JwtValidationService jwtValidationService;
+
+    //-----------------------------------------------------------------------------------------------
 
     @PostMapping("/login") // NO AUTHORIZATION
     public ResponseEntity<JwtDto> login(@RequestBody LoginRequestDto loginRequestDto) {

@@ -6,6 +6,7 @@ import com.example.model.Department;
 import com.example.model.Terminal;
 import com.example.repository.DepartmentRepository;
 import com.example.repository.TerminalRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,20 +26,23 @@ public class RegisterTerminalsService implements com.example.interfaces.Register
     @Value("${url.security.terminals}")
     String securityTerminalsUrl;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-    @Autowired
-    private RestTemplate restTemplate;
+    private final DepartmentRepository departmentRepository;
+    private final SecurityContainerService securityContainerService;
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Registers terminals for multiple departments and saves them to the database.
+     *
+     * @param authorizationHeader     The authorization header containing the authentication token.
+     * @param registerTerminalDtoList The list of RegisterTerminalDto objects containing the terminal details for each department.
+     * @return The set of departments with the registered terminals.
+     * @throws JsonProcessingException if an error occurs during JSON processing.
+     */
     @Override
-    public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) {
+    public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityTerminalsUrl, HttpMethod.POST, requestEntity, Object.class);
+        securityContainerService.jwtValidation(authorizationHeader, securityTerminalsUrl);
 
         Set<Department> departmentSet = new HashSet<>();
 
@@ -52,6 +56,8 @@ public class RegisterTerminalsService implements com.example.interfaces.Register
         }
         return departmentSet;
     }
+
+    //-----------------------------------------------------------------------------------------------
 
     private List<Terminal> getTerminalListFromTerminalDtoList(Department department, ArrayList<RegisterTerminalDto.TerminalDto> terminalDtoList) {
 

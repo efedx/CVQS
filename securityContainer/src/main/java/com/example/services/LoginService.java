@@ -7,7 +7,6 @@ import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -17,17 +16,24 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class LoginService implements com.example.interfaces.LoginService {
 
-    @Autowired
-    private JwtGenerationService jwtGenerationService;
-    @Autowired
+    private final JwtGenerationService jwtGenerationService;
     private final AuthenticationManager authenticationManager;
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Authenticates a user and generates a JWT token upon successful authentication.
+     *
+     * @param loginRequestDto The DTO object containing the username and password for login.
+     * @return The generated JWT token as a string.
+     * @throws CustomBadCredentialsException If the provided credentials are invalid.
+     * @throws UsernameNotFoundException    If the user is not found with the given username.
+     */
     @Override
     public String login(LoginRequestDto loginRequestDto) {
 
@@ -48,8 +54,6 @@ public class LoginService implements com.example.interfaces.LoginService {
             String name = employee.getUsername();
             String jwt = jwtGenerationService.generateJwt(name, rolesSet);
             return jwt;
-
-            // send the response with a JWT created
 
         } catch (AuthenticationException exception) {
             throw new CustomBadCredentialsException("Bad credentials");

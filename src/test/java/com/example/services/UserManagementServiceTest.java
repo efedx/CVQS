@@ -33,10 +33,8 @@ class UserManagementServiceTest {
     EmployeeRepository employeeRepository;
     @Mock
     RestTemplate restTemplate;
-//    @Autowired
     @Mock
     PasswordEncoder passwordEncoder;
-//    @InjectMocks
     @InjectMocks
     UserManagementService underTestUserManagementService;
 

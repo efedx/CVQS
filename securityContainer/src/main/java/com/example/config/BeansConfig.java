@@ -2,8 +2,12 @@ package com.example.config;
 
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,19 +17,22 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.crypto.SecretKey;
 import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
-@RequiredArgsConstructor
 public class BeansConfig {
 
-    private final EmployeeRepository employeeRepository;
+    @Value("${jwt.key}")
+    String JWT_KEY;
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return username -> employeeRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "not found"));
-//    }
+    @Bean
+    public SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(JWT_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,6 +45,11 @@ public class BeansConfig {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
     @Bean

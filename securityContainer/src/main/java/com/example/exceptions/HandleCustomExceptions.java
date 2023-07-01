@@ -22,12 +22,9 @@ public class HandleCustomExceptions {
         HttpStatus badRequestHttStatus = HttpStatus.BAD_REQUEST;
 
         ExceptionResponse exceptionResponse = new ExceptionResponse(
-                e.getMessage(),
-                badRequestHttStatus
+                e.getMessage()
         );
 
-        //return new ResponseEntity<>(exceptionResponse, badRequest);
         return ResponseEntity.status(badRequestHttStatus).contentType(MediaType.APPLICATION_JSON).body(exceptionResponse);
     }
-
 }

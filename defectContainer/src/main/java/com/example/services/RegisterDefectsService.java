@@ -5,9 +5,7 @@ import com.example.model.Defect;
 import com.example.model.Location;
 import com.example.model.Vehicle;
 import com.example.repository.VehicleRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,17 +18,25 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class RegisterDefectsService implements com.example.interfaces.RegisterDefectsService {
 
     @Value("${url.security.defects}")
     private String securityDefectsUrl;
 
-    @Autowired
-    private VehicleRepository vehicleRepository;
-    @Autowired
-    RestTemplate restTemplate;
+    private final VehicleRepository vehicleRepository;
+    private final RestTemplate restTemplate;
 
+    //-----------------------------------------------------------------------------------------------
+
+    /**
+     * Registers defects for multiple vehicles and saves them to the database.
+     *
+     * @param authorizationHeader     The authorization header containing the authentication token.
+     * @param registerDefectDtoList   The list of RegisterDefectDto objects containing the defect details for each vehicle.
+     * @param defectImageBytes        The byte array representing the defect image.
+     * @return The list of vehicles with the registered defects.
+     * @throws Exception               If an error occurs during the registration or processing of the defects.
+     */
     @Override
     public List<Vehicle> registerDefects(String authorizationHeader, List<RegisterDefectDto> registerDefectDtoList,
                                          byte[] defectImageBytes) throws Exception {
@@ -47,7 +53,7 @@ public class RegisterDefectsService implements com.example.interfaces.RegisterDe
         for(RegisterDefectDto registerDefectDto : registerDefectDtoList) {
             Vehicle vehicle = new Vehicle();
 
-            List<Defect> defectList = defectDto2Defect(vehicle, registerDefectDto, defectImageBytes);
+            List<Defect> defectList = defectDtoToDefectList(vehicle, registerDefectDto, defectImageBytes);
 
             vehicle.setVehicleNo(registerDefectDto.getVehicleNo());
             vehicle.setDefectList(defectList);
@@ -58,13 +64,13 @@ public class RegisterDefectsService implements com.example.interfaces.RegisterDe
         return vehicleList;
     }
 
+    //-----------------------------------------------------------------------------------------------
+
     // returns a List<Defect> populated with locations given in a LogDefectDto object
-    private List<Defect> defectDto2Defect(Vehicle vehicle, RegisterDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
+    private List<Defect> defectDtoToDefectList(Vehicle vehicle, RegisterDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
 
         List<Defect> defectsList = new ArrayList<>();
         Blob defectImageBlob = new SerialBlob(defectImageByte);
-
-        // Byte[] defectImageBytes = defectImage.getBytes();
 
         // defectDto has a defect name and locations specified with that defect. Such as ["A", (100, 200), (500, 600)]
         for(RegisterDefectDto.DefectDto defectDto: registerDefectDto.getDefectList()) {

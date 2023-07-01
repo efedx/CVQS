@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class JwtValidationController {
 
-    @Autowired
-    JwtValidationService jwtValidationService;
+    private final JwtValidationService jwtValidationService;
+
+    //-----------------------------------------------------------------------------------------------
 
     @PostMapping("/isTokenValid") // todo only admins can do that
     public ResponseEntity<Boolean> isTokenValid(@RequestHeader("Authorization") String jwt) {

@@ -9,60 +9,51 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.*;
 
-import static com.example.security.SecurityConstans.JWT_KEY;
-
 @Service
 @RequiredArgsConstructor
-public class JwtGenerationService {
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
+public class JwtGenerationService implements com.example.interfaces.JwtGenerationService {
+
+    private final SecretKey signingKey;
+
+    //-----------------------------------------------------------------------------------------------
 
     Date now = new Date(System.currentTimeMillis());
         Date expiration = new Date(now.getTime() + 999999999); // 360000000
 
-    // used for authentication
-    public String generateJwt(Authentication authentication) {
-        return Jwts.builder()
-                .setIssuer("Toyota Project")
-                .setIssuedAt(now)
-                .setExpiration(expiration)
-                .claim("username", authentication.getName())
-                .claim("authorities", grantedAuthoritiesToString(authentication.getAuthorities()))
-                .signWith(SignatureAlgorithm.HS256, getSigningKey())
-                .compact();
-    }
 
+    /**
+     * Generates a JSON Web Token (JWT) for the given username and set of roles.
+     *
+     * @param username  The username associated with the JWT.
+     * @param rolesSet  The set of roles associated with the JWT.
+     * @return The generated JWT as a string.
+     */
+    @Override
     public String generateJwt(String username, Set<Roles> rolesSet) {
         return Jwts.builder()
                 .setIssuer("Toyota Project")
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .claim("username", username)
-                //.claim("authorities", roles)
-                //.claim("authorities", grantedAuthoritiesToString(customUserDetailsService.getSimpleGrantedAuthorities(roles)))
                 .claim("authorities", rolesSetToString(rolesSet))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JWT_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+    //-----------------------------------------------------------------------------------------------
 
-    private String grantedAuthoritiesToString (Collection<? extends GrantedAuthority> grantedAuthorityCollection) {
-        Set<String> authoritiesStringSet = new HashSet<>(); // set is an interface, hashset is an implementation
-        for(GrantedAuthority authority: grantedAuthorityCollection) {
-            authoritiesStringSet.add(authority.getAuthority());
-        }
-        return String.join(",", authoritiesStringSet);
-    }
-
+    /**
+     * Converts a set of Roles to a comma-separated string representation.
+     *
+     * @param rolesSet  The set of Roles to convert.
+     * @return The comma-separated string representation of the roles.
+     */
     private String rolesSetToString (Set<Roles> rolesSet) {
         Set<String> roleStringSet = new HashSet<>(); // set is an interface, hashset is an implementation
         for(Roles role: rolesSet) {

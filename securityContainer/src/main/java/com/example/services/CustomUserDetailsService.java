@@ -3,10 +3,9 @@ package com.example.services;
 import com.example.model.Employee;
 import com.example.model.Roles;
 import com.example.repository.EmployeeRepository;
-import com.example.repository.RolesRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,23 +13,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private RolesRepository rolesRepository;
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return username -> employeeRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "not found"));
-//    }
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + username));
 
         Set<Roles> roles = employee.getRoles();
-        Set<GrantedAuthority> grantedAuthorities = getSimpleGrantedAuthorities(roles);
+        Set<GrantedAuthority> grantedAuthorities = getSimpleGrantedAuthoritiesFromRolesSet(roles);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(employee.getUsername())
@@ -52,8 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    // using a set of roles, this method yields a set of granted authorities
-    public Set<GrantedAuthority> getSimpleGrantedAuthorities(Set<Roles> rolesSet) {
+    public Set<GrantedAuthority> getSimpleGrantedAuthoritiesFromRolesSet(Set<Roles> rolesSet) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         for(Roles role: rolesSet) {

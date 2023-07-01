@@ -5,6 +5,7 @@ import com.example.dto.TerminalResponseDto;
 import com.example.model.Terminal;
 import com.example.services.ListTerminalsService;
 import com.example.services.RegisterTerminalsService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,16 +23,15 @@ import java.util.List;
 public class TerminalsController {
 
     private static final Logger logger = LogManager.getLogger(TerminalsController.class);
+    private final RegisterTerminalsService registerTerminalsService;
+    private final ListTerminalsService listTerminalsService;
 
-    @Autowired
-    RegisterTerminalsService registerTerminalsService;
-    @Autowired
-    ListTerminalsService listTerminalsService;
+    //-----------------------------------------------------------------------------------------------
 
     @PostMapping("/registerTerminals")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerTerminals(@RequestHeader("Authorization") String authorizationHeader,
-                                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) {
+                                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
         registerTerminalsService.registerTerminals(authorizationHeader, registerTerminalDtoList);
         return ResponseEntity.ok().body("Terminals registered");
     }
@@ -41,7 +41,7 @@ public class TerminalsController {
     public ResponseEntity<Page<TerminalResponseDto>> getTerminalsPage(@RequestHeader("Authorization") String authorizationHeader,
                                                                       @PathVariable int pageNumber,
                                                                       @RequestParam String sortDirection,
-                                                                      @RequestParam(required = false) String terminalName) {
+                                                                      @RequestParam(required = false) String terminalName) throws JsonProcessingException {
         if(terminalName != null) {
             return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(authorizationHeader, pageNumber, sortDirection, terminalName));
         }

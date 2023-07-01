@@ -22,12 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-public class Roles {
-
-    @Id
-    @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1)
-    @GeneratedValue(generator = "seq_gen", strategy = GenerationType.SEQUENCE)
-    private Long roleId;
+public class Roles extends com.example.model.Id {
 
     private String roleName;
 

@@ -45,18 +45,7 @@ public class Employee extends Id {
     private Boolean deleted;
 
     public void updateRoles(Set<Roles> rolesSet) {
-        //if(rolesSet.size() != 0) {
-            //this.roles.clear();
-            //this.roles.addAll(rolesSet);
             this.setRoles(rolesSet);
-        //}
-
-//        if(rolesSet.size() == 0) {
-//            this.roles =
-//        }
-//        if (rolesSet.size() != 0) {
-//            this.roles.addAll(rolesSet);
-//        }
     }
 
 
@@ -66,10 +55,6 @@ public class Employee extends Id {
         this.password = password;
         this.roles = roles;
     }
-
-//    public void addRoleSet(Set<Roles> roleSet) {
-//        this.roles.addAll(roleSet);
-//    }
 
     @PrePersist
     void preInsert() {
@@ -82,9 +67,4 @@ public class Employee extends Id {
 //            this.roles = rolesSet;
 //        }
     }
-
-
-    //-------------------------------------------------------------
-
-    // since only the email will be unique we need it as the username But not here
 }
