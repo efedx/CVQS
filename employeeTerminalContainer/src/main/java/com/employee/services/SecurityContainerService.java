@@ -1,12 +1,13 @@
 package com.employee.services;
 
+import com.common.JwtDto;
+import com.common.JwtGenerationRequestDto;
+import com.common.LoginRequestDto;
 import com.employee.exceptions.CustomSecurityException;
 import com.employee.exceptions.SecurityExceptionResponse;
-import com.common.JwtDto;
-import com.employee.dto.JwtGenerationRequestDto;
-import com.employee.dto.LoginRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.security.SecurityClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class SecurityContainerService {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final SecurityClient securityClient;
 
     //-----------------------------------------------------------------------------------------------
 
@@ -26,17 +28,25 @@ public class SecurityContainerService {
      *If the validation response indicates an error, a CustomSecurityException is thrown.
      *
      *@param authorizationHeader The authorization header containing the JWT token.
-     *@param url The URL to which the validation request is sent.
+     *@param serviceName         The name of the service to validate the JWT against.
      *@throws JsonProcessingException If an error occurs during JSON processing.
      *@throws CustomSecurityException If the validation response indicates an error.
      */
-    public void jwtValidation(String authorizationHeader, String url) throws JsonProcessingException {
+    public void jwtValidation(String authorizationHeader, String serviceName) throws JsonProcessingException {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
-        ResponseEntity<String> validationResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        httpHeaders.set("Authorization", authorizationHeader);
+//        HttpEntity<JwtGenerationRequestDto> requestEntity = new HttpEntity<>(httpHeaders);
+
+        if(serviceName.equals("user management")) {
+            securityClient.userManagement(authorizationHeader);
+        }
+        else if(serviceName.equals("terminal")) {
+            securityClient.terminals(authorizationHeader);
+        }
+
+        //ResponseEntity<String> validationResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 //       try {
 //           ResponseEntity<String> validationResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 //       } catch (HttpClientErrorException e) {
@@ -62,31 +72,33 @@ public class SecurityContainerService {
      *If the validation response indicates an error, a CustomSecurityException is thrown.
      *
      *@param loginRequestDto The login request data containing the username and password.
-     *@param url The URL to which the validation request is sent.
      *@return A ResponseEntity containing the JWT token if the login is successful.
      *@throws CustomSecurityException If the validation response indicates an error.
      */
-    public ResponseEntity<JwtDto> login (LoginRequestDto loginRequestDto, String url) {
+    public ResponseEntity<JwtDto> login (LoginRequestDto loginRequestDto) {
 
-        HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto);
-        ResponseEntity<Object> jwtResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
+//        HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto);
+//        ResponseEntity<Object> jwtResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
 
-        if(jwtResponse.getStatusCode().is2xxSuccessful()) {
+        ResponseEntity<JwtDto> jwtResponse = securityClient.login(loginRequestDto);
 
-            HttpStatusCode statusCode = jwtResponse.getStatusCode();
-            HttpHeaders headers = jwtResponse.getHeaders();
-            JwtDto jwtDto = objectMapper.convertValue(jwtResponse.getBody(), JwtDto.class);
-
-            return new ResponseEntity<>(jwtDto, headers, statusCode);
-        }
-
-        else {
-            SecurityExceptionResponse securityExceptionResponse = objectMapper.convertValue(jwtResponse.getBody(), SecurityExceptionResponse.class);
-            HttpStatusCode httpStatusCode = jwtResponse.getStatusCode();
-            HttpHeaders responseHttpHeaders = jwtResponse.getHeaders();
-            String message = securityExceptionResponse.message();
-            throw new CustomSecurityException(message, httpStatusCode, responseHttpHeaders);
-        }
+        return jwtResponse;
+//        if(jwtResponse.getStatusCode().is2xxSuccessful()) {
+//
+//            HttpStatusCode statusCode = jwtResponse.getStatusCode();
+//            HttpHeaders headers = jwtResponse.getHeaders();
+//            JwtDto jwtDto = objectMapper.convertValue(jwtResponse.getBody(), JwtDto.class);
+//
+//            return new ResponseEntity<>(jwtDto, headers, statusCode);
+//        }
+//
+//        else {
+//            SecurityExceptionResponse securityExceptionResponse = objectMapper.convertValue(jwtResponse.getBody(), SecurityExceptionResponse.class);
+//            HttpStatusCode httpStatusCode = jwtResponse.getStatusCode();
+//            HttpHeaders responseHttpHeaders = jwtResponse.getHeaders();
+//            String message = securityExceptionResponse.message();
+//            throw new CustomSecurityException(message, httpStatusCode, responseHttpHeaders);
+//        }
     }
 
     //-----------------------------------------------------------------------------------------------

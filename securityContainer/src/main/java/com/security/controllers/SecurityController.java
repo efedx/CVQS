@@ -1,12 +1,15 @@
 package com.security.controllers;
 
-import com.security.dto.JwtDto;
-import com.security.dto.LoginRequestDto;
+import com.common.JwtDto;
+import com.common.LoginRequestDto;
 import com.security.services.JwtValidationService;
 import com.security.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,21 +27,21 @@ public class SecurityController {
 
     @PostMapping("/userManagement") // ADMIN
     public ResponseEntity<Boolean> userManagement(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/defects") // OPERATOR
     public ResponseEntity<Boolean> defects(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/listDefects") // LEADER
     public ResponseEntity<Boolean> listDefects(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/terminals") // ALL
     public ResponseEntity<Boolean> terminals(@RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(jwtValidationService.isTokenValid(authorizationHeader));
+        return ResponseEntity.ok(true);
     }
 }

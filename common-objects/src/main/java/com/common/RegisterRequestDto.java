@@ -1,7 +1,6 @@
-package com.employee.dto;
+package com.common;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,25 +14,15 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class RegisterRequestDto {
-    //@NotEmpty
-    @NotBlank
     private String username;
-    @NotBlank
     @Size(min = 5, message = "Passwords must be at least 5 characters long")
     private String password;
-    //@Email(message = "Provide a valid email address")
-    @NotBlank
-    @Email
     private String email;
-    //@Enumerated(value = EnumType.STRING) // todo make here work with enums
-    // private Role role;
-    //@NotBlank(message = "Roles cannot be null or empty")
+    @NotEmpty(message = "Roles cannot be null or empty")
     private Set<RoleDto> roleSet;
 
     @Data
     public static class RoleDto {
-        //private Long roleId;
         private String roleName;
-
     }
 }

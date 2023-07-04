@@ -1,12 +1,8 @@
 package com.employee.controllers;
 
-import com.common.JwtDto;
-import com.employee.dto.LoginRequestDto;
-import com.employee.dto.RegisterRequestDto;
+import com.common.*;
 import com.employee.dto.UpdateRequestDto;
 import com.employee.exceptions.TakenUserNameException;
-import com.employee.model.Employee;
-import com.employee.model.Roles;
 import com.employee.repository.EmployeeRepository;
 import com.employee.services.UserManagementService;
 import com.fasterxml.jackson.core.JsonProcessingException;

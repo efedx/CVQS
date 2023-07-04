@@ -1,25 +1,24 @@
 package com.employee.services;
 
-import com.common.JwtDto;
-import com.employee.dto.LoginRequestDto;
-import com.employee.dto.RegisterRequestDto;
+import com.common.*;
 import com.employee.dto.UpdateRequestDto;
 import com.employee.exceptions.NoEmployeeWithIdException;
 import com.employee.exceptions.NoRolesException;
 import com.employee.exceptions.TakenUserNameException;
 import com.employee.repository.EmployeeRepository;
 import com.employee.repository.RolesRepository;
-import com.employee.model.Employee;
-import com.employee.model.Roles;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +37,23 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     //-----------------------------------------------------------------------------------------------
 
     /**
+     Performs a login request with the provided login credentials and retrieves a JWT token.
+     @param loginRequestDto The LoginRequestDto object containing the login credentials.
+     @return A JwtDto object containing the JWT token retrieved from the login response.
+     */
+    @Override
+    public JwtDto login(LoginRequestDto loginRequestDto) {
+
+        ResponseEntity<JwtDto> jwtResponse = securityContainerService.login(loginRequestDto);
+
+        JwtDto jwtDto = jwtResponse.getBody();
+
+        return jwtDto;
+    }
+
+    //-----------------------------------------------------------------------------------------------
+
+    /**
      * Registers multiple employees with the provided user details and saves them to the database.
      *
      * @param authorizationHeader    The authorization header containing the authentication token.
@@ -50,7 +66,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     @Override
     public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
 
-        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
+        securityContainerService.jwtValidation(authorizationHeader, "user management");
 
         Set<Employee> employeeSet = new HashSet<>();
 
@@ -122,23 +138,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     //-----------------------------------------------------------------------------------------------
 
     /**
-     Performs a login request with the provided login credentials and retrieves a JWT token.
-     @param loginRequestDto The LoginRequestDto object containing the login credentials.
-     @return A JwtDto object containing the JWT token retrieved from the login response.
-     */
-    @Override
-    public JwtDto login(LoginRequestDto loginRequestDto) {
-
-        ResponseEntity<JwtDto> jwtResponse = securityContainerService.login(loginRequestDto, securityLoginUrl);
-
-        JwtDto jwtDto = jwtResponse.getBody();
-
-        return jwtDto;
-    }
-
-    //-----------------------------------------------------------------------------------------------
-
-    /**
      * Deletes an employee with the specified ID by marking it as deleted in the database.
      *
      * @param authorizationHeader The authorization header containing the authentication token.
@@ -151,7 +150,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     @Override
     public Long deleteEmployeeById(String authorizationHeader, Long id) throws JsonProcessingException {
 
-        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
+        securityContainerService.jwtValidation(authorizationHeader, "user management");
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists");
 
@@ -177,7 +176,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     @Override
     public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) throws JsonProcessingException {
 
-        securityContainerService.jwtValidation(authorizationHeader, securityUserManagementUrl);
+        securityContainerService.jwtValidation(authorizationHeader, "user management");
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists"); // string builder
 
@@ -186,6 +185,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
         String password = null;
         if(updateRequestDto.getPassword() != null) {
              password = updateRequestDto.getPassword();
+             password = passwordEncoder.encode(updateRequestDto.getPassword());
         }
 
         String email = updateRequestDto.getEmail();

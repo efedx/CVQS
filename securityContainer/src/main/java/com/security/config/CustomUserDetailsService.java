@@ -1,4 +1,4 @@
-package com.security.services;
+package com.security.config;
 
 import com.security.model.Employee;
 import com.security.model.Roles;

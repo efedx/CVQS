@@ -1,10 +1,10 @@
 package com.employee.interfaces;
 
+import com.common.Employee;
 import com.common.JwtDto;
-import com.employee.dto.LoginRequestDto;
-import com.employee.dto.RegisterRequestDto;
+import com.common.LoginRequestDto;
+import com.common.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;
-import com.employee.model.Employee;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.transaction.annotation.Transactional;
 

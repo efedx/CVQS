@@ -2,9 +2,13 @@ package com.employee.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -35,7 +39,7 @@ public class HandleCustomExceptions {
                 .body(exceptionResponse);
     }
 
-    @ExceptionHandler(value = {CustomSecurityException.class, ServletException.class, HttpClientErrorException.class})
+    @ExceptionHandler(value = {CustomSecurityException.class, ServletException.class, FeignException.class, HttpClientErrorException.class})
     public ResponseEntity<Object> responseEntityForSecurity(HttpClientErrorException e) throws JsonProcessingException {
 
 //        HttpStatusCode httpStatusCode = e.getHttpStatusCode();

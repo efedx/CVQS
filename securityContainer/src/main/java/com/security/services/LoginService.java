@@ -1,6 +1,6 @@
 package com.security.services;
 
-import com.security.dto.LoginRequestDto;
+import com.common.LoginRequestDto;
 import com.security.exceptions.CustomBadCredentialsException;
 import com.security.model.Employee;
 import com.security.model.Roles;
@@ -13,7 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Set;
 
 @Service
 @Slf4j

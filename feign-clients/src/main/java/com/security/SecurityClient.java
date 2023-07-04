@@ -1,12 +1,16 @@
 package com.security;
 
+import com.common.JwtDto;
+import com.common.LoginRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient("${clients.security.value}")
+@FeignClient(
+        name = "security"
+)
 public interface SecurityClient {
 
     @PostMapping("/login") // NO AUTHORIZATION

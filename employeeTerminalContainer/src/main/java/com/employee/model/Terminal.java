@@ -1,5 +1,6 @@
 package com.employee.model;
 
+import com.common.Id;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;

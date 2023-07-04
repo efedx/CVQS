@@ -1,6 +1,6 @@
 package com.security.interfaces;
 
-import com.security.dto.LoginRequestDto;
+import com.common.LoginRequestDto;
 
 public interface LoginService {
     String login(LoginRequestDto loginRequestDto);

@@ -1,8 +1,8 @@
 package com.employee.services;
 
-import com.employee.repository.TerminalRepository;
 import com.employee.dto.TerminalResponseDto;
 import com.employee.model.Terminal;
+import com.employee.repository.TerminalRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

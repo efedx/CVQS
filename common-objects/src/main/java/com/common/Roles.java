@@ -1,4 +1,4 @@
-package com.employee.model;
+package com.common;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;

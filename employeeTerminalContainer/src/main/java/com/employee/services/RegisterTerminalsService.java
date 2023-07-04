@@ -1,9 +1,9 @@
 package com.employee.services;
 
-import com.employee.repository.DepartmentRepository;
 import com.employee.dto.RegisterTerminalDto;
 import com.employee.model.Department;
 import com.employee.model.Terminal;
+import com.employee.repository.DepartmentRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

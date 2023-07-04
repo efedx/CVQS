@@ -1,10 +1,10 @@
 package com.security.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.exceptions.CustomAccessDeniedHandler;
 import com.security.exceptions.CustomAuthenticationEntryPoint;
 import com.security.filters.ExceptionHandlerFilter;
 import com.security.filters.JwtValidationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +30,7 @@ public class CustomSecurityFilterChain {
 
         http.authorizeHttpRequests()
                 .requestMatchers("/login").permitAll() // white list that does not require authentication
-                .requestMatchers("/userManagement").hasAuthority("ADMIN")
+                .requestMatchers("/userManagement").hasRole("ADMIN")
                 .requestMatchers("/defects").hasAuthority("OPERATOR")
                 .requestMatchers("/listDefects").hasAuthority("LEADER")
                 .anyRequest().authenticated(); // but any other url must be authenticated

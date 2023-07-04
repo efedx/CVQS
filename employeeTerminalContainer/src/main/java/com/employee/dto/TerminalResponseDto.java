@@ -1,9 +1,6 @@
 package com.employee.dto;
 
-import jakarta.annotation.Nullable;
 import lombok.*;
-
-import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor

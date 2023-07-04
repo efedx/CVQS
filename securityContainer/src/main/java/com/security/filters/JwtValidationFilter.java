@@ -45,7 +45,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
                 // get the username and authorities to create a UPA token and set authentication in the security context
                 String username = String.valueOf(claims.get("username"));
-
                 String authorities = String.valueOf(claims.get("authorities"));
 
                 UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(
@@ -53,6 +52,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
                         null,
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
 
+                // set the security context, so that username password authentication filter becomes necessary
                 SecurityContextHolder.getContext().setAuthentication(upaToken);
             }
             catch (Exception e) {

@@ -1,6 +1,6 @@
 package com.employee.repository;
 
-import com.employee.model.Roles;
+import com.common.Roles;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -1,9 +1,9 @@
 package com.employee.services;
 
-import com.employee.dto.LoginRequestDto;
-import com.employee.dto.RegisterRequestDto;
+import com.common.Employee;
+import com.common.LoginRequestDto;
+import com.common.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;
-import com.employee.model.Employee;
 import com.employee.repository.EmployeeRepository;
 import com.employee.repository.RolesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
