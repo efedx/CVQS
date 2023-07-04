@@ -1,7 +1,7 @@
 package com.employee.logAspect;
 
 
-import com.employee.dto.JwtDto;
+import com.common.JwtDto;
 import com.employee.model.Employee;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;

@@ -1,6 +1,6 @@
 package com.employee.controllers;
 
-import com.employee.dto.JwtDto;
+import com.common.JwtDto;
 import com.employee.dto.LoginRequestDto;
 import com.employee.dto.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;

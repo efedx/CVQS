@@ -22,7 +22,7 @@ public class DefectServiceLoggingAspect {
 
     private final Logger logger = LogManager.getLogger(DefectServiceLoggingAspect.class);
 
-    @Pointcut("execution(* com.example.services.*.*(..))") // return type, class, method with any parameters
+    @Pointcut("execution(* com.security.services.*.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
 
     @Around("LoggingPointCut()")

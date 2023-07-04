@@ -2,7 +2,7 @@ package com.employee.services;
 
 import com.employee.exceptions.CustomSecurityException;
 import com.employee.exceptions.SecurityExceptionResponse;
-import com.employee.dto.JwtDto;
+import com.common.JwtDto;
 import com.employee.dto.JwtGenerationRequestDto;
 import com.employee.dto.LoginRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
