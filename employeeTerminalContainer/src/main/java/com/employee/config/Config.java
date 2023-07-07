@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class config {
+public class Config {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

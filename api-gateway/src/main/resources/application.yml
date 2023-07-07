@@ -9,25 +9,48 @@ logging:
     org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
 
 spring:
+  main:
+    allow-circular-references: true
   application:
     name: api-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: employee
-          uri: lb://EMPLOYEE
-          predicates:
-            - Path=/**
+  datasource:
+    username: efe
+    password: password
+    url: jdbc:postgresql://localhost:5434/cvqs
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
 
-        - id: security
-          uri: lb://SECURITY
-          predicates:
-            - Path=/**
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: employee
+#          uri: lb://EMPLOYEE
+#          predicates:
+#            - Path=/userManagement/**
+#          filters:
+#            - AuthenticationFilter
+#
+#        - id: employeeAdmin
+#          uri: lb://EMPLOYEE
+#          predicates:
+#            - Path=/registerAdmin
+#
+#        - id: terminal
+#          uri: lb://EMPLOYEE
+#          predicates:
+#            - Path=/terminals
+#
+#        - id: defect
+#          uri: lb://DEFECT
+#          predicates:
+#            - Path=/defects
 
-        - id: defect
-          uri: lb://DEFECT
-          predicates:
-            - Path=/**
 
 #      discovery:
 #        locator:

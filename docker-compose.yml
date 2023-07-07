@@ -24,66 +24,94 @@ services:
 #      - logs:/var/lib/docker/volumes/logs/_data
 
 
-  security-container:
-    image: 'security-container'
-    hostname: security
-    ports:
-      - "8083:8083"
-    expose:
-      - "8083"
-    build:
-      context: .
-    container_name: security-container
-    depends_on:
-      - db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
-      - SPRING_DATASOURCE_USERNAME=compose-postgres
-      - SPRING_DATASOURCE_PASSWORD=compose-postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-    networks:
-      - micro-service-network
-    volumes:
-      - logs:/var/lib/docker/volumes/logs/_data
+#  security-container:
+#    image: 'security-container'
+#    hostname: security
+#    ports:
+#      - "8083:8083"
+#    expose:
+#      - "8083"
+#    build:
+#      context: .
+#    container_name: security-container
+#    depends_on:
+#      - db
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+#    networks:
+#      - micro-service-network
+#    volumes:
+#      - logs:/var/lib/docker/volumes/logs/_data
+#
+#  employee-terminal-container:
+#    image: 'employee-terminal-container'
+#    ports:
+#      - "8081:8081"
+#    build:
+#      context: .
+#    container_name: employee-terminal-container
+#    depends_on:
+#      - db
+##      - security-container
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+#    networks:
+#      - micro-service-network
+#    volumes:
+#      - logs:/var/lib/docker/volumes/logs/_data
 
-  employee-terminal-container:
-    image: 'employee-terminal-container'
-    ports:
-      - "8081:8081"
-    build:
-      context: .
-    container_name: employee-terminal-container
-    depends_on:
-      - db
-#      - security-container
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
-      - SPRING_DATASOURCE_USERNAME=compose-postgres
-      - SPRING_DATASOURCE_PASSWORD=compose-postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-    networks:
-      - micro-service-network
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      - logs:/var/lib/docker/volumes/logs/_data
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
 
   db:
     image: 'postgres:13.1-alpine'
     container_name: db
     ports:
-      - "5432:5432"
+      - "5434:5432"
     environment:
-      - POSTGRES_USER=compose-postgres
-      - POSTGRES_PASSWORD=compose-postgres
-      - POSTGRES_DB=compose-postgres
+      - POSTGRES_USER=efe
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=cvqs
+      - PGDATA=/var/lib/postgresql/data
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data # host voluma name: path inside the container
     networks:
-      - micro-service-network
+      - postgres
+
+#  rabbitmq:
+#    image: rabbitmq:3.9.11-management-alpine
+#    container_name: rabbitmq
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    networks:
+#      - micro-service-network
 
 volumes:
   pgdata:
   logs:
+  pgadmin:
 
 networks:
+  postgres:
+    driver: bridge
   micro-service-network:
     driver: bridge

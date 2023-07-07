@@ -22,7 +22,8 @@
 		<module>feign-clients</module>
 		<module>common-objects</module>
 		<module>api-gateway</module>
-	</modules>
+        <module>amqp</module>
+    </modules>
 	<properties>
 		<java.version>19</java.version>
 	</properties>

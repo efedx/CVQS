@@ -176,7 +176,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     @Override
     public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) throws JsonProcessingException {
 
-        securityContainerService.jwtValidation(authorizationHeader, "user management");
+        //securityContainerService.jwtValidation(authorizationHeader, "user management");
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists"); // string builder
 
@@ -191,7 +191,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
         String email = updateRequestDto.getEmail();
 
         employeeRepository.updateEmployeeById(id, username, password, email);
-
 
         Employee employee = employeeRepository.findById(id).get();
 
