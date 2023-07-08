@@ -3,8 +3,12 @@ package com.gateway.config;
 import com.gateway.filter.CustomAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient;
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +25,7 @@ public class GatewayConfig {
     }
 
     @Bean
+//    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
@@ -46,7 +51,7 @@ public class GatewayConfig {
                 .route(r -> r
                         .path("/terminals/**")
                         .filters(f -> f.filter(customAuthenticationFilter.apply(new CustomAuthenticationFilter.Config())))
-                        .uri("lb://EMPLOYEE")
+                        .uri("lb://TERMINAL")
                 )
                 .route(r -> r
                         .path("/defects/**")

@@ -1,14 +1,12 @@
 package com.gateway.filter;
 
-import com.security.SecurityClient;
-import lombok.RequiredArgsConstructor;
+import com.securityClient.SecurityClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -52,21 +50,6 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
                 HttpEntity<Boolean> httpRequest = new HttpEntity<>(httpHeaders);
 
                 restTemplate.postForObject(url, httpRequest, Boolean.class);
-
-
-//                return webClient.post()
-//                        .uri("http://localhost:8083/userManagement")
-//                        .header(HttpHeaders.AUTHORIZATION, authHeader)
-//                        .retrieve()
-//                        .bodyToMono(Boolean.class)
-//                        .then(chain.filter(exchange)); // Continue the request chain
-
-//.onStatus(HttpStatus::isError, response -> {
-//                    // Handle error responses from the security service
-//                    // For example, if the role validation fails
-//                    return response.createException()
-//                            .flatMap(Mono::error);
-//                })
             }
             return chain.filter(exchange);
         }, 1);

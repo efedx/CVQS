@@ -15,15 +15,16 @@
 	<name>project</name>
 	<description>Demo project for Spring Boot</description>
 	<modules>
-		<module>securityContainer</module>
-		<module>defectContainer</module>
-		<module>employeeTerminalContainer</module>
+		<module>security</module>
+		<module>defect</module>
+		<module>employee</module>
 		<module>eureka-server</module>
 		<module>feign-clients</module>
 		<module>common-objects</module>
 		<module>api-gateway</module>
         <module>amqp</module>
 		<module>notification</module>
+        <module>terminal</module>
     </modules>
 	<properties>
 		<java.version>19</java.version>
