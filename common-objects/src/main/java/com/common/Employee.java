@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 @Getter
 @Setter
 @Builder
@@ -21,12 +23,11 @@ import static java.lang.Boolean.FALSE;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "employees")
+@Table(name = "employee")
 //@SQLDelete(sql = "UPDATE employees SET deleted = true WHERE id=?")
 //@Where(clause = "deleted = false")
 @FilterDef(name = "deletedEmployeeFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
 @Filter(name = "deletedEmployeeFilter", condition = "deleted = :isDeleted")
-
 public class Employee extends Id {
     private String username;
     private String email;
@@ -40,6 +41,9 @@ public class Employee extends Id {
     @ElementCollection
     private Set<Roles> roles = new HashSet<>();
     private Boolean deleted;
+    private String notification;
+    private String department;
+    private String terminal;
 
     public void updateRoles(Set<Roles> rolesSet) {
             this.setRoles(rolesSet);
@@ -53,15 +57,19 @@ public class Employee extends Id {
         this.roles = roles;
     }
 
+    public Employee(String username, String email, String password, Set<Roles> roles, String department, String terminal) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.department = department;
+        this.terminal = terminal;
+    }
+
     @PrePersist
     void preInsert() {
         if(this.deleted == null) {
             this.deleted = FALSE;
         }
-//        if(this.roles == null || (this.roles.size() == 0)) {
-//            Set<Roles> rolesSet = new HashSet<>();
-//            rolesSet.add(new Roles("ADMIN"));
-//            this.roles = rolesSet;
-//        }
     }
 }

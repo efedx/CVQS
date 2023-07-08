@@ -89,7 +89,8 @@ public class UserManagementService implements com.employee.interfaces.UserManage
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             employee.setEmail(registerRequestDto.getEmail());
             employee.setRoles(getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
-
+            employee.setDepartment(registerRequestDto.getDepartment());
+            employee.setTerminal(registerRequestDto.getTerminal());
             employeeSet.add(employeeRepository.save(employee));
         }
         return employeeSet;
@@ -129,7 +130,8 @@ public class UserManagementService implements com.employee.interfaces.UserManage
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             employee.setEmail(registerRequestDto.getEmail());
             employee.setRoles(getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
-
+            employee.setDepartment(registerRequestDto.getDepartment());
+            employee.setTerminal(registerRequestDto.getTerminal());
             employeeSet.add(employeeRepository.save(employee));
         }
         return employeeSet;

@@ -1,5 +1,6 @@
 package com.common;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,4 +26,8 @@ public class RegisterRequestDto {
     public static class RoleDto {
         private String roleName;
     }
+    @Nullable
+    private String department;
+    @Nullable
+    private String terminal;
 }

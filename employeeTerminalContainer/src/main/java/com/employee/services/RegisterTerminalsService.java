@@ -1,11 +1,14 @@
 package com.employee.services;
 
+import com.amqp.RabbitMQMessagePublisher;
+import com.employee.dto.NotificationRequestDto;
 import com.employee.dto.RegisterTerminalDto;
 import com.employee.model.Department;
 import com.employee.model.Terminal;
 import com.employee.repository.DepartmentRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class RegisterTerminalsService implements com.employee.interfaces.Registe
     @Value("${url.security.terminals}")
     String securityTerminalsUrl;
 
+    private final AmqpTemplate amqpTemplate;
+    private final RabbitMQMessagePublisher rabbitMQMessagePublisher;
     private final DepartmentRepository departmentRepository;
     private final SecurityContainerService securityContainerService;
 
@@ -37,17 +42,30 @@ public class RegisterTerminalsService implements com.employee.interfaces.Registe
     @Override
     public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
 
-        securityContainerService.jwtValidation(authorizationHeader, securityTerminalsUrl);
+        //securityContainerService.jwtValidation(authorizationHeader, securityTerminalsUrl);
 
         Set<Department> departmentSet = new HashSet<>();
 
         for(RegisterTerminalDto registerTerminalDto: registerTerminalDtoList) {
 
             Department department = new Department();
-            department.setDepartmentName(registerTerminalDto.getDepartmentName());
-            department.setTerminalList(getTerminalListFromTerminalDtoList(department, registerTerminalDto.getTerminalList()));
+            String departmentName = registerTerminalDto.getDepartmentName();
+            List<Terminal> terminalList = getTerminalListFromTerminalDtoList(department, registerTerminalDto.getTerminalList());
+
+            department.setDepartmentName(departmentName);
+            department.setTerminalList(terminalList);
 
             departmentSet.add(departmentRepository.save(department));
+
+            for (Terminal terminal: terminalList) {
+                NotificationRequestDto notificationRequestDto = new NotificationRequestDto().builder()
+                        .department(departmentName)
+                        .terminal(terminal.getTerminalName())
+                        .isActive(terminal.getIsActive())
+                        .build();
+                //amqpTemplate.convertAndSend("notification_terminal_exchange", "notification_terminal_routing_key", notificationRequestDto);
+                rabbitMQMessagePublisher.publishNotificationTerminal(notificationRequestDto);
+            }
         }
         return departmentSet;
     }

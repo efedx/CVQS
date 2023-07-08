@@ -6,6 +6,7 @@ import com.defect.model.Defect;
 import com.defect.model.Location;
 import com.defect.model.Vehicle;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class RegisterDefectsService implements com.defect.interfaces.RegisterDef
         httpHeaders.set("Authorization", authorizationHeader);
         HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
+//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         List<Vehicle> vehicleList = new ArrayList<>();
 

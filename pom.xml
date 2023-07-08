@@ -23,6 +23,7 @@
 		<module>common-objects</module>
 		<module>api-gateway</module>
         <module>amqp</module>
+		<module>notification</module>
     </modules>
 	<properties>
 		<java.version>19</java.version>
