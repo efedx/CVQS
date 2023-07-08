@@ -23,7 +23,7 @@ import static java.lang.Boolean.TRUE;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "employee")
+@Table(name = "employees")
 //@SQLDelete(sql = "UPDATE employees SET deleted = true WHERE id=?")
 //@Where(clause = "deleted = false")
 @FilterDef(name = "deletedEmployeeFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))

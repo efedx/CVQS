@@ -29,14 +29,34 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder, CustomAuthenticationFilter customAuthenticationFilter) {
 
         return routeLocatorBuilder.routes()
+
                 .route(r -> r
-                        .path("/userManagement/updateEmployeeById/**")
+                        .path("/registerAdmin")
+                        .uri("lb://EMPLOYEE")
+                )
+                .route(r -> r
+                        .path("/login")
+                        .uri("lb://EMPLOYEE")
+                )
+                .route(r -> r
+                        .path("/userManagement/**")
                         .filters(f -> f.filter(customAuthenticationFilter.apply(new CustomAuthenticationFilter.Config())))
                         .uri("lb://EMPLOYEE")
                 )
                 .route(r -> r
-                        .path("/userManagement/registerEmployee")
+                        .path("/terminals/**")
+                        .filters(f -> f.filter(customAuthenticationFilter.apply(new CustomAuthenticationFilter.Config())))
                         .uri("lb://EMPLOYEE")
+                )
+                .route(r -> r
+                        .path("/defects/**")
+                        .filters(f -> f.filter(customAuthenticationFilter.apply(new CustomAuthenticationFilter.Config())))
+                        .uri("lb://DEFECT")
+                )
+                .route(r -> r
+                        .path("/registerDefects")
+                        .filters(f -> f.filter(customAuthenticationFilter.apply(new CustomAuthenticationFilter.Config())))
+                        .uri("lb://DEFECT")
                 )
                 .build();
     }

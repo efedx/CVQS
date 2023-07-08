@@ -42,15 +42,16 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
 
 
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-                String contextPath = exchange.getRequest().getPath().contextPath().value();
+
+                String contextPath = exchange.getRequest().getPath().value();
+                String determiner = contextPath.split("/")[1];
+                String url = "http://localhost:8083/" + determiner;
 
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.set("Authorization", authHeader);
-
                 HttpEntity<Boolean> httpRequest = new HttpEntity<>(httpHeaders);
 
-
-                restTemplate.postForObject("http://localhost:8083/userManagement", httpRequest, Boolean.class);
+                restTemplate.postForObject(url, httpRequest, Boolean.class);
 
 
 //                return webClient.post()

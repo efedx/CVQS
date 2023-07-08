@@ -6,7 +6,6 @@ import com.defect.model.Defect;
 import com.defect.model.Location;
 import com.defect.model.Vehicle;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;

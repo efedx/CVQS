@@ -30,12 +30,12 @@ public class SecurityController {
         return ResponseEntity.ok(true);
     }
 
-    @PostMapping("/defects") // OPERATOR
+    @PostMapping("/registerDefects") // OPERATOR
     public ResponseEntity<Boolean> defects(@RequestHeader("Authorization") String authorizationHeader) {
         return ResponseEntity.ok(true);
     }
 
-    @PostMapping("/listDefects") // LEADER
+    @PostMapping("/defects") // LEADER
     public ResponseEntity<Boolean> listDefects(@RequestHeader("Authorization") String authorizationHeader) {
         return ResponseEntity.ok(true);
     }

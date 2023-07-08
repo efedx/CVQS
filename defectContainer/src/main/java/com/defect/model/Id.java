@@ -12,7 +12,7 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class Id implements Serializable {
     @jakarta.persistence.Id
-    @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1)
+    @SequenceGenerator(name = "seq_gen", sequenceName = "seq", initialValue = 1, allocationSize = 1)
     @GeneratedValue(generator = "seq_gen", strategy = GenerationType.SEQUENCE)
     private Long id;
 }

@@ -31,8 +31,8 @@ public class CustomSecurityFilterChain {
         http.authorizeHttpRequests()
                 .requestMatchers("/login").permitAll() // white list that does not require authentication
                 .requestMatchers("/userManagement").hasRole("ADMIN")
-                .requestMatchers("/defects").hasAuthority("OPERATOR")
-                .requestMatchers("/listDefects").hasAuthority("LEADER")
+                .requestMatchers("/registerDefects").hasRole("OPERATOR")
+                .requestMatchers("/defects").hasRole("LEADER")
                 .anyRequest().authenticated(); // but any other url must be authenticated
 
         http.exceptionHandling()

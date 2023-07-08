@@ -58,7 +58,7 @@ public class DefectsController {
         }
     }
 
-    @PostMapping("/defects/registerDefects")
+    @PostMapping("/registerDefects")
     public String registerDefects(@RequestPart("registerDefectDto") List<RegisterDefectDto> registerDefectDtoList,
                                   @RequestPart("defectImage") MultipartFile defectImage,
                                   @RequestHeader("Authorization") String authorizationHeader) throws Exception {
