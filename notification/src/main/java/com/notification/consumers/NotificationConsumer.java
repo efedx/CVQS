@@ -1,5 +1,7 @@
-package com.notification;
+package com.notification.consumers;
 
+import com.notification.dtos.NotificationRequestDto;
+import com.notification.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;

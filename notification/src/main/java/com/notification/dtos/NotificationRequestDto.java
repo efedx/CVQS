@@ -1,4 +1,4 @@
-package com.notification;
+package com.notification.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

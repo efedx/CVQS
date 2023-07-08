@@ -1,4 +1,4 @@
-package com.notification;
+package com.notification.repositries;
 
 import com.common.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
