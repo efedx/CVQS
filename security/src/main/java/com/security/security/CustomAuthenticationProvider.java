@@ -1,8 +1,8 @@
 package com.security.security;
 
 import com.security.exceptions.CustomBadCredentialsException;
-import com.security.model.Employee;
-import com.security.model.Roles;
+import com.security.entities.Employee;
+import com.security.entities.Roles;
 import com.security.repository.EmployeeRepository;
 import com.security.config.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;

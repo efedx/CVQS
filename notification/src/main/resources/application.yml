@@ -17,7 +17,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: true
+    show-sql: false
 
   rabbitmq:
     addresses: localhost:5672
@@ -30,6 +30,8 @@ eureka:
     register-with-eureka: true
     enabled: true
 
-#notification:
-#  defect:
-#    queue: defect_notification_queue
+notification:
+  defect:
+    queue: notification_terminal_queue
+    exchange: notification_terminal_exchange
+    routingKey: notification_terminal_routing_key

@@ -5,26 +5,19 @@ import com.defect.repository.VehicleRepository;
 import com.defect.model.Defect;
 import com.defect.model.Vehicle;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class ListDefectsService implements com.defect.interfaces.ListDefectsService {
 
-    @Value("${url.security.listDefects}")
-    private String securityListDefectsUrl;
-
     private final VehicleRepository vehicleRepository;
     private final DefectRepository defectRepository;
-    private final RestTemplate restTemplate;
 
     /**
      * Retrieves a page of defects associated with a specific vehicle.

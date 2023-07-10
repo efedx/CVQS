@@ -1,9 +1,9 @@
 package com.security.services;
 
-import com.common.LoginRequestDto;
+import com.security.dtos.LoginRequestDto;
 import com.security.exceptions.CustomBadCredentialsException;
-import com.security.model.Employee;
-import com.security.model.Roles;
+import com.security.entities.Employee;
+import com.security.entities.Roles;
 import com.security.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

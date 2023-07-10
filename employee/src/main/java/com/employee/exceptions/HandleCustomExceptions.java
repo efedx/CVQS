@@ -39,39 +39,23 @@ public class HandleCustomExceptions {
                 .body(exceptionResponse);
     }
 
-    @ExceptionHandler(value = {CustomSecurityException.class, ServletException.class, FeignException.class, HttpClientErrorException.class})
-    public ResponseEntity<Object> responseEntityForSecurity(HttpClientErrorException e) throws JsonProcessingException {
+    @ExceptionHandler(value = {FeignException.class})
+    public ResponseEntity<Object> responseEntityForSecurity(RuntimeException e) throws JsonProcessingException {
 
-//        HttpStatusCode httpStatusCode = e.getHttpStatusCode();
-//
-//        SecurityExceptionResponse securityExceptionResponse = new SecurityExceptionResponse(
-//                e.getMessage(),
-//                HttpStatus.valueOf(httpStatusCode.value())
-//        );
-//
-//        return ResponseEntity
-//                .status(HttpStatusCode.valueOf(httpStatusCode.value()))
-//                .headers(e.getHttpHeaders())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(securityExceptionResponse);
-//    }
-        //HttpStatusCode httpStatusCode = e.getMessage();
-
-        if(!e.getResponseBodyAsString().isEmpty()) {
-            SecurityExceptionResponse securityExceptionResponse = objectMapper.readValue(e.getResponseBodyAsString(), SecurityExceptionResponse.class);
+        if(!e.getMessage().isEmpty()) {
+            SecurityExceptionResponse securityExceptionResponse = objectMapper.readValue(e.getMessage(), SecurityExceptionResponse.class);
             return ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(403)
                     .headers(HttpHeaders.EMPTY)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(securityExceptionResponse);
         }
         else {
             return ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(403)
                     .headers(HttpHeaders.EMPTY)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(null);
         }
-        }
-
+    }
 }

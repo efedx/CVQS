@@ -1,7 +1,7 @@
 package com.security.controllers;
 
-import com.common.JwtDto;
-import com.common.LoginRequestDto;
+import com.security.dtos.JwtDto;
+import com.security.dtos.LoginRequestDto;
 import com.security.services.JwtValidationService;
 import com.security.services.LoginService;
 import lombok.RequiredArgsConstructor;

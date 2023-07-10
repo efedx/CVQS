@@ -1,5 +1,6 @@
 package com.gateway.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gateway.filter.CustomAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,10 @@ public class GatewayConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    };
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder, CustomAuthenticationFilter customAuthenticationFilter) {

@@ -1,6 +1,6 @@
 package com.terminal.repositories;
 
-import com.terminal.models.Terminal;
+import com.terminal.entities.Terminal;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

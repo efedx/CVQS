@@ -15,17 +15,10 @@
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--    added later-->
         <java.version>19</java.version>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>com.efe</groupId>
-            <artifactId>common-objects</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>

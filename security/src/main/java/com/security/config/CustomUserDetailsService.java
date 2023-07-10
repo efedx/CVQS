@@ -1,7 +1,7 @@
 package com.security.config;
 
-import com.security.model.Employee;
-import com.security.model.Roles;
+import com.security.entities.Employee;
+import com.security.entities.Roles;
 import com.security.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

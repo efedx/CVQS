@@ -1,7 +1,12 @@
 package com.employee.controllers;
 
-import com.common.*;
+
+import com.employee.dto.JwtDto;
+import com.employee.dto.LoginRequestDto;
+import com.employee.dto.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;
+import com.employee.entities.Employee;
+import com.employee.entities.Roles;
 import com.employee.exceptions.TakenUserNameException;
 import com.employee.repository.EmployeeRepository;
 import com.employee.services.UserManagementService;
@@ -30,32 +35,20 @@ public class UserManagementController {
 
     //-----------------------------------------------------------------------------------------------
 
-    @GetMapping("/test1")
-    public String test1() {
-        int id = 5;
-        throw new TakenUserNameException("Id " + 5 + " taken");
-    }
-    @GetMapping("/test2")
-    public String test2() {
-        return "test";
-    }
-
-
     @Validated
     @PostMapping("/registerAdmin") // todo only admins can do that
     //@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerAdmin(@RequestBody List<@Valid RegisterRequestDto> registerRequestDtoList) {
+    public ResponseEntity<String> registerAdmin(@RequestBody List<@Valid RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
 
-        Set<Employee> employeeSet = userManagementService.registerAdmin(registerRequestDtoList);
+        userManagementService.registerEmployee(registerRequestDtoList);
         return ResponseEntity.ok("Employees saved");
     }
 
     @Validated
     @PostMapping("/userManagement/registerEmployee") // todo only admins can do that
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerNewEmployee(@RequestHeader("Authorization") String authorizationHeader,
-                                                      @Valid @RequestBody List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
-        userManagementService.registerEmployee(authorizationHeader, registerRequestDtoList);
+    public ResponseEntity<String> registerEmployee(@RequestBody List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
+        userManagementService.registerEmployee(registerRequestDtoList);
         return ResponseEntity.ok("Employees saved");
     }
 
@@ -72,18 +65,16 @@ public class UserManagementController {
     }
 
     @PostMapping("/userManagement/deleteEmployeeById/{id}")
-    public ResponseEntity<String> deleteEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
-                                     @PathVariable Long id) throws JsonProcessingException {
+    public ResponseEntity<String> deleteEmployeeById(@PathVariable Long id) throws JsonProcessingException {
 
-        userManagementService.deleteEmployeeById(authorizationHeader, id);
+        userManagementService.deleteEmployeeById(id);
         return ResponseEntity.ok().body("Id with " + id + " deleted");
     }
 
     @PutMapping("/userManagement/updateEmployeeById/{id}")
-    public ResponseEntity<String> updateEmployeeById(@RequestHeader("Authorization") String authorizationHeader,
-                                     @PathVariable Long id,
-                                     @RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
-        userManagementService.updateEmployee(authorizationHeader, id, updateRequestDto);
+    public ResponseEntity<String> updateEmployeeById(@PathVariable Long id,
+                                                     @RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
+        userManagementService.updateEmployee(id, updateRequestDto);
         return ResponseEntity.ok().body("Id with " + id + " updated");
     }
 

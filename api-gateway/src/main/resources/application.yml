@@ -17,6 +17,11 @@ spring:
     username: efe
     password: password
     url: jdbc:postgresql://localhost:5434/cvqs
+#    datasource:
+#      driverClassName: org.postgresql.Driver
+#      username: postgres
+#      password: 1526
+#      url: jdbc:postgresql://localhost:5432
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -26,35 +31,8 @@ spring:
         format_sql: true
     show-sql: true
 
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: employee
-#          uri: lb://EMPLOYEE
-#          predicates:
-#            - Path=/userManagement/**
-#          filters:
-#            - AuthenticationFilter
-#
-#        - id: employeeAdmin
-#          uri: lb://EMPLOYEE
-#          predicates:
-#            - Path=/registerAdmin
-#
-#        - id: terminal
-#          uri: lb://EMPLOYEE
-#          predicates:
-#            - Path=/terminals
-#
-#        - id: defect
-#          uri: lb://DEFECT
-#          predicates:
-#            - Path=/defects
-
-
-#      discovery:
-#        locator:
-#          enabled: true
+url:
+  security: http://localhost:8083/
 
 eureka:
   client:

@@ -10,8 +10,8 @@
 
     <Appenders>
         <RollingFile name="RollingFile"
-                     fileName="${sys:user.home}/OneDrive/Desktop/codes/logs/employeeTerminal.log"
-                     filePattern="${sys:user.home}/OneDriveDesktop/codes/logs/employeeTerminal-%d{MM-dd-yyyy}-%i.log.gz"
+                     fileName="${sys:user.home}/OneDrive/Desktop/codes/logs/employee.log"
+                     filePattern="${sys:user.home}/OneDriveDesktop/codes/logs/employee-%d{MM-dd-yyyy}-%i.log.gz"
                      ignoreExceptions="false">
 
             <PatternLayout>

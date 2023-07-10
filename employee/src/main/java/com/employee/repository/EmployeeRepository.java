@@ -1,6 +1,6 @@
 package com.employee.repository;
 
-import com.common.Employee;
+import com.employee.entities.Employee;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

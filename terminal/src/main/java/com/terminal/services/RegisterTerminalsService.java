@@ -1,10 +1,10 @@
 package com.terminal.services;
 
-import com.amqp.RabbitMQMessagePublisher;
+import com.terminal.amqp.RabbitMQMessagePublisher;
 import com.terminal.dtos.NotificationRequestDto;
 import com.terminal.dtos.RegisterTerminalDto;
-import com.terminal.models.Department;
-import com.terminal.models.Terminal;
+import com.terminal.entities.Department;
+import com.terminal.entities.Terminal;
 import com.terminal.repositories.DepartmentRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;

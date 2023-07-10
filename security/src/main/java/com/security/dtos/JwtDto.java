@@ -1,0 +1,18 @@
+package com.security.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class JwtDto {
+    private String username;
+    private String token;
+    private List<String> tokenList;
+}

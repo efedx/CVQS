@@ -1,11 +1,10 @@
 package com.terminal.services;
 
 import com.terminal.dtos.TerminalResponseDto;
-import com.terminal.models.Terminal;
+import com.terminal.entities.Terminal;
 import com.terminal.repositories.TerminalRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

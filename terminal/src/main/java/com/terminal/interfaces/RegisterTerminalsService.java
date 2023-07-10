@@ -1,7 +1,7 @@
 package com.terminal.interfaces;
 
 import com.terminal.dtos.RegisterTerminalDto;
-import com.terminal.models.Department;
+import com.terminal.entities.Department;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;

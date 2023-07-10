@@ -10,11 +10,8 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,11 +29,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefectImageService implements com.defect.interfaces.DefectImageService {
 
-    @Value("${url.security.defects}")
-    private String securityDefectsUrl;
 
     private final DefectRepository defectRepository;
-    private final RestTemplate restTemplate;
 
     //-----------------------------------------------------------------------------------------------
 

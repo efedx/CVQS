@@ -1,9 +1,10 @@
 package com.employee.services;
 
-import com.common.Employee;
-import com.common.LoginRequestDto;
-import com.common.RegisterRequestDto;
+import com.employee.entities.Employee;
+import com.employee.dto.LoginRequestDto;
+import com.employee.dto.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;
+import com.employee.exceptions.TakenUserNameException;
 import com.employee.repository.EmployeeRepository;
 import com.employee.repository.RolesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,8 +36,6 @@ class UserManagementServiceTest {
     PasswordEncoder passwordEncoder;
     @Mock
     RolesRepository rolesRepository;
-    @Mock
-    SecurityContainerService securityContainerService;
     @InjectMocks
     UserManagementService underTestUserManagementService;
 
@@ -62,6 +61,8 @@ class UserManagementServiceTest {
         registerRequestDto.setPassword("password");
         registerRequestDto.setEmail("user@email.com");
         registerRequestDto.setRoleSet(roleDtoSet);
+        registerRequestDto.setDepartment("department");
+        registerRequestDto.setTerminal("terminal");
 
         List<RegisterRequestDto> registerRequestDtoList = new ArrayList<>();
         registerRequestDtoList.add(registerRequestDto);
@@ -71,15 +72,16 @@ class UserManagementServiceTest {
         employee.setPassword(registerRequestDto.getPassword());
         employee.setEmail(registerRequestDto.getEmail());
         employee.setRoles(underTestUserManagementService.getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
+        employee.setDepartment(registerRequestDto.getDepartment());
+        employee.setTerminal(registerRequestDto.getTerminal());
 
         // when
         when(employeeRepository.findByUsername(registerRequestDto.getUsername())).thenReturn(Optional.empty());
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
         when(passwordEncoder.encode(any(String.class))).thenReturn(registerRequestDto.getPassword());
-//        doNothing().when(securityContainerService).jwtValidation(anyString(), anyString());
 
 
-        Set<Employee> employeeSet = underTestUserManagementService.registerEmployee("token", registerRequestDtoList);
+        Set<Employee> employeeSet = underTestUserManagementService.registerEmployee(registerRequestDtoList);
 
         // then
         assertThat(employeeSet).contains(employee);
@@ -88,6 +90,46 @@ class UserManagementServiceTest {
         assertThat(registerRequestDto.getEmail()).isEqualTo(employee.getEmail());
         assertThat(registerRequestDto.getPassword()).isEqualTo(employee.getPassword());
         assertThat(registerRequestDto.getRoleSet().size()).isEqualTo(employee.getRoles().size());
+        assertThat(registerRequestDto.getDepartment()).isEqualTo(employee.getDepartment());
+        assertThat(registerRequestDto.getTerminal()).isEqualTo(employee.getTerminal());
+    }
+
+    @Test
+    void shouldThrowTakenUsernameExceptionAtRegisterEmployee() {
+        // given
+        String username = "username";
+
+        RegisterRequestDto registerRequestDto = RegisterRequestDto.builder().username(username).build();
+        List<RegisterRequestDto> registerRequestDtoList = List.of(registerRequestDto);
+
+        Employee employeeControl = Employee.builder().username(username).build();
+        given(employeeRepository.findByUsername(anyString())).willReturn(Optional.ofNullable(employeeControl));
+
+        // when
+
+        // assert
+        assertThatThrownBy(() -> underTestUserManagementService.registerEmployee(registerRequestDtoList))
+                .isInstanceOf(TakenUserNameException.class)
+                .hasMessage("Username: " + username + " is taken");
+    }
+
+    @Test
+    void shouldThrowNoExceptionAtRegisterEmployee() {
+        // given
+        String username = "username";
+
+        RegisterRequestDto registerRequestDto = RegisterRequestDto.builder().username(username).build();
+        List<RegisterRequestDto> registerRequestDtoList = List.of(registerRequestDto);
+
+        Employee employeeControl = Employee.builder().username(username).build();
+        given(employeeRepository.findByUsername(anyString())).willReturn(Optional.of(employeeControl));
+
+        // when
+
+        // assert
+        assertThatThrownBy(() -> underTestUserManagementService.registerEmployee(registerRequestDtoList))
+                .isInstanceOf(TakenUserNameException.class)
+                .hasMessage("Username: " + username + " is taken");
     }
 
     @Test
@@ -100,10 +142,8 @@ class UserManagementServiceTest {
         HttpEntity<LoginRequestDto> requestEntity = new HttpEntity<>(loginRequestDto);
 
         // when
-        //ResponseEntity<JwtDto> jwtResponse = restTemplate.exchange("securityLoginUrl", HttpMethod.POST, requestEntity, JwtDto.class);
 
         // then
-        //Mockito.verify(restTemplate).exchange(eq("securityLoginUrl"), eq(HttpMethod.POST), requestEntityCaptor.capture(), eq(JwtDto.class));
 
         HttpEntity<LoginRequestDto> capturedRequestEntity = requestEntityCaptor.getValue();
         LoginRequestDto capturedLoginRequestDto = capturedRequestEntity.getBody();
@@ -120,7 +160,7 @@ class UserManagementServiceTest {
         given(employeeRepository.existsById(id)).willReturn(true);
 
         // when
-        underTestUserManagementService.deleteEmployeeById("token", id);
+        underTestUserManagementService.deleteEmployeeById(id);
 
         // then
         verify(employeeRepository).setDeletedTrue(id);
@@ -135,7 +175,7 @@ class UserManagementServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> underTestUserManagementService.deleteEmployeeById("token", id))
+        assertThatThrownBy(() -> underTestUserManagementService.deleteEmployeeById(id))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Employee with id " + id + " does not exists");
 
@@ -160,7 +200,7 @@ class UserManagementServiceTest {
         given(employeeRepository.existsById(id)).willReturn(true);
         given(employeeRepository.findById(anyLong())).willReturn(Optional.ofNullable(employee));
         // when
-        Employee employeeTest = underTestUserManagementService.updateEmployee("token", id, updateRequestDto);
+        Employee employeeTest = underTestUserManagementService.updateEmployee(id, updateRequestDto);
         when(passwordEncoder.encode(any())).thenReturn(updateRequestDto.getPassword());
         //then
         verify(employeeRepository).updateEmployeeById(id, username, passwordEncoder.encode(password), email);
@@ -185,7 +225,7 @@ class UserManagementServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> underTestUserManagementService.updateEmployee("token", id, updateRequestDto))
+        assertThatThrownBy(() -> underTestUserManagementService.updateEmployee(id, updateRequestDto))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Employee with id " + id + " does not exists");
 

@@ -1,6 +1,6 @@
 package com.security.services;
 
-import com.security.model.Roles;
+import com.security.entities.Roles;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;

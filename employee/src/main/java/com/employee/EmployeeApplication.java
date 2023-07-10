@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EntityScan({"com.common", "com.employee"})
-@EnableFeignClients(basePackages = {"com.securityClient"})
+@EntityScan({"com.employee"})
+@EnableFeignClients(basePackages = {"com.employee"})
 public class EmployeeApplication {
     public static void main(String[] args) {
         SpringApplication.run(EmployeeApplication.class, args);

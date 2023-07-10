@@ -1,7 +1,8 @@
 package com.notification.services;
 
-import com.common.Employee;
 import com.notification.dtos.NotificationRequestDto;
+import com.notification.entities.Employee;
+import com.notification.interfaces.NotificationServiceInterface;
 import com.notification.repositries.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationService {
+public class NotificationService implements NotificationServiceInterface {
 
     private final EmployeeRepository employeeRepository;
 
@@ -19,6 +20,7 @@ public class NotificationService {
      *
      * @param notificationRequestDto the notification request containing the department, terminal, and active status
      */
+    @Override
     public void notify(NotificationRequestDto notificationRequestDto) {
 
         String department = notificationRequestDto.getDepartment();

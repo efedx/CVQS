@@ -1,6 +1,6 @@
 package com.security.interfaces;
 
-import com.security.model.Roles;
+import com.security.entities.Roles;
 
 import java.util.Set;
 

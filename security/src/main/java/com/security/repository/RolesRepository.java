@@ -1,6 +1,6 @@
 package com.security.repository;
 
-import com.security.model.Roles;
+import com.security.entities.Roles;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RolesRepository extends JpaRepository<Roles, Long> {

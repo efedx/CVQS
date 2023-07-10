@@ -1,7 +1,7 @@
 package com.terminal.logAspect;
 
 import com.terminal.dtos.TerminalResponseDto;
-import com.terminal.models.Department;
+import com.terminal.entities.Department;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

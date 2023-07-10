@@ -6,10 +6,8 @@ import com.defect.model.Defect;
 import com.defect.model.Location;
 import com.defect.model.Vehicle;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
@@ -20,11 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegisterDefectsService implements com.defect.interfaces.RegisterDefectsService {
 
-    @Value("${url.security.defects}")
-    private String securityDefectsUrl;
-
     private final VehicleRepository vehicleRepository;
-    private final RestTemplate restTemplate;
 
     //-----------------------------------------------------------------------------------------------
 

@@ -1,16 +1,19 @@
 package com.employee.services;
 
-import com.common.*;
+import com.employee.dto.JwtDto;
+import com.employee.dto.LoginRequestDto;
+import com.employee.dto.RegisterRequestDto;
 import com.employee.dto.UpdateRequestDto;
+import com.employee.entities.Employee;
+import com.employee.entities.Roles;
 import com.employee.exceptions.NoEmployeeWithIdException;
 import com.employee.exceptions.NoRolesException;
 import com.employee.exceptions.TakenUserNameException;
 import com.employee.repository.EmployeeRepository;
 import com.employee.repository.RolesRepository;
+import com.employee.securityClient.SecurityClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.securityClient.SecurityClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +55,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     /**
      * Registers multiple employees with the provided user details and saves them to the database.
      *
-     * @param authorizationHeader    The authorization header containing the authentication token.
      * @param registerRequestDtoList The list of RegisterRequestDto objects containing the employee details for registration.
      * @return The set of registered employees.
      * @throws JsonProcessingException if an error occurs during JSON processing.
@@ -60,9 +62,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
      * @throws NoRolesException        if an employee does not have at least one role assigned.
      */
     @Override
-    public Set<Employee> registerEmployee(String authorizationHeader, List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
-
-        //securityContainerService.jwtValidation(authorizationHeader, "user management");
+    public Set<Employee> registerEmployee(List<RegisterRequestDto> registerRequestDtoList) throws JsonProcessingException {
 
         Set<Employee> employeeSet = new HashSet<>();
 
@@ -80,47 +80,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
                 throw new NoRolesException("An employee mush have at least one role");
             }
 
-            Employee employee = new Employee();
-            employee.setUsername(username);
-            employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
-            employee.setEmail(registerRequestDto.getEmail());
-            employee.setRoles(getRolesSetFromRegisterRoleDtoSet(employee, registerRequestDto.getRoleSet()));
-            employee.setDepartment(registerRequestDto.getDepartment());
-            employee.setTerminal(registerRequestDto.getTerminal());
-            employeeSet.add(employeeRepository.save(employee));
-        }
-        return employeeSet;
-    }
-
-    //-----------------------------------------------------------------------------------------------
-
-    /**
-     * Registers multiple admin employees with the provided user details and saves them to the database.
-     *
-     * @param registerRequestDtoList The list of RegisterRequestDto objects containing the admin employee details for registration.
-     * @return The set of registered admin employees.
-     * @throws TakenUserNameException if the username is already taken by an existing employee.
-     * @throws NoRolesException       if an employee does not have at least one role assigned.
-     */
-    public Set<Employee> registerAdmin(List<RegisterRequestDto> registerRequestDtoList) {
-
-        Set<Employee> employeeSet = new HashSet<>();
-
-        for(RegisterRequestDto registerRequestDto: registerRequestDtoList) {
-
-            Optional<Employee> employeeControl = employeeRepository.findByUsername(registerRequestDto.getUsername());
-
-            // check if the user with that username exists
-            if(employeeControl.isPresent()) {
-                throw new TakenUserNameException("Username: " + employeeControl.get().getUsername() + " is taken");
-            }
-            // check if the register request contains at least one role
-            if(registerRequestDto.getRoleSet().size() == 0) {
-                throw new NoRolesException("An employee mush have at least one role");
-            }
-
-            // if not create an employee
-            String  username = registerRequestDto.getUsername();
             Employee employee = new Employee();
             employee.setUsername(username);
             employee.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
@@ -138,7 +97,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     /**
      * Deletes an employee with the specified ID by marking it as deleted in the database.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param id                  The ID of the employee to delete.
      * @return The ID of the deleted employee.
      * @throws JsonProcessingException   if an error occurs during JSON processing.
@@ -146,9 +104,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
      */
     @Transactional
     @Override
-    public Long deleteEmployeeById(String authorizationHeader, Long id) throws JsonProcessingException {
-
-        //securityContainerService.jwtValidation(authorizationHeader, "user management");
+    public Long deleteEmployeeById(Long id) throws JsonProcessingException {
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists");
 
@@ -163,7 +119,6 @@ public class UserManagementService implements com.employee.interfaces.UserManage
     /**
      * Updates the details of an employee with the specified ID.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param id                  The ID of the employee to update.
      * @param updateRequestDto    The UpdateRequestDto object containing the updated employee details.
      * @return The updated Employee object.
@@ -172,9 +127,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
      */
     @Transactional
     @Override
-    public Employee updateEmployee(String authorizationHeader, Long id, UpdateRequestDto updateRequestDto) throws JsonProcessingException {
-
-        //securityContainerService.jwtValidation(authorizationHeader, "user management");
+    public Employee updateEmployee(Long id, UpdateRequestDto updateRequestDto) throws JsonProcessingException {
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists"); // string builder
 

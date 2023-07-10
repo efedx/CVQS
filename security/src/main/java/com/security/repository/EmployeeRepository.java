@@ -1,7 +1,7 @@
 package com.security.repository;
 
-import com.security.model.Employee;
-import com.security.model.Roles;
+import com.security.entities.Employee;
+import com.security.entities.Roles;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
