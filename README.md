@@ -269,7 +269,8 @@ Note: do not forget to add a .png image
     "defectList": [
         {
             "defectName": "D",
-            "locationList": [
+            "locationList":
+            [
                 {"location": [340, 220]},
                 {"location": [300, 400]},
                 {"location": [350, 250]}
