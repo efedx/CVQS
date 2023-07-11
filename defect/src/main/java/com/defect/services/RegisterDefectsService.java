@@ -2,11 +2,10 @@ package com.defect.services;
 
 import com.defect.repository.VehicleRepository;
 import com.defect.dto.RegisterDefectDto;
-import com.defect.model.Defect;
-import com.defect.model.Location;
-import com.defect.model.Vehicle;
+import com.defect.entities.Defect;
+import com.defect.entities.Location;
+import com.defect.entities.Vehicle;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -25,22 +24,14 @@ public class RegisterDefectsService implements com.defect.interfaces.RegisterDef
     /**
      * Registers defects for multiple vehicles and saves them to the database.
      *
-     * @param authorizationHeader     The authorization header containing the authentication token.
      * @param registerDefectDtoList   The list of RegisterDefectDto objects containing the defect details for each vehicle.
      * @param defectImageBytes        The byte array representing the defect image.
      * @return The list of vehicles with the registered defects.
-     * @throws Exception               If an error occurs during the registration or processing of the defects.
+     * @throws Exception               If an error occurs during the registration or processing of the defects for blob.
      */
     @Override
-    public List<Vehicle> registerDefects(String authorizationHeader, List<RegisterDefectDto> registerDefectDtoList,
+    public List<Vehicle> registerDefects(List<RegisterDefectDto> registerDefectDtoList,
                                          byte[] defectImageBytes) throws Exception {
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", authorizationHeader);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
-//        ResponseEntity<Object> validationResponse = restTemplate.exchange(securityDefectsUrl, HttpMethod.POST, requestEntity, Object.class);
 
         List<Vehicle> vehicleList = new ArrayList<>();
 

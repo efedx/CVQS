@@ -1,8 +1,8 @@
 package com.defect.controllers;
 
 import com.defect.dto.RegisterDefectDto;
-import com.defect.model.Defect;
-import com.defect.model.Vehicle;
+import com.defect.entities.Defect;
+import com.defect.entities.Vehicle;
 import com.defect.services.DefectImageService;
 import com.defect.services.ListDefectsService;
 import com.defect.services.RegisterDefectsService;
@@ -26,38 +26,6 @@ public class DefectsController {
 
     //-----------------------------------------------------------------------------------------------
 
-    @GetMapping("/defects/getDefectImage/{defectId}")
-    public ResponseEntity<byte[]> getDefectImage(@RequestHeader("Authorization") String authorizationHeader,
-                                                 @PathVariable Long defectId) throws Exception {
-
-        byte[] combinedImageByte = defectImageService.getDefectImage(authorizationHeader, defectId);
-
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(combinedImageByte);
-    }
-
-    @GetMapping("/defects/getDefectsByVehicle/{vehicleId}/page/{pageNumber}")
-    public ResponseEntity<Page<Defect>> getVehiclesPage(@RequestHeader("Authorization") String authorizationHeader,
-                                                        @PathVariable Long vehicleId,
-                                                        @PathVariable int pageNumber,
-                                                        @RequestParam String sortDirection,
-                                                        @RequestParam String sortField) {
-        return ResponseEntity.ok().body(listDefectsService.getDefectsByVehicle(authorizationHeader, vehicleId, pageNumber, sortField, sortDirection));
-    }
-
-    @GetMapping("/defects/getDefectsByVehicle/page/{pageNumber}")
-    public ResponseEntity<Page<Vehicle>> getDefectsByVehiclePage(@RequestHeader("Authorization") String authorizationHeader,
-                                                                 @PathVariable int pageNumber,
-                                                                 @RequestParam String sortDirection,
-                                                                 @RequestParam String sortField,
-                                                                 @RequestParam(required = false) String defectName) {
-        if(defectName != null) {
-            return ResponseEntity.ok().body(listDefectsService.getDefectsByVehiclePage(authorizationHeader, pageNumber, sortField, sortDirection, defectName));
-        }
-        else {
-            return ResponseEntity.ok().body(listDefectsService.getDefectsByVehiclePage(authorizationHeader, pageNumber, sortField, sortDirection));
-        }
-    }
-
     @PostMapping("/registerDefects")
     public String registerDefects(@RequestPart("registerDefectDto") List<RegisterDefectDto> registerDefectDtoList,
                                   @RequestPart("defectImage") MultipartFile defectImage,
@@ -71,8 +39,36 @@ public class DefectsController {
             // handle the exception, e.g. log an error message or return an error response
             return "An error occurred while creating defect image";
         }
-        registerDefectsService.registerDefects(authorizationHeader, registerDefectDtoList, defectImageByte);
+        registerDefectsService.registerDefects(registerDefectDtoList, defectImageByte);
         return "Defects saved";
     }
 
+    @GetMapping("/defects/getDefectImage/{defectId}")
+    public ResponseEntity<byte[]> getDefectImage(@PathVariable Long defectId) throws Exception {
+
+        byte[] combinedImageByte = defectImageService.getDefectImage(defectId);
+
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(combinedImageByte);
+    }
+
+    @GetMapping("/defects/getDefectsByVehicle/{vehicleId}/page/{pageNumber}")
+    public ResponseEntity<Page<Defect>> getDefectsByVehicleId(@PathVariable int pageNumber,
+                                                              @PathVariable Long vehicleId,
+                                                              @RequestParam String sortDirection,
+                                                              @RequestParam String sortField) {
+        return ResponseEntity.ok().body(listDefectsService.getDefectsByVehicleId(vehicleId, pageNumber, sortField, sortDirection));
+    }
+
+    @GetMapping("/defects/getDefectsByVehicle/page/{pageNumber}")
+    public ResponseEntity<Page<Vehicle>> getAllDefects(@PathVariable int pageNumber,
+                                                       @RequestParam String sortDirection,
+                                                       @RequestParam String sortField,
+                                                       @RequestParam(required = false) String defectName) {
+        if(defectName != null) {
+            return ResponseEntity.ok().body(listDefectsService.getAllDefects(pageNumber, sortField, sortDirection, defectName));
+        }
+        else {
+            return ResponseEntity.ok().body(listDefectsService.getAllDefects(pageNumber, sortField, sortDirection));
+        }
+    }
 }

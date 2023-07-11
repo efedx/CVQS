@@ -1,7 +1,7 @@
 package com.defect.logAspect;
 
-import com.defect.model.Defect;
-import com.defect.model.Vehicle;
+import com.defect.entities.Defect;
+import com.defect.entities.Vehicle;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +22,7 @@ public class DefectServiceLoggingAspect {
 
     private final Logger logger = LogManager.getLogger(DefectServiceLoggingAspect.class);
 
-    @Pointcut("execution(* com.security.services.*.*(..))") // return type, class, method with any parameters
+    @Pointcut("execution(* com.defect.services.*.*(..))") // return type, class, method with any parameters
     public void LoggingPointCut() {}
 
     @Around("LoggingPointCut()")

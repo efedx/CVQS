@@ -24,7 +24,6 @@ public class ListTerminalsService implements com.terminal.interfaces.ListTermina
     /**
      * Retrieves a paginated list of active terminals with the specified terminal name.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param pageNumber         The page number to retrieve.
      * @param sortDirection      The sort direction for the results ("asc" for ascending, "desc" for descending).
      * @param terminalName       The terminal name to filter the results (can be null or empty for no filtering).
@@ -32,11 +31,11 @@ public class ListTerminalsService implements com.terminal.interfaces.ListTermina
      * @throws JsonProcessingException if an error occurs during JSON processing.
      */
     @Override
-    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection, String terminalName) throws JsonProcessingException {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(int pageNumber, String sortDirection, String terminalName) throws JsonProcessingException {
 
-        int pageSize = 5;
+        int itemPerPage = 5;
 
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by("id").ascending()
+        Pageable pageable = PageRequest.of(pageNumber - 1, itemPerPage, sortDirection.equals("asc") ? Sort.by("id").ascending()
                 : Sort.by("id").descending());
 
         List<Terminal> activeTerminalsList = terminalRepository.findByActiveTerminalsAndTerminalNameList(terminalName);
@@ -64,18 +63,17 @@ public class ListTerminalsService implements com.terminal.interfaces.ListTermina
     /**
      * Retrieves a paginated list of active terminals without filtering by terminal name.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param pageNumber         The page number to retrieve.
      * @param sortDirection      The sort direction for the results ("asc" for ascending, "desc" for descending).
      * @return A Page object containing the list of TerminalResponseDto objects and pagination information.
      * @throws JsonProcessingException if an error occurs during JSON processing.
      */
     @Override
-    public Page<TerminalResponseDto> getActiveTerminalsPage(String authorizationHeader, int pageNumber, String sortDirection) throws JsonProcessingException {
+    public Page<TerminalResponseDto> getActiveTerminalsPage(int pageNumber, String sortDirection) throws JsonProcessingException {
 
-        int pageSize = 5;
+        int itemPerPage = 5;
 
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by("id").ascending()
+        Pageable pageable = PageRequest.of(pageNumber - 1, itemPerPage, sortDirection.equals("asc") ? Sort.by("id").ascending()
                 : Sort.by("id").descending());
 
         List<Terminal> activeTerminalsList = terminalRepository.findAllByActiveTerminalsList(pageable);

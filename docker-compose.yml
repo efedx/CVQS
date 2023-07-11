@@ -9,7 +9,7 @@ services:
     environment:
       - EUREKA_CLIENT_FETCH_REGISTRY=false
       - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
     networks:
       - micro-service-network
 
@@ -24,11 +24,15 @@ services:
 #      EUREKA_CLIENT_REGISTERWITHEUREKA: 'True'
       - EUREKA_CLIENT_FETCH_REGISTRY=true
       - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
     networks:
       - micro-service-network
     depends_on:
       - eureka-server
+      - employee
+#      - terminal
+#      - security
+#      - defect
 
   rabbitmq:
     image: rabbitmq:3.9.11-management-alpine
@@ -39,28 +43,28 @@ services:
     networks:
       - micro-service-network
 
-#  pgadmin:
-#    container_name: pgadmin
-#    image: dpage/pgadmin4
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-#      PGADMIN_CONFIG_SERVER_MODE: 'False'
-#    volumes:
-#      - pgadmin:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
-#    networks:
-#      - postgres
-#      - micro-service-network
-#    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+      - micro-service-network
+    restart: unless-stopped
 
   db:
     image: 'postgres:13.1-alpine'
     container_name: db
     hostname: db
     ports:
-      - "5434:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=efe
       - POSTGRES_PASSWORD=password
@@ -73,22 +77,22 @@ services:
       - micro-service-network
 
   employee:
-    image: 'user-management'
+    image: 'employee'
     container_name: employee
     ports:
       - "8081:8081"
     depends_on:
       - db
-      - api-gateway
       - eureka-server
     environment:
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
       - SPRING_DATASOURCE_USERNAME=efe
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-      - EUREKA_CLIENT_FETCH_REGISTRY=true
-      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+
     networks:
       - micro-service-network
     volumes:
@@ -105,7 +109,6 @@ services:
       context: .
     depends_on:
       - db
-      - api-gateway
       - eureka-server
       - rabbitmq
     environment:
@@ -116,8 +119,8 @@ services:
 
       - EUREKA_CLIENT_FETCH_REGISTRY=true
       - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
-      - SPRING_RABBITMQ_ADDRESSES=localhost:5672
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+      - SPRING_RABBITMQ_ADDRESSES=rabbitmq:5672
     networks:
       - micro-service-network
     volumes:
@@ -133,9 +136,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
       - SPRING_DATASOURCE_USERNAME=efe
       - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_RABBITMQ_ADDRESSES=localhost:5672
+      - SPRING_RABBITMQ_ADDRESSES=rabbitmq:5672
     depends_on:
-      - api-gateway
       - db
       - rabbitmq
       - eureka-server
@@ -144,55 +146,54 @@ services:
       - postgres
     volumes:
       - logs:/var/lib/docker/volumes/logs/_data
-#
-#  defect:
-#    image: 'defect'
-#    container_name: defect
-#    hostname: defect
-#    ports:
-#      - "8084:8084"
-#    build:
-#      context: .
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
-#      - SPRING_DATASOURCE_USERNAME=efe
-#      - SPRING_DATASOURCE_PASSWORD=password
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#
-#      - EUREKA_CLIENT_FETCH_REGISTRY=true
-#      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
-#      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
-#    depends_on:
-#      - db
-#      - api-gateway
-#    networks:
-#      - micro-service-network
-#    volumes:
-#      - logs:/var/lib/docker/volumes/logs/_data
-#
-#  security:
-#    image: 'security'
-#    container_name: security
-#    hostname: security
-#    ports:
-#      - "8085:8085"
-#    build:
-#      context: .
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
-#      - SPRING_DATASOURCE_USERNAME=efe
-#      - SPRING_DATASOURCE_PASSWORD=password
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#
-#      - EUREKA_CLIENT_FETCH_REGISTRY=true
-#      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
-#      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
-#    depends_on:
-#      - db
-#    networks:
-#      - micro-service-network
-#    volumes:
-#      - logs:/var/lib/docker/volumes/logs/_data
+
+  defect:
+    image: 'defect'
+    container_name: defect
+    hostname: defect
+    ports:
+      - "8084:8084"
+    build:
+      context: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
+      - SPRING_DATASOURCE_USERNAME=efe
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+    depends_on:
+      - db
+    networks:
+      - micro-service-network
+    volumes:
+      - logs:/var/lib/docker/volumes/logs/_data
+
+  security:
+    image: 'security'
+    container_name: security
+    hostname: security
+    ports:
+      - "8085:8085"
+    build:
+      context: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cvqs
+      - SPRING_DATASOURCE_USERNAME=efe
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+    depends_on:
+      - db
+    networks:
+      - micro-service-network
+    volumes:
+      - logs:/var/lib/docker/volumes/logs/_data
 
 
 

@@ -4,13 +4,13 @@ import com.security.dtos.LoginRequestDto;
 import com.security.exceptions.CustomBadCredentialsException;
 import com.security.entities.Employee;
 import com.security.entities.Roles;
+import com.security.exceptions.CustomUsernameNotFoundException;
 import com.security.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -32,7 +32,7 @@ public class LoginService implements com.security.interfaces.LoginService {
      * @param loginRequestDto The DTO object containing the username and password for login.
      * @return The generated JWT token as a string.
      * @throws CustomBadCredentialsException If the provided credentials are invalid.
-     * @throws UsernameNotFoundException    If the user is not found with the given username.
+     * @throws CustomUsernameNotFoundException    If the user is not found with the given username.
      */
     @Override
     public String login(LoginRequestDto loginRequestDto) {
@@ -48,7 +48,7 @@ public class LoginService implements com.security.interfaces.LoginService {
 
             Employee employee = employeeRepository
                     .findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + username));
+                    .orElseThrow(() -> new CustomUsernameNotFoundException("User not found with username : " + username));
             // if the authentication successful fetch the roles
             Set<Roles> rolesSet = employee.getRoles();
             String name = employee.getUsername();

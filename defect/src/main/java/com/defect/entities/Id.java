@@ -1,4 +1,4 @@
-package com.defect.model;
+package com.defect.entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

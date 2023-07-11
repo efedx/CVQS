@@ -28,23 +28,21 @@ public class TerminalsController {
 
     @PostMapping("/registerTerminals")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerTerminals(@RequestHeader("Authorization") String authorizationHeader,
-                                                  @RequestBody List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
-        registerTerminalsService.registerTerminals(authorizationHeader, registerTerminalDtoList);
+    public ResponseEntity<String> registerTerminals(@RequestBody List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
+        registerTerminalsService.registerTerminals(registerTerminalDtoList);
         return ResponseEntity.ok().body("Terminals registered");
     }
 
     @GetMapping("/listTerminals/page/{pageNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<TerminalResponseDto>> getTerminalsPage(@RequestHeader("Authorization") String authorizationHeader,
-                                                                      @PathVariable int pageNumber,
+    public ResponseEntity<Page<TerminalResponseDto>> getTerminalsPage(@PathVariable int pageNumber,
                                                                       @RequestParam String sortDirection,
                                                                       @RequestParam(required = false) String terminalName) throws JsonProcessingException {
         if(terminalName != null) {
-            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(authorizationHeader, pageNumber, sortDirection, terminalName));
+            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(pageNumber, sortDirection, terminalName));
         }
         else {
-            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(authorizationHeader, pageNumber, sortDirection));
+            return ResponseEntity.ok().body(listTerminalsService.getActiveTerminalsPage(pageNumber, sortDirection));
         }
     }
 

@@ -1,9 +1,9 @@
 package com.defect.services;
 
 import com.defect.exceptions.NoDefectWithIdException;
-import com.defect.model.Location;
+import com.defect.entities.Location;
 import com.defect.repository.DefectRepository;
-import com.defect.model.Defect;
+import com.defect.entities.Defect;
 import lombok.RequiredArgsConstructor;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -37,7 +37,6 @@ public class DefectImageService implements com.defect.interfaces.DefectImageServ
     /**
      * Retrieves the defect image and combines it with additional SVG information to generate an image with defects located
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param defectId            The ID of the defect for which the image is requested.
      * @return The combined image as a byte array.
      * @throws NoDefectWithIdException       If no defect exists with the given defect ID.
@@ -45,7 +44,7 @@ public class DefectImageService implements com.defect.interfaces.DefectImageServ
      */
     @Override
     @Transactional
-    public byte[] getDefectImage(String authorizationHeader, Long defectId) throws Exception {
+    public byte[] getDefectImage(Long defectId) throws Exception {
 
         Defect defect = defectRepository.findById(defectId).orElseThrow(() -> new NoDefectWithIdException("Defect with id " + defectId + " does not exist"));
         List<Location> locationList = defect.getLocationList();

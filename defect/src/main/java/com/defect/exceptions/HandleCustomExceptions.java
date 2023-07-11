@@ -15,18 +15,15 @@ import java.time.ZonedDateTime;
 @ControllerAdvice
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class HandleCustomExceptions {
-    @ExceptionHandler(value = {NoDefectWithIdException.class})
+    @ExceptionHandler(value = {NoDefectWithIdException.class, NoVehicleWithIdException.class})
     public ResponseEntity<Object> responseEntity(RuntimeException e) {
 
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage());
 
-        ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage(),
-                badRequest,
-                ZonedDateTime.now(ZoneId.of("Z"))
-        );
-
-        //return new ResponseEntity<>(exceptionResponse, badRequest);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(exceptionResponse);
+        return ResponseEntity
+                .status(400)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(exceptionResponse);
     }
 
 }

@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface RegisterTerminalsService {
-    Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException;
+    Set<Department> registerTerminals(List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException;
 }

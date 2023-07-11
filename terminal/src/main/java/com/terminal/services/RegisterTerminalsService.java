@@ -27,13 +27,12 @@ public class RegisterTerminalsService implements com.terminal.interfaces.Registe
     /**
      * Registers terminals for multiple departments and saves them to the database.
      *
-     * @param authorizationHeader     The authorization header containing the authentication token.
      * @param registerTerminalDtoList The list of RegisterTerminalDto objects containing the terminal details for each department.
      * @return The set of departments with the registered terminals.
      * @throws JsonProcessingException if an error occurs during JSON processing.
      */
     @Override
-    public Set<Department> registerTerminals(String authorizationHeader, List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
+    public Set<Department> registerTerminals(List<RegisterTerminalDto> registerTerminalDtoList) throws JsonProcessingException {
 
         Set<Department> departmentSet = new HashSet<>();
 

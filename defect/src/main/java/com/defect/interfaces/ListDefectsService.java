@@ -1,16 +1,16 @@
 package com.defect.interfaces;
 
-import com.defect.model.Defect;
-import com.defect.model.Vehicle;
+import com.defect.entities.Defect;
+import com.defect.entities.Vehicle;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface ListDefectsService {
-    Page<Defect> getDefectsByVehicle(String authorizationHeader, Long vehicleId, int pageNumber, String sortField, String sortDirection);
+    Page<Defect> getDefectsByVehicleId(Long vehicleId, int pageNumber, String sortField, String sortDirection);
 
     @Transactional
-    Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection);
+    Page<Vehicle> getAllDefects(int pageNumber, String sortField, String sortDirection);
 
     @Transactional
-    Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection, String defectName);
+    Page<Vehicle> getAllDefects(int pageNumber, String sortField, String sortDirection, String defectName);
 }

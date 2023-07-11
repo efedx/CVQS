@@ -2,6 +2,7 @@ package com.security.config;
 
 import com.security.entities.Employee;
 import com.security.entities.Roles;
+import com.security.exceptions.CustomUsernameNotFoundException;
 import com.security.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -23,10 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws CustomUsernameNotFoundException {
         Employee employee = employeeRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + username));
+                .orElseThrow(() -> new CustomUsernameNotFoundException("User not found with username : " + username));
 
         Set<Roles> roles = employee.getRoles();
         Set<GrantedAuthority> grantedAuthorities = getSimpleGrantedAuthoritiesFromRolesSet(roles);

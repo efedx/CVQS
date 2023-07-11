@@ -28,8 +28,6 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
     String securityUrl;
 
     @Autowired
-    private RouteValidator validator;
-    @Autowired
     private RestTemplate restTemplate;
     @Autowired
     private WebClient webClient;
@@ -55,7 +53,7 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
 
                 String contextPath = exchange.getRequest().getPath().value();
                 String determiner = contextPath.split("/")[1];
-                String url = "http://localhost:8085/" + determiner;
+                String url = "http://SECURITY:8085/" + determiner;
 
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.set("Authorization", authHeader);
@@ -63,7 +61,8 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
 
                 try {
 
-                    restTemplate.postForObject(url, httpRequest, Boolean.class);
+                    Boolean value = restTemplate.postForObject(url, httpRequest, Boolean.class);
+                    int a = 5;
                 }
                 catch (HttpClientErrorException e) {
 
@@ -84,6 +83,16 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
 
                         return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
                                 .bufferFactory().wrap(securityExceptionResponse.message().getBytes())));
+                    }
+                    else {
+                        ResponseEntity<SecurityExceptionResponse> responseEntity = ResponseEntity
+                                .status(e.getStatusCode())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(null);
+                        exchange.getResponse().setStatusCode(e.getStatusCode());
+
+                        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                                .bufferFactory().wrap("No authorization".getBytes())));
                     }
                 }
             }

@@ -1,9 +1,10 @@
 package com.defect.services;
 
+import com.defect.exceptions.NoVehicleWithIdException;
 import com.defect.repository.DefectRepository;
 import com.defect.repository.VehicleRepository;
-import com.defect.model.Defect;
-import com.defect.model.Vehicle;
+import com.defect.entities.Defect;
+import com.defect.entities.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,6 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
     /**
      * Retrieves a page of defects associated with a specific vehicle.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param vehicleId           The ID of the vehicle for which defects are requested.
      * @param pageNumber          The page number to retrieve (1-based index).
      * @param sortField           The field to use for sorting the defects.
@@ -30,13 +30,19 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
      * @return A page of defects for the specified vehicle.
      */
     @Override
-    public Page<Defect> getDefectsByVehicle(String authorizationHeader, Long vehicleId, int pageNumber, String sortField, String sortDirection) {
+    public Page<Defect> getDefectsByVehicleId(Long vehicleId, int pageNumber, String sortField, String sortDirection) {
 
-        int pageSize = 2;
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
-                : Sort.by("id").descending());
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new NoVehicleWithIdException("Vehicle with id " + vehicleId + " does not exist"));
 
-        return defectRepository.findAll(pageable);
+        int itemPerPage = 4;
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, itemPerPage, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending());
+
+        Page<Defect> defectPage = defectRepository.findDefectsByVehicleId(vehicleId, pageable);
+
+        return defectPage;
     }
 
     //-----------------------------------------------------------------------------------------------
@@ -44,7 +50,6 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
     /**
      * Retrieves a page of vehicles with their associated defects.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param pageNumber          The page number to retrieve (1-based index).
      * @param sortField           The field to use for sorting the vehicles.
      * @param sortDirection       The direction of sorting ("asc" for ascending, "desc" for descending).
@@ -52,13 +57,12 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
      */
     @Override
     @Transactional
-    public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection) {
+    public Page<Vehicle> getAllDefects(int pageNumber, String sortField, String sortDirection) {
 
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
+        int itemPerPage = 4;
+        Pageable pageable = PageRequest.of(pageNumber - 1, itemPerPage, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending());
 
-        int i = 5;
         Page<Vehicle> vehiclesPage = vehicleRepository.findAll(pageable);
 
         return vehiclesPage;
@@ -69,7 +73,6 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
     /**
      * Retrieves a page of vehicles with their associated defects filtered by defect name.
      *
-     * @param authorizationHeader The authorization header containing the authentication token.
      * @param pageNumber          The page number to retrieve (1-based index).
      * @param sortField           The field to use for sorting the vehicles.
      * @param sortDirection       The direction of sorting ("asc" for ascending, "desc" for descending).
@@ -78,11 +81,11 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
      */
     @Override
     @Transactional
-    public Page<Vehicle> getDefectsByVehiclePage(String authorizationHeader, int pageNumber, String sortField, String sortDirection, String defectName) {
+    public Page<Vehicle> getAllDefects(int pageNumber, String sortField, String sortDirection, String defectName) {
 
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
-                : Sort.by("sortField").descending());
+        int itemPerPage = 4;
+        Pageable pageable = PageRequest.of(pageNumber - 1, itemPerPage, sortDirection.equals("asc") ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending());
 
         Page<Vehicle> vehiclesPage = vehicleRepository.findByDefectName(defectName, pageable);
 

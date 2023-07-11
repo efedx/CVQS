@@ -13,23 +13,6 @@ spring:
     allow-circular-references: true
   application:
     name: api-gateway
-  datasource:
-    username: efe
-    password: password
-    url: jdbc:postgresql://localhost:5434/cvqs
-#    datasource:
-#      driverClassName: org.postgresql.Driver
-#      username: postgres
-#      password: 1526
-#      url: jdbc:postgresql://localhost:5432
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
 
 url:
   security: http://localhost:8083/

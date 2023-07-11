@@ -1,4 +1,4 @@
-package com.defect.model;
+package com.defect.entities;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;

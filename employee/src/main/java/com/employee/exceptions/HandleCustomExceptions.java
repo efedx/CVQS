@@ -29,30 +29,28 @@ public class HandleCustomExceptions {
 
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 e.getMessage(),
-                badRequest,
-                ZonedDateTime.now(ZoneId.of("Z"))
+                badRequest
         );
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(badRequest)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(exceptionResponse);
     }
 
-    @ExceptionHandler(value = {FeignException.class})
+    @ExceptionHandler(value = {CustomSecurityException.class})
     public ResponseEntity<Object> responseEntityForSecurity(RuntimeException e) throws JsonProcessingException {
 
         if(!e.getMessage().isEmpty()) {
-            SecurityExceptionResponse securityExceptionResponse = objectMapper.readValue(e.getMessage(), SecurityExceptionResponse.class);
             return ResponseEntity
-                    .status(403)
+                    .status(400)
                     .headers(HttpHeaders.EMPTY)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(securityExceptionResponse);
+                    .body(e.getMessage());
         }
         else {
             return ResponseEntity
-                    .status(403)
+                    .status(400)
                     .headers(HttpHeaders.EMPTY)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(null);
