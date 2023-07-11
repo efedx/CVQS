@@ -131,17 +131,17 @@ public class UserManagementService implements com.employee.interfaces.UserManage
 
         if(!employeeRepository.existsById(id)) throw new NoEmployeeWithIdException("Employee with id " + id + " does not exists"); // string builder
 
-        String username = updateRequestDto.getUsername();
-
         String password = null;
         if(updateRequestDto.getPassword() != null) {
              password = updateRequestDto.getPassword();
              password = passwordEncoder.encode(updateRequestDto.getPassword());
         }
-
+        String username = updateRequestDto.getUsername();
         String email = updateRequestDto.getEmail();
+        String department = updateRequestDto.getDepartment();
+        String terminal = updateRequestDto.getTerminal();
 
-        employeeRepository.updateEmployeeById(id, username, password, email);
+        employeeRepository.updateEmployeeById(id, username, password, email, department, terminal);
 
         Employee employee = employeeRepository.findById(id).get();
 

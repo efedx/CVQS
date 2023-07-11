@@ -21,23 +21,19 @@ public class UpdateRequestDto {
     @Size(min = 5, message = "Passwords must be at least 5 characters long")
     private String password;
     @Nullable
-    //@Email(message = "Provide a valid email address")
     private String email;
-//    @Nullable
-//    private Set<RegisterRequestDto.RoleDto> roleSet;
+
+    @Nullable
+    private String department;
+
+    @Nullable
+    private String terminal;
 
     @Nullable
     private Set<RoleDto> roleSet;
 
     @Data
     public static class RoleDto {
-        //private Long roleId;
         private String roleName;
     }
-
-//    @Data
-//    @Nullable
-//    public static class RoleDto {
-//        private String roleName;
-//    }
 }

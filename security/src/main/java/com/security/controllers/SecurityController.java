@@ -2,7 +2,6 @@ package com.security.controllers;
 
 import com.security.dtos.JwtDto;
 import com.security.dtos.LoginRequestDto;
-import com.security.services.JwtValidationService;
 import com.security.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class SecurityController {
 
     private final LoginService loginService;
-    private final JwtValidationService jwtValidationService;
 
     //-----------------------------------------------------------------------------------------------
 

@@ -189,12 +189,16 @@ class UserManagementServiceTest {
         String username = "username";
         String email = "email@gmail.com";
         String password = "password";
+        String department = "department";
+        String terminal = "terminal";
         Employee employee = Employee.builder().build();
 
         UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
                 .username(username)
                 .email(email)
                 .password(password)
+                .department(department)
+                .terminal(terminal)
                 .build();
 
         given(employeeRepository.existsById(id)).willReturn(true);
@@ -203,7 +207,7 @@ class UserManagementServiceTest {
         Employee employeeTest = underTestUserManagementService.updateEmployee(id, updateRequestDto);
         when(passwordEncoder.encode(any())).thenReturn(updateRequestDto.getPassword());
         //then
-        verify(employeeRepository).updateEmployeeById(id, username, passwordEncoder.encode(password), email);
+        verify(employeeRepository).updateEmployeeById(id, username, passwordEncoder.encode(password), email, department, terminal);
     }
 
     @Test

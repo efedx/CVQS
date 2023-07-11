@@ -32,8 +32,7 @@ public class ListDefectsService implements com.defect.interfaces.ListDefectsServ
     @Override
     public Page<Defect> getDefectsByVehicleId(Long vehicleId, int pageNumber, String sortField, String sortDirection) {
 
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new NoVehicleWithIdException("Vehicle with id " + vehicleId + " does not exist"));
+        if(!vehicleRepository.existsById(vehicleId)) throw  new NoVehicleWithIdException("Vehicle with id " + vehicleId + " does not exist");
 
         int itemPerPage = 4;
 

@@ -20,6 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Transactional
     @Query("UPDATE Employee e SET e.username = COALESCE(:username, e.username), e.password = COALESCE(:password, e.password)," +
-            " e.email = COALESCE(:email, e.email) WHERE e.id = :id")
-    void updateEmployeeById(Long id, String username, String password, String email);
+            " e.email = COALESCE(:email, e.email), e.department = COALESCE(:department, e.department), e.terminal = COALESCE(:terminal, e.terminal)" +
+            "WHERE e.id = :id")
+    void updateEmployeeById(Long id, String username, String password, String email, String department, String terminal);
 }
