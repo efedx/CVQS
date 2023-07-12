@@ -20,16 +20,8 @@ import java.io.Reader;
 @RequiredArgsConstructor
 public class CustomErrorDecoder implements ErrorDecoder {
     private final ErrorDecoder errorDecoder = new Default();
-    private final ObjectMapper objectMapper;
     @Override
     public Exception decode(String methodKey, Response response) {
-
-//        try (InputStream bodyIs = response.body().asInputStream()) {
-//            ObjectMapper mapper = new ObjectMapper();
-//            securityExceptionResponse = mapper.readValue(bodyIs, SecurityExceptionResponse.class);
-//        } catch (IOException e) {
-//            return new Exception(e.getMessage());
-//        }
 
         Reader reader = null;
 

@@ -29,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefectImageService implements com.defect.interfaces.DefectImageService {
 
-
     private final DefectRepository defectRepository;
 
     //-----------------------------------------------------------------------------------------------

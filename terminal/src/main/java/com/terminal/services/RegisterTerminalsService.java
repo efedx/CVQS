@@ -63,7 +63,7 @@ public class RegisterTerminalsService implements com.terminal.interfaces.Registe
 
     //-----------------------------------------------------------------------------------------------
 
-    private List<Terminal> getTerminalListFromTerminalDtoList(Department department, ArrayList<RegisterTerminalDto.TerminalDto> terminalDtoList) {
+    public List<Terminal> getTerminalListFromTerminalDtoList(Department department, List<RegisterTerminalDto.TerminalDto> terminalDtoList) {
 
         List<Terminal> terminalList = new ArrayList<>();
 

@@ -29,7 +29,7 @@ public class RabbitMQMessagePublisher {
     public void publishNotificationTerminal(Object payload) {
 
         logger.info("Publishing to {} using routingKey {}. Payload: {}", exchange, routingKey, payload);
-        amqpTemplate.convertAndSend("notification_terminal_exchange", "notification_terminal_routing_key", payload);
+        amqpTemplate.convertAndSend(exchange, routingKey, payload);
         logger.info("Published to {} using routingKey {}. Payload: {}", exchange, routingKey, payload);
     }
 

@@ -45,9 +45,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
 
         ResponseEntity<JwtDto> jwtResponse = securityClient.login(loginRequestDto);
 
-        JwtDto jwtDto = jwtResponse.getBody();
-
-        return jwtDto;
+        return jwtResponse.getBody();
     }
 
     //-----------------------------------------------------------------------------------------------
@@ -176,7 +174,7 @@ public class UserManagementService implements com.employee.interfaces.UserManage
         return newRolesSet;
     }
 
-    private Set<Roles> getRolesSetFromUpdateRoleDtoSet(Employee employee, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
+    public Set<Roles> getRolesSetFromUpdateRoleDtoSet(Employee employee, Set<UpdateRequestDto.RoleDto> roleDtoSet) {
         Set<Roles> newRolesSet = new HashSet<>();
 
         for (UpdateRequestDto.RoleDto roleDto : roleDtoSet) {

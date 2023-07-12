@@ -59,7 +59,7 @@ public class DefectsController {
         return ResponseEntity.ok().body(listDefectsService.getDefectsByVehicleId(vehicleId, pageNumber, sortField, sortDirection));
     }
 
-    @GetMapping("/defects/getDefectsByVehicle/page/{pageNumber}")
+    @GetMapping("/defects/getAllDefects/page/{pageNumber}")
     public ResponseEntity<Page<Vehicle>> getAllDefects(@PathVariable int pageNumber,
                                                        @RequestParam String sortDirection,
                                                        @RequestParam String sortField,

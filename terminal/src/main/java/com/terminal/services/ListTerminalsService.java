@@ -17,7 +17,6 @@ import java.util.List;
 public class ListTerminalsService implements com.terminal.interfaces.ListTerminalsService {
 
     private final TerminalRepository terminalRepository;
-    private final RestTemplate restTemplate;
 
     //-----------------------------------------------------------------------------------------------
 

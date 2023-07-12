@@ -48,7 +48,7 @@ public class LoginService implements com.security.interfaces.LoginService {
 
             Employee employee = employeeRepository
                     .findByUsername(username)
-                    .orElseThrow(() -> new CustomUsernameNotFoundException("User not found with username : " + username));
+                    .orElseThrow(() -> new CustomUsernameNotFoundException("User not found with username: " + username));
             // if the authentication successful fetch the roles
             Set<Roles> rolesSet = employee.getRoles();
             String name = employee.getUsername();

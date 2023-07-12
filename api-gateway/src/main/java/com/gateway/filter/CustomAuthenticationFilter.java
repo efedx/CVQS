@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -42,58 +39,55 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
 
         return new OrderedGatewayFilter((exchange, chain) -> {
 
-            if (true) { // validator.isSecured.test(exchange.getRequest())
-                //header contains token or not
-                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("missing authorization header");
-                }
+            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(400));
+                return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                        .bufferFactory().wrap("No authorization header".getBytes())));
+            }
 
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
 
-                String contextPath = exchange.getRequest().getPath().value();
-                String determiner = contextPath.split("/")[1];
-                String url = "http://SECURITY:8085/" + determiner;
+            String contextPath = exchange.getRequest().getPath().value();
+            String determiner = contextPath.split("/")[1];
+            String url = "http://SECURITY:8085/" + determiner;
 
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.set("Authorization", authHeader);
-                HttpEntity<Boolean> httpRequest = new HttpEntity<>(httpHeaders);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set("Authorization", authHeader);
+            HttpEntity<Boolean> httpRequest = new HttpEntity<>(httpHeaders);
 
-                try {
+            try {
+                Boolean value = restTemplate.postForObject(url, httpRequest, Boolean.class);
+            }
+            catch (HttpClientErrorException e) {
 
-                    Boolean value = restTemplate.postForObject(url, httpRequest, Boolean.class);
-                    int a = 5;
-                }
-                catch (HttpClientErrorException e) {
+                if(!e.getResponseBodyAsString().isEmpty()) {
 
-                    if(!e.getResponseBodyAsString().isEmpty()) {
+                    SecurityExceptionResponse securityExceptionResponse = null;
 
-                        SecurityExceptionResponse securityExceptionResponse = null;
-
-                        try {
-                            securityExceptionResponse = objectMapper.readValue(e.getResponseBodyAsString(), SecurityExceptionResponse.class);
-                        } catch (JsonProcessingException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        ResponseEntity<SecurityExceptionResponse> responseEntity = ResponseEntity
-                                .status(e.getStatusCode())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(securityExceptionResponse);
-                        exchange.getResponse().setStatusCode(e.getStatusCode());
-
-                        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
-                                .bufferFactory().wrap(securityExceptionResponse.message().getBytes())));
+                    try {
+                        securityExceptionResponse = objectMapper.readValue(e.getResponseBodyAsString(), SecurityExceptionResponse.class);
+                    } catch (JsonProcessingException ex) {
+                        throw new RuntimeException(ex);
                     }
-                    else {
-                        ResponseEntity<SecurityExceptionResponse> responseEntity = ResponseEntity
-                                .status(e.getStatusCode())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(null);
-                        exchange.getResponse().setStatusCode(e.getStatusCode());
+                    ResponseEntity<SecurityExceptionResponse> responseEntity = ResponseEntity
+                            .status(e.getStatusCode())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(securityExceptionResponse);
+                    exchange.getResponse().setStatusCode(e.getStatusCode());
 
-                        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
-                                .bufferFactory().wrap("No authorization".getBytes())));
-                    }
+                    return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                            .bufferFactory().wrap(securityExceptionResponse.message().getBytes())));
+                }
+                else {
+                    ResponseEntity<SecurityExceptionResponse> responseEntity = ResponseEntity
+                            .status(e.getStatusCode())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(null);
+                    exchange.getResponse().setStatusCode(e.getStatusCode());
+
+                    return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                            .bufferFactory().wrap("No authorization".getBytes())));
                 }
             }
             return chain.filter(exchange);

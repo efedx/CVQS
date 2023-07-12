@@ -20,7 +20,7 @@ public class JwtGenerationService implements com.security.interfaces.JwtGenerati
     //-----------------------------------------------------------------------------------------------
 
     Date now = new Date(System.currentTimeMillis());
-        Date expiration = new Date(now.getTime() + 999999999); // 360000000
+    Date expiration = new Date(now.getTime() + 999999999); // 360000000
 
 
     /**

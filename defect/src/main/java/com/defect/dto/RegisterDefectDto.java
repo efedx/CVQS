@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,19 +17,19 @@ public class RegisterDefectDto {
 
     private Long vehicleNo;
     //private Defects[] defects;
-    private ArrayList<DefectDto> defectList;
+    private List<DefectDto> defectList;
 
     @Data
     public static class DefectDto {
         private String defectName;
         //private Byte[] defectImage;
         // private ArrayList<ArrayList<Integer>> locationList;
-        private ArrayList<LocationDto> locationList;
+        private List<LocationDto> locationList;
     }
 
     @Data
     public static class LocationDto {
-        private ArrayList<Integer> location;
+        private List<Integer> location;
     }
 
 //    private ArrayList<Defect> defectList = new ArrayList<>();

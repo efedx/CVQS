@@ -52,7 +52,7 @@ public class RegisterDefectsService implements com.defect.interfaces.RegisterDef
     //-----------------------------------------------------------------------------------------------
 
     // returns a List<Defect> populated with locations given in a LogDefectDto object
-    private List<Defect> defectDtoToDefectList(Vehicle vehicle, RegisterDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
+    public List<Defect> defectDtoToDefectList(Vehicle vehicle, RegisterDefectDto registerDefectDto, byte[] defectImageByte) throws Exception {
 
         List<Defect> defectsList = new ArrayList<>();
         Blob defectImageBlob = new SerialBlob(defectImageByte);

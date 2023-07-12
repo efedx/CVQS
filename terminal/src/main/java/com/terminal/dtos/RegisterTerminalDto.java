@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class RegisterTerminalDto {
 
     private String departmentName;
-    private ArrayList<TerminalDto> terminalList;
+    private List<TerminalDto> terminalList;
     @Data
     public static class TerminalDto {
         private String terminalName;
