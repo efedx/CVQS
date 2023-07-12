@@ -22,7 +22,7 @@ public class HandleCustomExceptions {
 
     private final ObjectMapper objectMapper;
 
-    @ExceptionHandler(value = {TakenUserNameException.class, NoRolesException.class})
+    @ExceptionHandler(value = {TakenUserNameException.class, NoRolesException.class, NoEmployeeWithIdException.class})
     public ResponseEntity<Object> responseEntity(RuntimeException e) {
 
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;

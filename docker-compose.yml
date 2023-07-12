@@ -19,9 +19,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://localhost:8761/eureka'
-#      EUREKA_CLIENT_FETCHREGISTRY: 'True'
-#      EUREKA_CLIENT_REGISTERWITHEUREKA: 'True'
       - EUREKA_CLIENT_FETCH_REGISTRY=true
       - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
@@ -30,9 +27,9 @@ services:
     depends_on:
       - eureka-server
       - employee
-#      - terminal
-#      - security
-#      - defect
+      - terminal
+      - security
+      - defect
 
   rabbitmq:
     image: rabbitmq:3.9.11-management-alpine
